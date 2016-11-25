@@ -1,7 +1,8 @@
 # gorilla-middleware
 
-A Clojure library designed to ... well, that part is up to you.
-
+Bare bones middleware for gorilla-repl. Batteries (convenience function to
+ start/stop nrepl server). You may want this for minimum footprint when
+ running the gorilla-repl client remotely.
 ## Usage
 
 FIXME
