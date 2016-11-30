@@ -13,4 +13,4 @@
   '[cemerick.piggieback/wrap-cljs-repl])
 
 
-(def cljs-handler (atom (mw/nrepl-handler false cljs-middleware)))
+(def cljs-handler (mw/nrepl-handler false cljs-middleware))

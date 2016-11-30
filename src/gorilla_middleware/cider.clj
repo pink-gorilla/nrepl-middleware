@@ -14,4 +14,4 @@
     cider.nrepl.middleware.stacktrace/wrap-stacktrace])
 
 
-(def cider-handler (atom (mw/nrepl-handler false cider-middleware)))
+(def cider-handler (mw/nrepl-handler false cider-middleware))
