@@ -1,11 +1,14 @@
 (ns gorilla-middleware.render-values
-  (:require [clojure.tools.nrepl.transport :as transport]
-            [clojure.tools.nrepl.middleware.pr-values]
-            [clojure.tools.nrepl.middleware :as middleware]
-            [gorilla-middleware.json :as json]
-            ;; [clojure.data.json :as json]
-            #_[cheshire.core :as json]
-            [gorilla-renderable.core :as render])
+  (:require 
+   [clojure.tools.nrepl.transport :as transport]
+   [clojure.tools.nrepl.middleware.pr-values]
+   [clojure.tools.nrepl.middleware :as middleware]
+   [gorilla-middleware.json :as json]
+   ;; [clojure.data.json :as json]
+   #_[cheshire.core :as json]
+   ;[gorilla-renderable.core :as render]
+   [pinkgorilla.ui.gorilla-renderable :refer [render]]
+   )
   #_(:refer [clojure.data.json :rename {write-str generate-string}])
   (:import clojure.tools.nrepl.transport.Transport))
 
@@ -32,7 +35,7 @@
                                                 ;; effect that the string will end up double-escaped.
                                                 ;; (assoc resp :value (json/generate-string (render/render v)))
                                                 ;; TODO: We actually want the serialization to be swappable
-                                                (assoc resp :value (json/serialize (render/render v)))
+                                                (assoc resp :value (json/serialize (render v)))
                                                 resp))
                                        this))))))
 

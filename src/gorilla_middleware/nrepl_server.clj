@@ -1,7 +1,8 @@
 (ns gorilla-middleware.nrepl-server
-  (:require [clojure.tools.nrepl.server :as srv]
-            [gorilla-middleware.handle :as mw]
-            [cider.nrepl :as cider])
+  (:require 
+   [clojure.tools.nrepl.server :as srv]
+   [gorilla-middleware.handle :as mw]
+   [cider.nrepl :as cider])
   )
 
 (def nrepl (atom {}))

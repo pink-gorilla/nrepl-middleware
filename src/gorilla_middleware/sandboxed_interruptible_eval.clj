@@ -1,12 +1,14 @@
 (ns ^{:author "Chas Emerick"}
 gorilla-middleware.sandboxed_interruptible-eval
-  (:require [clojail.testers :refer [secure-tester-without-def secure-tester blanket]]
-            [clojail.core :refer [sandbox]]
-            [clojure.tools.nrepl.transport :as t]
-            clojure.main)
-  (:use [clojure.tools.nrepl.misc :only (response-for returning)]
-        [clojure.tools.nrepl.middleware :only (set-descriptor!)]
-        [clojure.tools.nrepl.middleware.interruptible-eval :only (*msg* *eval*)])
+  (:require 
+   [clojail.testers :refer [secure-tester-without-def secure-tester blanket]]
+   [clojail.core :refer [sandbox]]
+   [clojure.tools.nrepl.transport :as t]
+   clojure.main)
+  (:use 
+   [clojure.tools.nrepl.misc :only (response-for returning)]
+   [clojure.tools.nrepl.middleware :only (set-descriptor!)]
+   [clojure.tools.nrepl.middleware.interruptible-eval :only (*msg* *eval*)])
 
   (:import clojure.lang.LineNumberingPushbackReader
            (java.io FilterReader LineNumberReader StringReader Writer)
