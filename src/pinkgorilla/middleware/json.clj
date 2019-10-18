@@ -1,4 +1,4 @@
-(ns gorilla-middleware.json
+(ns pinkgorilla.middleware.json
   (:require 
    [clojure.data.json :as json]
    #_[cheshire.core :as json])

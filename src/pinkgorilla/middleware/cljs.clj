@@ -1,9 +1,9 @@
-(ns gorilla-middleware.cljs
+(ns pinkgorilla.middleware.cljs
   "Experimental CLJS"
   (:require 
-   [gorilla-middleware.handle :as mw]
-   [gorilla-middleware.sandboxed_interruptible-eval]
-   [gorilla-middleware.render-values :as render-mw] ;; it's essential this import comes after the previous one! It
+   [pinkgorilla.middleware.handle :as mw]
+   [pinkgorilla.middleware.sandboxed_interruptible-eval]
+   [pinkgorilla.middleware.render-values :as render-mw] ;; it's essential this import comes after the previous one! It
     ;; refers directly to a var in nrepl (as a hack to workaround
     ;; a weakness in nREPL's middleware resolution).
    [clojure.tools.nrepl.server :as server]

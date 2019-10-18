@@ -1,9 +1,9 @@
-(ns gorilla-middleware.render-values
+(ns pinkgorilla.middleware.render-values
   (:require 
    [clojure.tools.nrepl.transport :as transport]
    [clojure.tools.nrepl.middleware.pr-values]
    [clojure.tools.nrepl.middleware :as middleware]
-   [gorilla-middleware.json :as json]
+   [pinkgorilla.middleware.json :as json]
    ;; [clojure.data.json :as json]
    #_[cheshire.core :as json]
    ;[gorilla-renderable.core :as render]

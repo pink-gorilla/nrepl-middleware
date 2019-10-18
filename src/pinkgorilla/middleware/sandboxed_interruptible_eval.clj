@@ -1,5 +1,5 @@
 (ns ^{:author "Chas Emerick"}
-gorilla-middleware.sandboxed_interruptible-eval
+pinkgorilla.middleware.sandboxed_interruptible-eval
   (:require 
    [clojail.testers :refer [secure-tester-without-def secure-tester blanket]]
    [clojail.core :refer [sandbox]]

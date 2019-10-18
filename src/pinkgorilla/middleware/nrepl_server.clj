@@ -1,7 +1,7 @@
-(ns gorilla-middleware.nrepl-server
+(ns pinkgorilla.middleware.nrepl-server
   (:require 
    [clojure.tools.nrepl.server :as srv]
-   [gorilla-middleware.handle :as mw]
+   [pinkgorilla.middleware.handle :as mw]
    [cider.nrepl :as cider])
   )
 
