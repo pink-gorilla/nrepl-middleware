@@ -1,9 +1,8 @@
 (ns pinkgorilla.middleware.nrepl-server
-  (:require 
-   [clojure.tools.nrepl.server :as srv]
-   [pinkgorilla.middleware.handle :as mw]
-   [cider.nrepl :as cider])
-  )
+  (:require
+    [nrepl.server :as srv]
+    [pinkgorilla.middleware.handle :as mw]
+    [cider.nrepl :as cider]))
 
 (def nrepl (atom {}))
 
