@@ -1,14 +1,14 @@
 (ns pinkgorilla.middleware.render-values
-    (:require [nrepl.transport :as transport]
-      [nrepl.middleware.print]
-      [nrepl.middleware :as middleware]
-      [pinkgorilla.middleware.json :as json]
-      ;; [clojure.data.json :as json]
-      #_[cheshire.core :as json]
-      ;; [gorilla-renderable.core :as render]
-      [pinkgorilla.ui.gorilla-renderable :refer [render]])
-    #_(:refer [clojure.data.json :rename {write-str generate-string}])
-    (:import nrepl.transport.Transport))
+  (:require
+   [nrepl.transport :as transport]
+   [nrepl.middleware.print]
+   [nrepl.middleware :as middleware]
+   ;; [clojure.data.json :as json]
+   #_[cheshire.core :as json]
+   [pinkgorilla.middleware.json :as json]
+   [pinkgorilla.ui.gorilla-renderable :refer [render]])
+  #_(:refer [clojure.data.json :rename {write-str generate-string}])
+  (:import nrepl.transport.Transport))
 
 ;; TODO: This might no longer be true as of nrepl 0.6
 ;; There's absolutely no way I would have figured this out without referring to
@@ -19,14 +19,14 @@
 ;; then converts the result to json.
 ;; TODO: Would be awesome to make JSON serialization swapable
 (defn render-values
-      [handler]
-      (fn [{:keys [op ^Transport transport] :as msg}]
-          (handler (assoc msg :transport (reify Transport
-                                                (recv [this] (.recv transport))
-                                                (recv [this timeout] (.recv transport timeout))
-                                                (send [this resp]
-                                                      (.send transport
-                                                             (if-let [[_ v] (and (:as-html msg) (find resp :value))]
+  [handler]
+  (fn [{:keys [op ^Transport transport] :as msg}]
+    (handler (assoc msg :transport (reify Transport
+                                     (recv [this] (.recv transport))
+                                     (recv [this timeout] (.recv transport timeout))
+                                     (send [this resp]
+                                       (.send transport
+                                              (if-let [[_ v] (and (:as-html msg) (find resp :value))]
                                                                      ;; we have to transform the rendered value to JSON here, as otherwise
                                                                      ;; it will be pr'ed by the print middleware (which comes with the
                                                                      ;; eval middleware), meaning that it won't be mapped to JSON when the
@@ -34,9 +34,9 @@
                                                                      ;; effect that the string will end up double-escaped.
                                                                      ;; (assoc resp :value (json/generate-string (render/render v)))
                                                                      ;; TODO: We actually want the serialization to be swappable
-                                                                     (assoc resp :value (json/serialize (render v)))
-                                                                     resp))
-                                                      this))))))
+                                                (assoc resp :value (json/serialize (render v)))
+                                                resp))
+                                       this))))))
 
 
 ;; TODO: No idea whether this still applies to nrepl 0.6
