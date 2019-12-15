@@ -5,8 +5,9 @@
             [pinkgorilla.middleware.render-values :as render-mw] ;; it's essential this import comes after the previous one! It
     ;; refers directly to a var in nrepl (as a hack to workaround
     ;; a weakness in nREPL's middleware resolution).
-            [nrepl.server :as server]
-            [cider.piggieback :as pb]))
+            ;; [nrepl.server :as server]
+            ;; [cider.piggieback :as pb]
+            ))
 
 (def ^:private cljs-middleware
   "A vector containing the cljs gorilla repl supports."
