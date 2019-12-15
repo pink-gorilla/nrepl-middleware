@@ -16,4 +16,7 @@
     cider.nrepl/wrap-stacktrace])
 
 
-(def cider-handler (mw/nrepl-handler false cider-middleware))
+(defn cider-handler []
+  ;; force side effects at runtime
+  (require 'cider.nrepl)
+  (mw/nrepl-handler false cider-middleware))
