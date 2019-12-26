@@ -15,11 +15,10 @@
    (users can define their own render implementations)"
   [result]
   (let [m (meta result)]
-    {:value-response
      (cond
        ;(contains? m :r) {:type :reagent-cljs :reagent result :map-kewords false}
        (contains? m :R) {:type :reagent-cljs :reagent result :map-kewords true}
-       :else (render result))}))
+       :else (render result))))
 
 
 ;; TODO: This might no longer be true as of nrepl 0.6
