@@ -6,12 +6,15 @@
    [pinkgorilla.middleware.render-values :as render-mw] ;; it's essential this import comes after the previous one! It
     ;; refers directly to a var in nrepl (as a hack to workaround
     ;; a weakness in nREPL's middleware resolution).
-   [clojure.tools.nrepl.server :as server]
-   [cider.piggieback :as pb]))
+   ;; [clojure.tools.nrepl.server :as server]
+   ;; [cider.piggieback :as pb]
+   ))
 
 (def ^:private cljs-middleware
   "A vector containing the cljs gorilla repl supports."
   '[cider/wrap-cljs-repl])
 
-
-(def cljs-handler (mw/nrepl-handler false cljs-middleware))
+;; TODO middleware must resolve
+(defn cljs-handler []
+  (require 'cider.piggieback)
+  (mw/nrepl-handler false cljs-middleware))
