@@ -10,6 +10,18 @@
   #_(:refer [clojure.data.json :rename {write-str generate-string}])
   (:import nrepl.transport.Transport))
 
+(defn render-renderable-meta
+  "rendering via the Renderable protocol (needs renderable project)
+   (users can define their own render implementations)"
+  [result]
+  (let [m (meta result)]
+    {:value-response
+     (cond
+       ;(contains? m :r) {:type :reagent-cljs :reagent result :map-kewords false}
+       (contains? m :R) {:type :reagent-cljs :reagent result :map-kewords true}
+       :else (render result))}))
+
+
 ;; TODO: This might no longer be true as of nrepl 0.6
 ;; There's absolutely no way I would have figured this out without referring to
 ;; https://github.com/clojure/tools.nrepl/blob/master/src/main/clojure/clojure/tools/nrepl/middleware/pr_values.clj
@@ -34,7 +46,7 @@
                                                                      ;; effect that the string will end up double-escaped.
                                                                      ;; (assoc resp :value (json/generate-string (render/render v)))
                                                                      ;; TODO: We actually want the serialization to be swappable
-                                                (assoc resp :value (json/serialize (render v)))
+                                                (assoc resp :value (json/serialize (render-renderable-meta v)))
                                                 resp))
                                        this))))))
 

@@ -1,11 +1,12 @@
 (ns pinkgorilla.middleware.handle
   (:require 
+   [nrepl.core :as nrepl]
    [nrepl.server :as srv]
    [pinkgorilla.middleware.sandboxed_interruptible-eval]
    [pinkgorilla.middleware.render-values :as render-mw] ;; it's essential this import comes after the previous one! It
     ;; refers directly to a var in nrepl (as a hack to workaround
     ;; a weakness in nREPL's middleware resolution).
-   [nrepl.core :as nrepl]))
+   ))
 
 ;; Dirty hack to swap nREPL interruptible-eval
 (defn- middlewares
