@@ -13,5 +13,4 @@
   "A vector containing the cljs gorilla repl supports."
   '[cider.piggieback/wrap-cljs-repl])
 
-
 (def cljs-handler (mw/nrepl-handler false cljs-middleware))

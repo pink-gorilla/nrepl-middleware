@@ -15,10 +15,10 @@
    (users can define their own render implementations)"
   [result]
   (let [m (meta result)]
-     (cond
+    (cond
        ;(contains? m :r) {:type :reagent-cljs :reagent result :map-kewords false}
-       (contains? m :R) {:type :reagent-cljs :reagent result :map-kewords true}
-       :else (render result))))
+      (contains? m :R) {:type :reagent-cljs :reagent result :map-kewords true}
+      :else (render result))))
 
 
 ;; TODO: This might no longer be true as of nrepl 0.6
@@ -29,6 +29,8 @@
 ;; This middleware function calls the gorilla-repl render protocol on the value that results from the evaluation, and
 ;; then converts the result to json.
 ;; TODO: Would be awesome to make JSON serialization swapable
+
+
 (defn render-values
   [handler]
   (fn [{:keys [op ^Transport transport] :as msg}]
@@ -55,6 +57,8 @@
 ;; Unfortunately nREPL's interruptible-eval middleware has a fixed dependency on the pr-values middleware. So here,
 ;; what we do is fudge the :requires and :expects values to ensure that our rendering middleware gets inserted into
 ;; the linearized middlware stack between the eval middleware and the pr-values middleware. A bit of a hack!
+
+
 (middleware/set-descriptor! #'render-values
                             {:requires #{#'nrepl.middleware.print/wrap-print}
                              :expects  #{"eval"}
