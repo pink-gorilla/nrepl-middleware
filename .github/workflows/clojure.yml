@@ -9,7 +9,19 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    - name: Cache dependencies
+      uses: actions/cache@v1
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/project.clj') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
     - name: Install dependencies
+      run: lein deps
+    - name: Check
       run: lein deps
     - name: Run tests
       run: lein test
+    - name: Release
+      if: github.ref == 'master'
+      run: lein release
