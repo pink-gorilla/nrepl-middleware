@@ -13,6 +13,7 @@
                   [clojail "1.0.6"] ; sandboxing
                   [cider/piggieback "0.4.2"]
                   [org.pinkgorilla/gorilla-renderable "2.1.0"]]
+
   :profiles {:dev   {:dependencies [[clj-kondo "2019.11.23"]]
                      :plugins [[lein-cljfmt "0.6.6"]
                                [lein-cloverage "1.1.2"]]
@@ -27,4 +28,16 @@
                                          with-debug-bindings [[:inner 0]]
                                          merge-meta          [[:inner 0]]
                                          try-if-let          [[:block 1]]}}}}
+
+  :aliases {"bump-version" ["change" "version" "leiningen.release/bump-version"]}
+
+  :release-tasks [["vcs" "assert-committed"]
+                  ["bump-version" "release"]
+                  ["vcs" "commit" "Release %s"]
+                  ["vcs" "tag" "v" "--no-sign"]
+                  ["deploy"]
+                  ["bump-version"]
+                  ["vcs" "commit" "Begin %s"]
+                  ["vcs" "push"]]
+
   :repl-options {:init-ns pinkgorilla.middleware.cljs})
