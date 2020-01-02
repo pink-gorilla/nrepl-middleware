@@ -40,6 +40,7 @@ jobs:
         release_username: ${{ secrets.ReleaseUsername }}
         release_password: ${{ secrets.ReleasePassword }}
       run: |
+        env
         git config --global user.email "ci@pinkgorilla.org"
         git config --global user.name "CI/CD"
         lein release
