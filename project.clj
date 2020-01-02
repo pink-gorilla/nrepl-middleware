@@ -3,8 +3,8 @@
   :url "https://github.com/pink-gorilla/gorilla-middleware"
   :license {:name "MIT"}
   :deploy-repositories [["releases" {:url "https://clojars.org/repo"
-                                     :username :env/clojars_username
-                                     :password :env/clojars_password
+                                     :username :env/release_username
+                                     :password :env/release_password
                                      :sign-releases false}]]
   :dependencies  [[org.clojure/clojure "1.10.1"]
                   [org.clojure/data.json "0.2.6"]

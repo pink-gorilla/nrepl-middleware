@@ -36,6 +36,9 @@ jobs:
       run: lein test
     - name: Release
       if: github.event_name == 'push'
+      env:
+        release_username: ${{ secrets.ReleaseUsername }}
+        release_password: ${{ secrets.ReleasePassword }}
       run: |
         git config --global user.email "ci@pinkgorilla.org"
         git config --global user.name "CI/CD"
