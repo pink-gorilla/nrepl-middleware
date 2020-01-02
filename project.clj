@@ -1,11 +1,11 @@
-(defproject org.pinkgorilla/gorilla-middleware "0.2.7-SNAPSHOT"
+(defproject org.pinkgorilla/gorilla-middleware "0.2.7"
   :description "Pink Gorilla nREPL middleware"
   :url "https://github.com/pink-gorilla/gorilla-middleware"
   :license {:name "MIT"}
-  :deploy-repositories [["clojars" {:url "https://clojars.org/repo"
-                                    :username :env/clojars_username
-                                    :password :env/clojars_password
-                                    :sign-releases false}]]
+  :deploy-repositories [["releases" {:url "https://clojars.org/repo"
+                                     :username :env/clojars_username
+                                     :password :env/clojars_password
+                                     :sign-releases false}]]
   :dependencies  [[org.clojure/clojure "1.10.1"]
                   [org.clojure/data.json "0.2.6"]
                   [nrepl "0.6.0"]
