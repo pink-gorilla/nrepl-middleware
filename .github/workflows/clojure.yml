@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: Cache dependencies
       uses: actions/cache@v1
       with:
@@ -40,7 +40,6 @@ jobs:
         RELEASE_USERNAME: ${{ secrets.ReleaseUsername }}
         RELEASE_PASSWORD: ${{ secrets.ReleasePassword }}
       run: |
-        env
         git config --global user.email "ci@pinkgorilla.org"
         git config --global user.name "CI/CD"
         lein release
