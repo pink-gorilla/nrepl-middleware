@@ -37,8 +37,8 @@ jobs:
     - name: Release
       if: github.event_name == 'push'
       env:
-        release_username: ${{ secrets.ReleaseUsername }}
-        release_password: ${{ secrets.ReleasePassword }}
+        RELEASE_USERNAME: ${{ secrets.ReleaseUsername }}
+        RELEASE_PASSWORD: ${{ secrets.ReleasePassword }}
       run: |
         env
         git config --global user.email "ci@pinkgorilla.org"
