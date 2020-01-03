@@ -1,4 +1,4 @@
-# Gorilla Middleware [![GitHub Actions status |pink-gorilla/gorilla-middleware](https://github.com/pink-gorilla/gorilla-middleware/workflows/Clojure%20CI/badge.svg)](https://github.com/pink-gorilla/gorilla-middleware/actions?workflow=Clojure+CI)
+# Gorilla Middleware [![GitHub Actions status |pink-gorilla/gorilla-middleware](https://github.com/pink-gorilla/gorilla-middleware/workflows/CI/badge.svg)](https://github.com/pink-gorilla/gorilla-middleware/actions?workflow=CI)
 
 Bare bones middleware for pink-gorilla. Batteries (convenience function to
  start/stop nrepl server). You may want this for minimum footprint when
