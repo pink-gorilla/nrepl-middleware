@@ -1,9 +1,10 @@
 (ns gorilla-middleware.render_values-test
-  (:require [clojure.test :refer :all]
-    ;; hack to test just compilation for now
-            [pinkgorilla.middleware.handle :refer [nrepl-handler]]
-            [pinkgorilla.middleware.json :as json]
-            [pinkgorilla.middleware.render-values :refer :all]))
+  (:require [clojure.test :refer [testing is deftest]]
+            [pinkgorilla.middleware.json :as json]))
+
+;; TODO: Only force loading for now
+(require 'pinkgorilla.middleware.handle
+         'pinkgorilla.middleware.render-values)
 
 (deftest json-serialization
   (testing "Default JSON serialization"

@@ -1,6 +1,5 @@
 (ns pinkgorilla.middleware.handle
   (:require
-   [nrepl.core :as nrepl]
    [nrepl.server :as srv]
    [pinkgorilla.middleware.sandboxed_interruptible-eval]
    [pinkgorilla.middleware.render-values :as render-mw] ;; it's essential this import comes after the previous one! It

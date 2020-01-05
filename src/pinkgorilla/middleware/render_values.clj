@@ -33,7 +33,7 @@
 
 (defn render-values
   [handler]
-  (fn [{:keys [op ^Transport transport] :as msg}]
+  (fn [{:keys [^Transport transport] :as msg}]
     (handler (assoc msg :transport (reify Transport
                                      (recv [this] (.recv transport))
                                      (recv [this timeout] (.recv transport timeout))
