@@ -1,18 +1,18 @@
 (ns ^{:author "Chas Emerick"}
  pinkgorilla.middleware.sandboxed_interruptible-eval
-  (:require [clojail.testers :refer [secure-tester-without-def secure-tester blanket]]
+  (:require [clojail.testers :refer [secure-tester]]
             [clojail.core :refer [sandbox]]
             [nrepl.transport :as t]
+            [nrepl.misc :refer [response-for returning]]
+            [nrepl.middleware :refer [set-descriptor!]]
+            [nrepl.middleware.interruptible-eval :refer [*msg*]]
             clojure.main)
-  (:use [nrepl.misc :only (response-for returning)]
-        [nrepl.middleware :only (set-descriptor!)]
-        [nrepl.middleware.interruptible-eval :only (*msg*)])
-
   (:import clojure.lang.LineNumberingPushbackReader
-           (java.io FilterReader LineNumberReader StringReader Writer)
+           ;; LineNumberReader - does not play with ^LineNumberReader type meta + clj-kondo
+           (java.io FilterReader StringReader Writer)
            java.lang.reflect.Field
            java.util.concurrent.atomic.AtomicLong
-           (java.util.concurrent Executor BlockingQueue LinkedBlockingQueue ThreadFactory
+           (java.util.concurrent Executor BlockingQueue ThreadFactory
                                  SynchronousQueue TimeUnit ThreadPoolExecutor)))
 
 #_(def gorilla-repl-tester
@@ -48,7 +48,8 @@
   (-> FilterReader
       ^Field (.getDeclaredField "in")
       (doto (.setAccessible true))
-      ^LineNumberReader (.get reader)
+      ^java.io.LineNumberReader (.get reader)
+      (.get reader)
       (.setLineNumber line)))
 
 (defn- set-column!
@@ -160,7 +161,7 @@
 (def ^{:private true} jdk6? (try
                               (Class/forName "java.util.ServiceLoader")
                               true
-                              (catch ClassNotFoundException e false)))
+                              (catch ClassNotFoundException _ false)))
 
 ; this is essentially the same as Executors.newCachedThreadPool, except
 ; for the JDK 5/6 fix described below
@@ -168,8 +169,8 @@
   "Returns a ThreadPoolExecutor, configured (by default) to
         have no core threads, use an unbounded queue, create only daemon threads,
         and allow unused threads to expire after 30s."
-  [& {:keys [keep-alive queue thread-factory]
-      :or   {keep-alive 30000
+  [& {:keys [queue thread-factory] ;; keep-alive
+      :or   {;; keep-alive 30000
              queue      (SynchronousQueue.)}}]
   (let [^ThreadFactory thread-factory (or thread-factory (configure-thread-factory))]
             ; ThreadPoolExecutor in JDK5 *will not run* submitted jobs if the core pool size is zero and
@@ -226,7 +227,7 @@
        otherwise."
   [h & configuration]
   (let [executor (:executor configuration @default-executor)]
-    (fn [{:keys [op session interrupt-id id transport] :as msg}]
+    (fn [{:keys [op session interrupt-id transport] :as msg}] ;; id
       (case op
         "eval"
         (if-not (:code msg)
