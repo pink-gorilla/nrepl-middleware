@@ -12,7 +12,7 @@
 
 (def ^:private cljs-middleware
   "A vector containing the cljs gorilla repl supports."
-  '[cider/wrap-cljs-repl])
+  '[cider.piggieback/wrap-cljs-repl])
 
 ;; TODO middleware must resolve
 (defn cljs-handler []

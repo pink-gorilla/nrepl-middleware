@@ -27,3 +27,5 @@ jobs:
       run: lein clj-kondo --lint .
     - name: Run tests
       run: lein test
+    - name: Code coverage
+      run: lein cloverage
