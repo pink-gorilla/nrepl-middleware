@@ -1,4 +1,5 @@
-# Gorilla Middleware [![GitHub Actions status |pink-gorilla/gorilla-middleware](https://github.com/pink-gorilla/gorilla-middleware/workflows/CI/badge.svg)](https://github.com/pink-gorilla/gorilla-middleware/actions?workflow=CI)[![Clojars Project](https://img.shields.io/clojars/v/org.pinkgorilla/gorilla-middleware.svg)](https://clojars.org/org.pinkgorilla/gorilla-middleware)
+# Gorilla Middleware [![GitHub Actions status |pink-gorilla/gorilla-middleware](https://github.com/pink-gorilla/gorilla-middleware/workflows/CI/badge.svg)](https://github.com/pink-gorilla/gorilla-middleware/actions?workflow=CI)[![Codecov Project](https://codecov.io/gh/pink-gorilla/gorilla-middleware/branch/master/graph/badge.svg)](https://codecov.io/gh/pink-gorilla/gorilla-middleware)[![Clojars Project](https://img.shields.io/clojars/v/org.pinkgorilla/gorilla-middleware.svg)](https://clojars.org/org.pinkgorilla/gorilla-middleware)
+
 
 
 Bare bones middleware for pink-gorilla. Batteries (convenience function to
