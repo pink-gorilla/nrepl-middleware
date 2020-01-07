@@ -25,7 +25,8 @@ jobs:
       run: lein cljfmt check
     - name: Lint
       run: lein clj-kondo --lint .
-    - name: Run tests
-      run: lein test
-    - name: Code coverage
-      run: lein cloverage
+    - name: Run tests / code coverage
+      run: |
+        lein test
+        lein cloverage
+        bash <(curl -s https://codecov.io/bash) -d

@@ -28,11 +28,12 @@ jobs:
       run: lein cljfmt check
     - name: Lint
       run: lein clj-kondo --lint .
-    - name: Run tests
-      run: lein test
-    - name: Code coverage
-      run: lein cloverage
+    - name: Run tests / code coverage
+      run: |
+        lein test
+        lein cloverage
     - name: Release
+      if: success()
       # if: github.event_name == 'push'
       env:
         RELEASE_USERNAME: ${{ secrets.ReleaseUsername }}
