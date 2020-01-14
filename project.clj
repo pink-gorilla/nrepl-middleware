@@ -12,7 +12,7 @@
                   [cider/cider-nrepl "0.22.4"]
                   [clojail "1.0.6"] ; sandboxing
                   [cider/piggieback "0.4.2"]
-                  [org.pinkgorilla/gorilla-renderable "2.1.22"]]
+                  [org.pinkgorilla/gorilla-renderable "3.0.0"]]
 
   :profiles {:dev   {:dependencies [[clj-kondo "2019.11.23"]]
                      :plugins [[lein-cljfmt "0.6.6"]
