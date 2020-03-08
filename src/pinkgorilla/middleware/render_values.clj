@@ -3,11 +3,8 @@
    [nrepl.transport :as transport]
    [nrepl.middleware.print]
    [nrepl.middleware :as middleware]
-   ;; [clojure.data.json :as json]
-   #_[cheshire.core :as json]
-   [pinkgorilla.middleware.json :as json]
+   [pinkgorilla.middleware.formatter :as formatter]
    [pinkgorilla.ui.gorilla-renderable :refer [render]])
-  #_(:refer [clojure.data.json :rename {write-str generate-string}])
   (:import nrepl.transport.Transport))
 
 (defn render-renderable-meta
@@ -47,7 +44,7 @@
                                                                      ;; effect that the string will end up double-escaped.
                                                                      ;; (assoc resp :value (json/generate-string (render/render v)))
                                                                      ;; TODO: We actually want the serialization to be swappable
-                                                (assoc resp :value (json/serialize (render-renderable-meta v)))
+                                                (assoc resp :value (formatter/serialize (render-renderable-meta v)))
                                                 resp))
                                        this))))))
 
