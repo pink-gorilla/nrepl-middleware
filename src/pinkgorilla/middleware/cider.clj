@@ -8,7 +8,7 @@
    ))
 
 (def ^:private cider-middleware
-  "A vector containing the CIDER middleware gorilla repl supports."
+  "A vector containing the CIDER middleware pinkgorilla supports."
   '[cider.nrepl/wrap-complete
     cider.nrepl/wrap-info
     cider.nrepl/wrap-stacktrace])
