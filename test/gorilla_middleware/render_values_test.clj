@@ -1,5 +1,5 @@
 (ns gorilla-middleware.render_values-test
-  (:require 
+  (:require
    [clojure.test :refer [testing is deftest]]
    [pinkgorilla.middleware.formatter :refer [serialize]]))
 
