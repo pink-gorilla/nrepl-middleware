@@ -5,7 +5,7 @@
    [nrepl.middleware.print]
    [nrepl.middleware :as middleware]
    [pinkgorilla.middleware.formatter :as formatter]
-   [pinkgorilla.ui.gorilla-renderable :refer [render render-renderable-meta]])
+   [pinkgorilla.ui.gorilla-renderable :refer [#_render render-renderable-meta]])
   (:import nrepl.transport.Transport))
 
 
