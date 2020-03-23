@@ -1,19 +1,19 @@
 (ns pinkgorilla.middleware.nrepl-server
   (:require
-   [nrepl.server :as srv]
-   [pinkgorilla.middleware.handle :as mw]
-   [cider.nrepl :as cider]))
+   [nrepl.server :refer [start-server stop-server]]
+   [cider.nrepl :as cider]
+   [pinkgorilla.middleware.handle :refer [nrepl-handler]]))
 
 (def nrepl (atom {}))
 
 (defn start-nrepl!
   [port]
-  (let [server (srv/start-server :port port
-                                 :handler (mw/nrepl-handler false cider/cider-middleware))]
+  (let [server (start-server :port port
+                             :handler (nrepl-handler false cider/cider-middleware))]
     (swap! nrepl assoc port server)
     server))
 
 (defn stop-nrepl!
   [port]
   (let [server (get @nrepl port)]
-    (srv/stop-server server)))
+    (stop-server server)))

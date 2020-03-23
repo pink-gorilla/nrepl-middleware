@@ -1,24 +1,13 @@
 (ns pinkgorilla.middleware.render-values
   (:require
+   ;[clojure.tools.logging :refer (info)]
    [nrepl.transport :as transport]
    [nrepl.middleware.print]
    [nrepl.middleware :as middleware]
-   ;; [clojure.data.json :as json]
-   #_[cheshire.core :as json]
-   [pinkgorilla.middleware.json :as json]
-   [pinkgorilla.ui.gorilla-renderable :refer [render]])
-  #_(:refer [clojure.data.json :rename {write-str generate-string}])
+   [pinkgorilla.middleware.formatter :as formatter]
+   [pinkgorilla.ui.gorilla-renderable :refer [#_render render-renderable-meta]])
   (:import nrepl.transport.Transport))
 
-(defn render-renderable-meta
-  "rendering via the Renderable protocol (needs renderable project)
-   (users can define their own render implementations)"
-  [result]
-  (let [m (meta result)]
-    (cond
-       ;(contains? m :r) {:type :reagent-cljs :reagent result :map-kewords false}
-      (contains? m :R) {:type :reagent-cljs :reagent result :map-kewords true}
-      :else (render result))))
 
 
 ;; TODO: This might no longer be true as of nrepl 0.6
@@ -30,6 +19,12 @@
 ;; then converts the result to json.
 ;; TODO: Would be awesome to make JSON serialization swapable
 
+
+(defn render-value [value]
+  (let [r (render-renderable-meta value)]
+    ;(info "rendering value: " value)
+    ;(info "rendered to: " r)
+    r))
 
 (defn render-values
   [handler]
@@ -47,7 +42,7 @@
                                                                      ;; effect that the string will end up double-escaped.
                                                                      ;; (assoc resp :value (json/generate-string (render/render v)))
                                                                      ;; TODO: We actually want the serialization to be swappable
-                                                (assoc resp :value (json/serialize (render-renderable-meta v)))
+                                                (assoc resp :value (formatter/serialize (render-value v)))
                                                 resp))
                                        this))))))
 
