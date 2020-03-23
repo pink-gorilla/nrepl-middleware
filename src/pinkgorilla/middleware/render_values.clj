@@ -1,6 +1,6 @@
 (ns pinkgorilla.middleware.render-values
   (:require
-   [clojure.tools.logging :refer (info)]
+   ;[clojure.tools.logging :refer (info)]
    [nrepl.transport :as transport]
    [nrepl.middleware.print]
    [nrepl.middleware :as middleware]
@@ -22,8 +22,8 @@
 
 (defn render-value [value]
   (let [r (render-renderable-meta value)]
-    (info "rendering value: " value)
-    (info "rendered to: " r)
+    ;(info "rendering value: " value)
+    ;(info "rendered to: " r)
     r))
 
 (defn render-values
