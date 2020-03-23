@@ -4,12 +4,10 @@
    #_[cheshire.core :as json])
   #_(:refer [clojure.data.json :rename {write-str generate-string}]))
 
-
-
 #_(defn serialize
-  "Default JSON serializer."
-  [val]
-  (json/write-str val))
+    "Default JSON serializer."
+    [val]
+    (json/write-str val))
 
 (defn serialize
   "Default EDN serializer."

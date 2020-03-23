@@ -21,12 +21,10 @@
 
 
 (defn render-value [value]
-  (let [r (render-renderable-meta value) ]
-  (info "rendering value: " value)
-  (info "rendered to: " r)
-  r
-  ))
-
+  (let [r (render-renderable-meta value)]
+    (info "rendering value: " value)
+    (info "rendered to: " r)
+    r))
 
 (defn render-values
   [handler]
