@@ -10,7 +10,7 @@
                   [org.clojure/data.json "0.2.6"]
                   [nrepl "0.6.0"]
                   [cider/cider-nrepl "0.22.4"]
-                  ;[clojail "1.0.6"] ; sandboxing
+                  [clojail "1.0.6"] ; sandboxing
                   [cider/piggieback "0.4.2"]
                   [org.pinkgorilla/gorilla-renderable "3.0.5"]]
 
