@@ -9,22 +9,30 @@
   (:import nrepl.transport.Transport))
 
 
-
 ;; TODO: This might no longer be true as of nrepl 0.6
-;; There's absolutely no way I would have figured this out without referring to
+
+;; Stolen from:
 ;; https://github.com/clojure/tools.nrepl/blob/master/src/main/clojure/clojure/tools/nrepl/middleware/pr_values.clj
-;; and as a result the structure of this follows that code rather closely (which is a fancy way of saying I copied it).
+;; and as a result the structure of this follows that code rather closely
 
 ;; This middleware function calls the gorilla-repl render protocol on the value that results from the evaluation, and
-;; then converts the result to json.
-;; TODO: Would be awesome to make JSON serialization swapable
+;; then converts the result to edn.
 
 
 (defn render-value [value]
   (let [r (render-renderable-meta value)]
-    ;(info "rendering value: " value)
-    ;(info "rendered to: " r)
     r))
+
+(defn convert-response [msg resp]
+   ;; we have to transform the rendered value to JSON here, as otherwise
+   ;; it will be pr'ed by the print middleware (which comes with the
+   ;; eval middleware), meaning that it won't be mapped to JSON when the
+   ;; whole message is mapped to JSON later. This has the unfortunate side
+   ;; effect that the string will end up double-escaped.
+   ;; (assoc resp :value (json/generate-string (render/render v)))
+  (if-let [[_ v] (and (:as-html msg) (find resp :value))]
+    (assoc resp :value (formatter/serialize (render-value v)))
+    resp))
 
 (defn render-values
   [handler]
@@ -33,17 +41,7 @@
                                      (recv [this] (.recv transport))
                                      (recv [this timeout] (.recv transport timeout))
                                      (send [this resp]
-                                       (.send transport
-                                              (if-let [[_ v] (and (:as-html msg) (find resp :value))]
-                                                                     ;; we have to transform the rendered value to JSON here, as otherwise
-                                                                     ;; it will be pr'ed by the print middleware (which comes with the
-                                                                     ;; eval middleware), meaning that it won't be mapped to JSON when the
-                                                                     ;; whole message is mapped to JSON later. This has the unfortunate side
-                                                                     ;; effect that the string will end up double-escaped.
-                                                                     ;; (assoc resp :value (json/generate-string (render/render v)))
-                                                                     ;; TODO: We actually want the serialization to be swappable
-                                                (assoc resp :value (formatter/serialize (render-value v)))
-                                                resp))
+                                       (.send transport (convert-response msg resp))
                                        this))))))
 
 

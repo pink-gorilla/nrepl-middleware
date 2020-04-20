@@ -7,6 +7,8 @@
 (require 'pinkgorilla.middleware.handle
          'pinkgorilla.middleware.render-values)
 
-(deftest json-serialization
+(deftest edn-serialization
   (testing "Default EDN serialization"
-    (is (= (serialize {:a 1}) "{:a 1}"))))
+    (is (= (serialize {:a 1}) "{:a 1}"))
+    (is (= (serialize ^:R {:a 1}) "^{:R true} {:a 1}"))
+    ))
