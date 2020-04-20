@@ -24,10 +24,10 @@
     r))
 
 (defn convert-response [msg resp]
-   ;; we have to transform the rendered value to JSON here, as otherwise
+   ;; we have to transform the rendered value to EDN here, as otherwise
    ;; it will be pr'ed by the print middleware (which comes with the
-   ;; eval middleware), meaning that it won't be mapped to JSON when the
-   ;; whole message is mapped to JSON later. This has the unfortunate side
+   ;; eval middleware), meaning that it won't be mapped to EDN when the
+   ;; whole message is mapped to EDN later. This has the unfortunate side
    ;; effect that the string will end up double-escaped.
    ;; (assoc resp :value (json/generate-string (render/render v)))
   (if-let [[_ v] (and (:as-html msg) (find resp :value))]
