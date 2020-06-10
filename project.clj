@@ -1,4 +1,4 @@
-(defproject org.pinkgorilla/gorilla-middleware "0.2.24-SNAPSHOT"
+(defproject org.pinkgorilla/gorilla-middleware "0.2.24"
   :description "Pink Gorilla nREPL middleware"
   :url "https://github.com/pink-gorilla/gorilla-middleware"
   :license {:name "MIT"}
