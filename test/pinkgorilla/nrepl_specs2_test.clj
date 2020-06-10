@@ -1,7 +1,7 @@
 (ns pinkgorilla.nrepl-specs2-test
   (:require
-   [clojure.test :refer [testing is deftest]]
-   [clojure.spec.alpha :as s]
+   [clojure.test :refer [#_testing is deftest]]
+   ;[clojure.spec.alpha :as s]
    ; bring the specs into scope:
    [pinkgorilla.kernel.nrepl-specs]))
 
@@ -20,5 +20,9 @@
 
 ;(when (s/valid? :nrepl-msg/stacktrace-msg message)
 ;  (info "rcvd valid stacktrace: " message))
+;  
+(deftest nrepl-specs-test
+  (is (= true true ; (s/valid? :nrepl-msg/stacktrace-msg stacktrace-msg)
+         )))
 
 
