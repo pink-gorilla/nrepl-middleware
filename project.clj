@@ -7,7 +7,9 @@
                                      :password :env/release_password
                                      :sign-releases false}]]
   :dependencies  [[org.clojure/clojure "1.10.1"]
+                  [org.clojure/spec.alpha "0.2.187"]
                   [org.clojure/data.json "0.2.6"]
+                  [com.stuartsierra/component "0.4.0"]
                   [nrepl "0.6.0"]
                   [cider/cider-nrepl "0.22.4"]
                   [clojail "1.0.6"] ; sandboxing
