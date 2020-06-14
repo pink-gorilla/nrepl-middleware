@@ -1,4 +1,4 @@
-(ns pinkgorilla.kernel.nrepl
+(ns pinkgorilla.nrepl.server
   (:require
    [clojure.tools.logging :as log]
    [com.stuartsierra.component :as component]

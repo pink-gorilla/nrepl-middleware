@@ -10,10 +10,13 @@
                   [org.clojure/spec.alpha "0.2.187"]
                   [org.clojure/data.json "0.2.6"]
                   [com.stuartsierra/component "0.4.0"]
+                  [jarohen/chord "0.8.1" ; nrepl websocket
+                   :exclusions [com.cognitect/transit-clj
+                                com.cognitect/transit-cljs]] ; websockets with core.async
                   [nrepl "0.6.0"]
                   [cider/cider-nrepl "0.22.4"]
+                  [cider/piggieback "0.4.2"] 
                   [clojail "1.0.6"] ; sandboxing
-                  [cider/piggieback "0.4.2"]
                   [org.pinkgorilla/gorilla-renderable "3.0.5"]]
 
   :profiles {:dev   {:dependencies [[clj-kondo "2019.11.23"]]
