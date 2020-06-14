@@ -20,9 +20,7 @@
                          [com.cognitect/transit-cljs "0.8.264"]
                          [com.fasterxml.jackson.core/jackson-core "2.11.0"]
                          [cheshire "5.10.0"]
-                         [org.clojure/tools.reader "1.3.2"]
-
-                         ]
+                         [org.clojure/tools.reader "1.3.2"]]
 
 
   :dependencies  [;[org.clojure/clojure "1.10.1"]
@@ -49,6 +47,7 @@
                                    ; shadow-cljs MAY NOT be a dependency in lein deps :tree -> if so, bundeler will fail because shadow contains core.async which is not compatible with self hosted clojurescript
                                    [thheller/shadow-cljs "2.10.7"]
                                    [thheller/shadow-cljsjs "0.0.21"]
+                                    [com.taoensso/timbre "4.10.0"]             ; clojurescript logging
                                    [com.lucasbradstreet/cljs-uuid-utils "1.0.2"] ;; awb99: in encoding, and clj/cljs proof
                                    ]}
 

@@ -16,21 +16,20 @@
    This is useful for applications that want to display partial 
    responses (say console output) during a longer running evaluation)"
   [state request-id callback]
-  (let [ch (:fragment-ch state)
+  (let [fragment-ch (:fragment-ch state)
         filtered-ch (chan)
         fragments (atom [])]
-    (go
-      (loop
-       (let [msg (<! ch)
+    (go-loop []
+       (let [msg (<! fragment-ch)
              id (:id msg)]
          (when (= id request-id)
-           (!> fragment-ch msg)  
-           (swap fragments conj msg)
+           (>! fragment-ch msg)  
+           (swap! fragments conj msg)
            (if (contains? (:status msg) :done) ;; eval status
              (do (close! filtered-ch)
                  (when callback 
                    (callback {:id request-id :fragments @fragments})))
-             (recur))))))
+             (recur)))))
     filtered-ch))
 
 
@@ -67,16 +66,16 @@
         request-id (keyword id)]
     (info "ws rcvd message request-id " request-id)
     (go
-      (!> fragment-ch message)
+      (>! fragment-ch message)
       (when (contains? status :done) ;; eval status
         (do
           (swap! (:requests state) dissoc request-id)
-          (!> result-ch message))))))
+          (>! result-ch message))))))
 
 (defn- notify [state msg-type payload]
   (let [control-ch @(:control-ch state)]
     (go
-      (!> control-ch {:msg-type msg-type
+      (>! control-ch {:msg-type msg-type
                       :patload payload}))))
 
 (defn- receive-msgs!
