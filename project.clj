@@ -54,6 +54,11 @@
                                    [thheller/shadow-cljsjs "0.0.21"]
                                    [com.taoensso/timbre "4.10.0"]             ; clojurescript logging
                                    [com.lucasbradstreet/cljs-uuid-utils "1.0.2"] ;; awb99: in encoding, and clj/cljs proof
+                                   [reagent "0.10.0"
+                                    :exclusions [org.clojure/tools.reader
+                                                 cljsjs/react
+                                                 cljsjs/react-dom]]
+                                   
                                    ]}
 
              :dev   {:dependencies [[org.clojure/tools.logging "1.0.0"]

@@ -8,6 +8,7 @@
    [cljs.core.async :as async :refer [<! >! chan timeout close!]]
    [taoensso.timbre :refer [debug info warn error]]
    [cljs-uuid-utils.core :as uuid]
+   [reagent.core :as r]
    [chord.client :as chord])) ; websockets with core.async
 
 
@@ -21,72 +22,85 @@
    :status :done})
 
 (defn- process-incoming-nrepl-msgs
-  [session-id ws-ch user-ch]
-  (let [fail-fn (fn [error]
-                  (error "ws error:" error)
+  [session-id ws-ch output-ch connected?]
+  (let [fail-fn (fn [error-msg]
+                  (error "ws error:" error-msg)
                   (close! ws-ch))]
     (info "processing incoming nrepl messages ..")
     (go-loop [got-session-msg false]
       (let [{:keys [message error] :as data} (<! ws-ch)]
-        (info "NREPL RCVD: " data)
+        (debug "NREPL RCVD: " data)
         (if message
           (if got-session-msg
             (do
-              (>! user-ch message)
+              (>! output-ch message)
               (recur true))
             (if-let [new-session-id (:new-session message)]
               (do
                 (info "Got session-id msg " message)
+                (reset! connected? true)
                 (reset! session-id new-session-id)
-                (>! user-ch (connection-msg :connected))
+                (>! output-ch (connection-msg :connected))
                 (recur true))
               (do
                 (error "waiting for :new-session. dumping: " message)
                 (recur false))))
           (fail-fn error))))))
 
-(defn- process-user-messages [ws-ch user-ch session-id]
+(defn- process-user-messages [ws-ch input-ch output-ch session-id connected?]
   (go-loop [first true]
-    (if-let [message (<! user-ch)]
+    (if-let [message (<! input-ch)]
       (do
-        (info "USER RCVD: " message)
-        (if @ws-ch
+        (debug "USER RCVD: " message)
+        (if (and @ws-ch @connected?)
           (let [m2 (merge message {:session @session-id})]
-            (info "forwarding user msg to nrepl: " m2)
+            (debug "NREPL SEND: " m2)
             (>! @ws-ch m2))
-          (>! user-ch (reply-msg message {:error "Rejected - no websocket connection"}))))
+          (>! output-ch (reply-msg message {:error "Rejected - no websocket connection"}))))
       (error "USER RCVD: no data!"))
     (recur false)))
 
 (defn ws-connect!
+  "creates an nrepl connection via websocket.
+   output: 
+   {:input-ch   core.async channel where to send nrepl messages to
+    :output-ch  core.async channel to receive messages 
+   }
+   "
+  
   [ws-url]
-  (let [session-id (atom nil) ; sent from nrepl on connect, set by receive-msgs!
-        user-ch (chan)
+  (let [input-ch (chan)
+        output-ch (chan)
+        connected? (r/atom false)
+        session-id (r/atom nil) ; sent from nrepl on connect, set by receive-msgs!
         ws-ch (atom nil)]
-    (go-loop [connected? false]
+    (go-loop [connected-prior? false]
       (info "ws-connecting...")
       (let [{:keys [ws-channel error]} (<! (chord/ws-ch ws-url {:format :edn}))]
         (if error
           (do
-            (info "ws-chan connection failed!")
+            (error "ws-chan connection failed!")
+            (reset! connected? false)
             (reset! ws-ch nil)
-            (when connected?
-              (>! user-ch (connection-msg :disconnected)))
+            (when connected-prior?
+              (>! output-ch (connection-msg :disconnected)))
             (<! (timeout 3000))
             (recur false))
           (do
             (info "ws-chan connected!")
             (reset! ws-ch ws-channel)
-            (when-not connected?
-              (>! ws-channel {:op "clone" :id "uiui"}))
-            (<! (process-incoming-nrepl-msgs session-id ws-channel user-ch))
+            ;(when-not connected-prior?
+              (>! ws-channel {:op "clone" :id "uiui"}) ; )
+            (<! (process-incoming-nrepl-msgs session-id ws-channel output-ch connected?))
             (info "incoming nrepl processing finished (ws closed?)")
             (<! (timeout 3000))
-            (recur false)))))
+            (recur true)))))
      ; process incoming user messages
-    (process-user-messages ws-ch user-ch session-id)
+    (process-user-messages ws-ch input-ch output-ch session-id connected?)
     {:session-id session-id
-     :ch user-ch}))
+     :input-ch input-ch
+     :output-ch output-ch
+     :connected? connected?}))
 
 
 
