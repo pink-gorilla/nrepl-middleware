@@ -44,7 +44,7 @@
 (defn process-message-mem
   "Processes websocket messages"
   [nrepl-handler transport ws timeout data]
-  (let [;_ (debug "ws Received: " data)
+  (let [_ (debug "ws Received: " data)
         data-edn (edn/read-string data)
         ;_ (debug "data edn: " data-edn " meta: " (meta data-edn))
         msg (assoc data-edn :as-html 1)
@@ -98,6 +98,8 @@
    :on-text    (fn [ws text-message]
                  (debug "ws Rcvd Text" " " text-message)
                  (let [session (:session ws)
+                       _ (info "session: " session)
+                       _ (info "ws: " ws)
                        transport (or (::transport session)
                                      (transport/piped-transports))]
                    (process-message-mem nrepl-handler transport ws Long/MAX_VALUE text-message)))

@@ -2,6 +2,7 @@
   (:require
    [taoensso.timbre :as timbre :refer [debug info error]]
    [ring.util.response :as response]
+   [ring.middleware.cors :refer [wrap-cors]]
    [nrepl.server]
    [pinkgorilla.middleware.cider :refer [cider-handler]]
    ;[com.stuartsierra.component :as c]
@@ -21,20 +22,29 @@
   (html-response "Hello, World!")
   nil)
 
-(defn run-nrepl-gateway []
+(def nrepl-handler
+  "this is only needed by jetty-ws-relay and jee-interop
+   httpkit handler has it in its own namespace"
+  (atom (cider-handler)))
+
+(defn run-nrepl-relay []
   (timbre/set-level! :debug)
-  (info "starting..")
-  (println "starting nrepl server at port 12000 ..")
+  (info "starting nrepl server at port 12000 ..")
   (let [nrepl-server (nrepl.server/start-server :port 12000
                                                 :handler (cider-handler))
-        ws-handler (ws-processor nrepl-server)
-        _ (println "handler: " ws-handler)]
-    (run-jetty ws-handler {:port 9000
-                           :websockets {"/nrepl" ws-handler}
-                           :allow-null-path-info true})))
+        ws-handler (ws-processor nrepl-handler)
+        _ (println "handler: " ws-handler)
+        ws-handler-wrapped ws-handler
+        ;ws-handler-wrapped (-> ws-handler (wrap-cors :access-control-allow-origin #".+"))
+        ]
+    (run-jetty ws-handler-wrapped {:port 9000
+                           :websockets {"/nrepl" ws-handler-wrapped}
+                           :allow-null-path-info true
+                           ;:join?  false        
+                                   })))
 
 (defn -main [& args]
-  (println "nrepl proxy starting with cli-args: " args)
-  (run-nrepl-gateway))
+  (println "nrepl relay starting with cli-args: " args)
+  (run-nrepl-relay))
 
 
