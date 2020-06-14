@@ -10,12 +10,12 @@
    [cljs-uuid-utils.core :as uuid]
    [chord.client :refer [ws-ch]])) ; websockets with core.async
 
-(defn filtered-chan! 
+(defn- filtered-chan! 
   "takes the global fragment channel, and creates a new channel
    that only contains response (fragments) related to the request.
    This is useful for applications that want to display partial 
    responses (say console output) during a longer running evaluation)"
-  [state request-id]
+  [state request-id callback]
   (let [ch (:fragment-ch state)
         filtered-ch (chan)
         fragments (atom [])]
@@ -27,10 +27,11 @@
            (!> fragment-ch msg)  
            (swap fragments conj msg)
            (if (contains? (:status msg) :done) ;; eval status
-             (close! filtered-ch)
+             (do (close! filtered-ch)
+                 (when callback 
+                   (callback {:id request-id :fragments @fragments})))
              (recur))))))
     filtered-ch))
-
 
 
 (defn make-request!
@@ -48,10 +49,8 @@
   ([state message callback]
    (let [request-id (or (:id message) (uuid/uuid-string (uuid/make-random-uuid)))
          session-id (:session-id state)
-         requests (:requests state)
          nrepl-msg  (merge message {:id request-id :session @session-id})
-         fultered-ch (filtered-chan! (:fragment-ch state) request-id)]
-     (swap! requests assoc (keyword request-id) {:fragments [] :callback callback})
+         filtered-ch (filtered-chan! state request-id callback)]
      (info "ws sending ws message: " nrepl-msg)
      (>! @(:ws-chan state) nrepl-msg)
      filtered-ch)))

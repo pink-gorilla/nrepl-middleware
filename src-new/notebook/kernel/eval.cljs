@@ -10,10 +10,17 @@
    [pinkgorilla.notifications :refer [add-notification notification]]
    [pinkgorilla.util :refer [application-url ws-origin]]))
 
-
 (defn start! []
   []
   (start-repl! (ws-origin "repl" (application-url))))
+
+
+#_(defn eval!
+    [segment-id code]
+    (send-message! :evaluations
+                   {:op   "eval"
+                    :code code}
+                   segment-id))
 
 
 (defn set-clj-kernel-status [connected session-id]

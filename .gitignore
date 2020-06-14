@@ -1,6 +1,9 @@
+node_modules
+/target
+.shadow-cljs
+.clj-kondo/.cache/
 .idea/*
 *.iml
-/target
 /classes
 /checkouts
 pom.xml
@@ -11,8 +14,8 @@ pom.xml.asc
 /.nrepl-port
 .hgignore
 .hg/
-.clj-kondo/.cache/
 .classpath
 .project
 .settings/*
+
 

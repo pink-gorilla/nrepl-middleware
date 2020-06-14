@@ -6,12 +6,7 @@
    [pinkgorilla.nrepl.ws.client :refer [make-request!]]))
 
 
-#_(defn eval!
-    [segment-id code]
-    (send-message! :evaluations
-                   {:op   "eval"
-                    :code code}
-                   segment-id))
+
 
 
 
@@ -77,8 +72,8 @@
 (defn ^:export eval!
   "evaluates a clj-snippet"
   [state code]
-  (make-request! state {:op "eval" :code code})
-  (let [atom-result (r/atom {:value []
+  (let [fragment-ch (make-request! state {:op "eval" :code code})
+        atom-result (r/atom {:value []
                              :console ""
                              :error nil})
         
