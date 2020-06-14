@@ -11,7 +11,6 @@
   #_(reagent.dom/render [demo.app/app]
                         (.getElementById js/document "app"))
 
-  (let [conn (ws-start! "ws://localhost:8005")]
+  (let [conn (ws-start! "ws://localhost:9000/nrepl")]
     (make-request! conn {:op "describe"})))
 
-(start)

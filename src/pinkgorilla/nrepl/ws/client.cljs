@@ -10,7 +10,7 @@
    [cljs-uuid-utils.core :as uuid]
    [chord.client :refer [ws-ch]])) ; websockets with core.async
 
-(defn- filtered-chan! 
+(defn- filtered-chan!
   "takes the global fragment channel, and creates a new channel
    that only contains response (fragments) related to the request.
    This is useful for applications that want to display partial 
@@ -20,16 +20,16 @@
         filtered-ch (chan)
         fragments (atom [])]
     (go-loop []
-       (let [msg (<! fragment-ch)
-             id (:id msg)]
-         (when (= id request-id)
-           (>! fragment-ch msg)  
-           (swap! fragments conj msg)
-           (if (contains? (:status msg) :done) ;; eval status
-             (do (close! filtered-ch)
-                 (when callback 
-                   (callback {:id request-id :fragments @fragments})))
-             (recur)))))
+      (let [msg (<! fragment-ch)
+            id (:id msg)]
+        (when (= id request-id)
+          (>! fragment-ch msg)
+          (swap! fragments conj msg)
+          (if (contains? (:status msg) :done) ;; eval status
+            (do (close! filtered-ch)
+                (when callback
+                  (callback {:id request-id :fragments @fragments})))
+            (recur)))))
     filtered-ch))
 
 
@@ -46,12 +46,16 @@
   ([state message]
    (make-request! state message nil))
   ([state message callback]
-   (let [request-id (or (:id message) (uuid/uuid-string (uuid/make-random-uuid)))
+   (let [ws-chan @(:ws-chan state)
+         request-id (or (:id message) (uuid/uuid-string (uuid/make-random-uuid)))
          session-id (:session-id state)
          nrepl-msg  (merge message {:id request-id :session @session-id})
          filtered-ch (filtered-chan! state request-id callback)]
      (info "ws sending ws message: " nrepl-msg)
-     (>! @(:ws-chan state) nrepl-msg)
+     (if ws-chan
+       (go
+         (>! ws-chan nrepl-msg))
+       (error "Cannot send nrepl message - ws not connected!"))
      filtered-ch)))
 
 (defn- process-msg
@@ -73,7 +77,7 @@
           (>! result-ch message))))))
 
 (defn- notify [state msg-type payload]
-  (let [control-ch @(:control-ch state)]
+  (let [control-ch (:control-ch state)]
     (go
       (>! control-ch {:msg-type msg-type
                       :patload payload}))))
@@ -81,10 +85,10 @@
 (defn- receive-msgs!
   [state]
   (let [ws-chan @(:ws-ch state)
-         fail-fn (fn [error]
-                      (close! ws-chan)
-                      (dissoc state :ws-chan)
-                      (notify state :session-disconnect error))]
+        fail-fn (fn [error]
+                  (close! ws-chan)
+                  (dissoc state :ws-chan)
+                  (notify state :session-disconnect error))]
     (go
       (let [{:keys [message error]} (<! ws-chan)]
         (if message
@@ -108,8 +112,9 @@
 (defn ws-start!
   [ws-url]
   (let [state {:ws-url ws-url
-               :result-ch (chan)
                :control-ch (chan)
+               :fragment-ch (chan)
+               :result-ch (chan)
                :ws-chan (atom nil)
                :session-id (atom nil) ; sent from nrepl on connect, set by receive-msgs!
                :requests (atom {}) ; callbacks of nrepl requests

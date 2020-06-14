@@ -1,16 +1,20 @@
 {:lein {:profile "+cljs"}
- 
+
  :source-paths ["src"]
- 
+
+; :nrepl {:port 9000
+;         :middleware []} ; optional list of namespace-qualified symbol
+
  ; shadow dev http server settings
- :dev-http {8000 ["target/node_modules/public"  ;  css and png from selected npm dependencies
-                  "target/demo" ; demo ui bundle
-                  "profiles/demo/public" ; demo ui resources (html, data files)
-                  "resources/public"; resources we ship without npm
+ :dev-http {8000 {:roots ["target/node_modules/public"  ;  css and png from selected npm dependencies
+                          "target/demo/public" ; demo ui bundle
+                          "profiles/demo/public" ; demo ui resources (html, data files)
+                          "resources/public"; resources we ship without npm
                   ;"classpath:public" 
                   ;"classpath:resources"
                   ;"classpath:resources/public"
-                  ]}
+                          ]
+                  }}
 
  :builds {:demo {:target :browser
                  :output-dir "target/demo/public"
@@ -20,8 +24,7 @@
                                                         ;; Beware: releasing :none not supported by shadow
                                                         ;; :optimizations   :none
                                    ;:optimizations   :simple
-                                   :optimizations  :none
-                 }}
+                                    :optimizations  :none}}
 
           :ci {:target :karma
                :output-to  "target/ci.js"

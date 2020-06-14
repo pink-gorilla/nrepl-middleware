@@ -6,12 +6,17 @@
                                      :username :env/release_username
                                      :password :env/release_password
                                      :sign-releases false}]]
+  :min-lein-version "2.9.3"
+  :min-java-version "1.11"
+
 
   :source-paths ["src"]
   :target-path  "target/jar"
   :clean-targets ^{:protect false} [:target-path
                                     [:demo :builds :app :compiler :output-dir]
                                     [:demo :builds :app :compiler :output-to]]
+
+  :uberjar-exclusions [#"cider/nrepl.*\.class$"]
 
   :managed-dependencies [[org.clojure/clojure "1.10.1"]
                          [org.clojure/core.async "1.2.603"]
@@ -30,10 +35,10 @@
                   [jarohen/chord "0.8.1" ; nrepl websocket
                    :exclusions [com.cognitect/transit-clj
                                 com.cognitect/transit-cljs]] ; websockets with core.async
-                  ;[nrepl "0.6.0"]
-                  ;[cider/cider-nrepl "0.22.4"]
-                  ;[cider/piggieback "0.4.2"]
-                  ;[clojail "1.0.6"] ; sandboxing
+                  [nrepl "0.7.0"]
+                  [cider/cider-nrepl "0.22.4"]
+                  [cider/piggieback "0.4.2"]
+                  [clojail "1.0.6"] ; sandboxing
                   [org.pinkgorilla/gorilla-renderable "3.0.15"]]
 
   :profiles {:cljs {:repl-options   {:init-ns          demo.core
@@ -47,16 +52,35 @@
                                    ; shadow-cljs MAY NOT be a dependency in lein deps :tree -> if so, bundeler will fail because shadow contains core.async which is not compatible with self hosted clojurescript
                                    [thheller/shadow-cljs "2.10.7"]
                                    [thheller/shadow-cljsjs "0.0.21"]
-                                    [com.taoensso/timbre "4.10.0"]             ; clojurescript logging
+                                   [com.taoensso/timbre "4.10.0"]             ; clojurescript logging
                                    [com.lucasbradstreet/cljs-uuid-utils "1.0.2"] ;; awb99: in encoding, and clj/cljs proof
                                    ]}
 
-             :dev   {:dependencies [[clj-kondo "2020.06.12"]]
+             :dev   {:dependencies [[org.clojure/tools.logging "1.0.0"]
+                                    [com.stuartsierra/component "0.4.0"]
+                                    [com.taoensso/timbre "4.10.0"]             ; clojurescript logging
+                                    [ring "1.7.1"]
+                                    [ring-cors "0.1.13"]
+                                    [ring/ring-defaults "0.3.2"
+                                     :exclusions [javax.servlet/servlet-api]]
+                                    ;[javax.websocket/javax.websocket-api "1.1"]
+                                    ;[javax.servlet/javax.servlet-api "4.0.1"]
+                                    [compojure "1.6.1"] ; Routing
+                                    ;[org.eclipse.jetty.websocket/websocket-server "9.4.12.v20180830"]
+                                    [info.sunng/ring-jetty9-adapter "0.12.5"]
+
+                                   ; [de.otto/tesla-jetty "0.2.6"
+                                     ;:exclusions [org.eclipse.jetty/jetty-server
+                                      ;            org.eclipse.jetty/jetty-servlet]
+                                    ; ]
+
+                                    [clj-kondo "2020.06.12"]]
                      :plugins [[lein-cljfmt "0.6.6"]
                                [lein-cloverage "1.1.2"]
                                [lein-shell "0.5.0"]
                                [lein-codox "0.10.7"]
-                               [lein-ancient "0.6.15"]]
+                               [lein-ancient "0.6.15"]
+                               [min-java-version "0.1.0"]]
 
                      :aliases {"clj-kondo"
                                ["run" "-m" "clj-kondo.main"]}
@@ -89,8 +113,12 @@
             "test-js" ^{:doc "Run Unit Tests. Will compile bundle first."}
             ["do" "build-test" ["test-run"]]
 
-            "demo"  ^{:doc "Runs UI components via webserver."}
-            ["shell" "shadow-cljs" "watch" "demo"]}
+            "demo"  ^{:doc "Runs demo  via webserver."}
+            ["shell" "shadow-cljs" "watch" "demo"]
+            
+            "relay"
+               ["run" "-m" "demo.core"]
+            }
 
   :release-tasks [["vcs" "assert-committed"]
                   ["bump-version" "release"]
