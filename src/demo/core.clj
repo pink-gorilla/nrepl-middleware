@@ -9,7 +9,10 @@
    [ring.adapter.jetty9 :refer [run-jetty]]
    ;[pinkgorilla.nrepl.server :refer [new-cider-repl-server]]
    ;[pinkgorilla.web.serving-with-jetty :refer [add-jetty-server]]
-   [pinkgorilla.nrepl.ws.jetty9-ws-relay :refer [ws-processor]])
+   [pinkgorilla.nrepl.ws.jetty9-ws-relay :refer [ws-processor]]
+   
+   [pinkgorilla.ui.hiccup_renderer] ; for side effects
+   )
   (:gen-class))
 
 (defn html-response [html]

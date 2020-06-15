@@ -39,7 +39,7 @@
     ; value /namespace
   (when ns
     (swap! result assoc :namespace ns)
-    (swap! result assoc :value (conj (:value @result) value))) ; (parse-value value)
+    (swap! result assoc :value (conj (:value @result) (parse-value value)))) ; (parse-value value)
 
   (when root-ex ;; root exception ?? what is this ?? where does it come from ? cider? nrepl?
     (swap! result assoc :root-ex root-ex)
