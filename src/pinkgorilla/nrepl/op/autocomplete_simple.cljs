@@ -1,5 +1,8 @@
 (ns pinkgorilla.nrepl.autocomplete-simple
-  (:require [clojure.string :as str]))
+  (:require 
+   [clojure.string :as str]
+            [pinkgorilla.nrepl.ws.client :refer [nrepl-op-complete]]
+            ))
 
 (def special-forms
   (mapv str
@@ -23,7 +26,7 @@
 (defn- re-escape [prefix]
   (str/escape (str prefix) re-char-escapes))
 
-(defn for-clj [repl ns-name txt-prefix]
+(defn for-clj [conn ns-name txt-prefix]
   (let [prefix (->> txt-prefix (re-seq valid-prefix) last last)
         cmd (str "(clojure.core/let [collect #(clojure.core/map "
                  "(clojure.core/comp str first) "
@@ -41,6 +44,13 @@
                  "vec"
                  "))")]
     (if (not-empty prefix)
+        (nrepl-op-complete
+         conn
+         {:op "describe"}
+         (fn [fragments]
+           (let [f (first fragments)]
+             (select-keys f [:versions :ops])))))
+      
       (.. (eval/eval repl cmd {:namespace ns-name :ignore true})
           (then normalize-results)
           (catch (constantly [])))

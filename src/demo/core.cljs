@@ -10,6 +10,8 @@
    [pinkgorilla.nrepl.ws.connection :refer [ws-connect!]]
    [pinkgorilla.nrepl.ws.client :refer [nrepl-client! nrepl-op]]
    [pinkgorilla.nrepl.ui.describe :refer [describe]]
+   [pinkgorilla.nrepl.op.describe :refer [describe-req]]
+   [pinkgorilla.nrepl.op.eval :refer [nrepl-eval]]
    [demo.ui :refer [app]]))
 
 (enable-console-print!)
@@ -48,9 +50,22 @@
     (go-loop [c 1]
       (<! (timeout 5000))
       (info "connected: " @connected? "session id: " @session-id)
-      (let [c (<! (nrepl-op conn {:op "describe"}))]
+      
+      #_(let [c (<! (nrepl-op conn {:op "describe"}))]
         (info "first fragment: " c)
         (reset! d c))
+      
+      (let [c (<! (describe-req conn))]
+        (info "all fragments: " c)
+        (reset! d c)
+        )
+      
+      (let [r (<! (nrepl-eval conn "(println 3)(* 7 7)(println 5)"))]
+        (info "eval result: " r)
+        ;(reset! d c)
+        )
+      
+      
       (<! (timeout 15000))
       (recur 1))
     conn))
