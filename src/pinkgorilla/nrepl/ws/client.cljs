@@ -66,11 +66,14 @@
         request-id (keyword id)
         request-ch (request-id @requests)]
     (debugf "%s fragment rcvd." request-id)
-    (when request-ch
-      (when (contains? status :done) ;; eval status
-        (debugf "%s request done." request-id)
-        (swap! requests dissoc request-id))
-      request-ch)))
+    (if request-ch
+      (if (contains? status :done) ;; eval status
+        (do
+          (debugf "%s request done." request-id)
+          (swap! requests dissoc request-id)
+          [request-ch true])
+        [request-ch false])
+      [nil false])))
 
 (defn- dump-msg [msg]
   (let [request-id (:id msg)]
@@ -86,9 +89,12 @@
     ; process incoming responses from nrepl
     (go-loop []
       (let [msg (<! output-ch)
-            req-ch (chan-for-incoming-nrepl-msg requests msg)]
+            [req-ch done?] (chan-for-incoming-nrepl-msg requests msg)]
         (if req-ch
-          (>! req-ch msg)
+          (do (>! req-ch msg)
+              (when done?
+                (debugf "%s closing channel." (:id msg))
+                (close! req-ch)))
           (dump-msg msg))
         (recur)))
     (assoc conn :requests requests)))

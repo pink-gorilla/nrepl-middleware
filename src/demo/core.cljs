@@ -14,7 +14,11 @@
 
 (enable-console-print!)
 
-(defn conn-raw [ws-url]
+(defn conn-raw 
+  "demo nrepl websocket 
+   uses the level1 api (raw api)
+   only useful for testing"
+  [ws-url]
   (let [{:keys [connected? session-id input-ch output-ch] :as conn}
         (ws-connect! ws-url)]
 
@@ -34,7 +38,10 @@
 
     conn))
 
-(defn conn-req [ws-url d]
+(defn conn-req 
+  "demo nrepl websocket
+   uses the async request api (layer 2)"
+  [ws-url d]
   (let [{:keys [connected? session-id] :as conn}
         (nrepl-client! ws-url)]
  ; send messages
