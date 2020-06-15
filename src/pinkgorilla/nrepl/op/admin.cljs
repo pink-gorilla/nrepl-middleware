@@ -4,6 +4,10 @@
    [pinkgorilla.nrepl.ws.client :refer [nrepl-op-complete]]))
 
 
+;todo:
+; op: close
+; op: clone
+
 (defn describe [conn]
   (nrepl-op-complete
    conn
@@ -18,10 +22,7 @@
    conn
    {:op "ls-sessions"}
    (fn [fragments]
-       (reduce #(conj  (:sessions %2) %1 ) () fragments
-               ;(map :sessions fragments)
-               )
-     
+       (apply conj (map :sessions fragments))
      )))
 
 

@@ -28,24 +28,27 @@
                   (close! ws-ch))]
     (info "processing incoming nrepl messages ..")
     (go-loop [got-session-msg false]
-      (let [{:keys [message error] :as data} (<! ws-ch)]
-        (debug "NREPL RCVD: " data)
-        (if message
-          (if got-session-msg
-            (do
-              (>! output-ch message)
-              (recur true))
-            (if-let [new-session-id (:new-session message)]
-              (do
-                (info "Got session-id msg " message)
-                (reset! connected? true)
-                (reset! session-id new-session-id)
-                (>! output-ch (connection-msg :connected))
-                (recur true))
-              (do
-                (error "waiting for :new-session. dumping: " message)
-                (recur false))))
-          (fail-fn error))))))
+      (let [data (<! ws-ch)] ; data is nil when ws session gets disconnected.
+        (if data
+          (let [{:keys [message error]} data]
+            (debug "NREPL RCVD: " data)
+            (if error
+              (fail-fn error)
+              (if got-session-msg
+                (do
+                  (>! output-ch message)
+                  (recur true))
+                (if-let [new-session-id (:new-session message)]
+                  (do
+                    (info "Got session-id msg " message)
+                    (reset! connected? true)
+                    (reset! session-id new-session-id)
+                    (>! output-ch (connection-msg :connected))
+                    (recur true))
+                  (do
+                    (error "waiting for :new-session. dumping: " message)
+                    (recur false)))))))
+        (fail-fn "nrepl websocket session was disconnected!")))))
 
 (defn- process-user-messages [ws-ch input-ch output-ch session-id connected?]
   (go-loop [first true]
@@ -71,7 +74,7 @@
                 and ready to receive requests (is set after op: clone)
    }
    "
-  
+
   [ws-url]
   (let [input-ch (chan)
         output-ch (chan)
@@ -94,7 +97,7 @@
             (info "ws-chan connected!")
             (reset! ws-ch ws-channel)
             ;(when-not connected-prior?
-              (>! ws-channel {:op "clone" :id "uiui"}) ; )
+            (>! ws-channel {:op "clone" :id "uiui"}) ; )
             (<! (process-incoming-nrepl-msgs session-id ws-channel output-ch connected?))
             (info "incoming nrepl processing finished (ws closed?)")
             (<! (timeout 3000))
@@ -104,8 +107,7 @@
     {:session-id session-id
      :input-ch input-ch
      :output-ch output-ch
-     :connected? connected?
-     }))
+     :connected? connected?}))
 
 
 

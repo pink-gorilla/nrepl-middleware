@@ -1,6 +1,6 @@
 (defproject org.pinkgorilla/gorilla-middleware "0.2.25-SNAPSHOT"
-  :description "Pink Gorilla nREPL middleware"
-  :url "https://github.com/pink-gorilla/gorilla-middleware"
+  :description "nREPL middleware"
+  :url "https://github.com/pink-gorilla/nrepl-middleware"
   :license {:name "MIT"}
   :deploy-repositories [["releases" {:url "https://clojars.org/repo"
                                      :username :env/release_username
@@ -8,7 +8,6 @@
                                      :sign-releases false}]]
   :min-lein-version "2.9.3"
   :min-java-version "1.11"
-
 
   :source-paths ["src"]
   :target-path  "target/jar"
@@ -31,7 +30,6 @@
   :dependencies  [;[org.clojure/clojure "1.10.1"]
                   ;[org.clojure/spec.alpha "0.2.187"]
                   ;[org.clojure/data.json "0.2.6"]
-                  ;[com.stuartsierra/component "0.4.0"]
                   [jarohen/chord "0.8.1" ; nrepl websocket
                    :exclusions [com.cognitect/transit-clj
                                 com.cognitect/transit-cljs]] ; websockets with core.async
@@ -71,15 +69,9 @@
                                     [compojure "1.6.1"] ; Routing
                                     ;[org.eclipse.jetty.websocket/websocket-server "9.4.12.v20180830"]
                                     [info.sunng/ring-jetty9-adapter "0.12.5"]
-
-                                   ; [de.otto/tesla-jetty "0.2.6"
-                                     ;:exclusions [org.eclipse.jetty/jetty-server
-                                      ;            org.eclipse.jetty/jetty-servlet]
-                                    ; ]
                                     ]}
 
              :dev   {:dependencies [[org.clojure/tools.logging "1.0.0"]
-                                    [com.stuartsierra/component "0.4.0"]
                                     [com.taoensso/timbre "4.10.0"]             ; clojurescript logging
                                     [clj-kondo "2020.06.12"]]
                      :plugins [[lein-cljfmt "0.6.6"]

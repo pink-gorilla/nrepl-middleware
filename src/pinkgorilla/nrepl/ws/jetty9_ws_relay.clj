@@ -54,7 +54,7 @@
                           (fn [msg]
                             ;(println "msg: " msg)
                             (let [payload (pr-str-with-meta msg)]
-                              (info "ws Send " payload)
+                              (debug "ws Send " payload)
                               (jetty/send! ws payload)))
                           (fn [s] (contains? s :done)))]
     (reply-fn
@@ -98,8 +98,8 @@
    :on-text    (fn [ws text-message]
                  (debug "ws Rcvd Text" " " text-message)
                  (let [session (:session ws)
-                       _ (info "session: " session)
-                       _ (info "ws: " ws)
+                       _ (debug "session: " session)
+                       _ (debug "ws: " ws)
                        transport (or (::transport session)
                                      (transport/piped-transports))]
                    (process-message-mem nrepl-handler transport ws Long/MAX_VALUE text-message)))

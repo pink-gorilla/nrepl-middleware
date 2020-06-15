@@ -12,8 +12,8 @@
    conn
    {:op "complete" :symbol symbol :ns ns :context context}
    (fn [fragments]
-     (map :completions fragments) ;  #(:candidate %)
-     )))
+     ;(map :completions fragments) ;  #(:candidate %)
+     (apply conj (map :completions fragments)))))
 
 (defn doc-string
   "Queries the REPL server for docs for the given symbol. 
@@ -50,12 +50,14 @@
    conn
    {:op "stacktrace"}
    (fn [fragments]
-     (map :stacktrace fragments))))
+     (let [stacktraces (->> (map :stacktrace fragments)
+                            (remove nil?))] ; done message does not have stacktrace normally
+       (apply concat stacktraces)))))
 
 
 (comment
 
-  (get-completion-doc 'print-table 'clojure.pprint #(println "docs: " %1))
+  (doc-string 'print-table 'clojure.pprint #(println "docs: " %1))
 
 
 ;  
