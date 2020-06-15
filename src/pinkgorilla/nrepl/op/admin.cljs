@@ -1,10 +1,10 @@
-(ns pinkgorilla.nrepl.op.describe
+(ns pinkgorilla.nrepl.op.admin
   (:require
    [clojure.string :as str]
    [pinkgorilla.nrepl.ws.client :refer [nrepl-op-complete]]))
 
 
-(defn describe-req [conn]
+(defn describe [conn]
   (nrepl-op-complete
    conn
    {:op "describe"}

@@ -1,4 +1,4 @@
-(ns pinkgorilla.middleware.nrepl-server
+(ns pinkgorilla.nrepl.server.core
   (:require
    [nrepl.server :refer [start-server stop-server]]
    [cider.nrepl :as cider]

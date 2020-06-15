@@ -1,4 +1,4 @@
-(ns pinkgorilla.nrepl.specs
+(ns pinkgorilla.nrepl.specs.core
   (:require  
    [clojure.spec.alpha :as s]))
 

@@ -10,7 +10,7 @@
    [nrepl.server]
    [nrepl.core]
    [nrepl.transport]
-   [pinkgorilla.middleware.cider :refer [cider-handler]]))
+   [pinkgorilla.nrepl.middleware.cider :refer [cider-handler]]))
 
 (def clients (atom {}))
 (def my-cider-handler (cider-handler))

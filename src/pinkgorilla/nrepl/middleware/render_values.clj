@@ -1,10 +1,10 @@
-(ns pinkgorilla.middleware.render-values
+(ns pinkgorilla.nrepl.middleware.render-values
   (:require
    ;[clojure.tools.logging :refer (info)]
    [nrepl.transport :as transport]
    [nrepl.middleware.print]
    [nrepl.middleware :as middleware]
-   [pinkgorilla.middleware.formatter :as formatter]
+   [pinkgorilla.nrepl.middleware.formatter :as formatter]
    [pinkgorilla.ui.gorilla-renderable :refer [#_render render-renderable-meta]])
   (:import nrepl.transport.Transport))
 

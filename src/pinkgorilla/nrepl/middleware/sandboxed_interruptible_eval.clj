@@ -1,19 +1,21 @@
 (ns ^{:author "Chas Emerick"}
- pinkgorilla.middleware.sandboxed_interruptible-eval
-  (:require [clojail.testers :refer [secure-tester]]
-            [clojail.core :refer [sandbox]]
-            [nrepl.transport :as t]
-            [nrepl.misc :refer [response-for returning]]
-            [nrepl.middleware :refer [set-descriptor!]]
-            [nrepl.middleware.interruptible-eval :refer [*msg*]]
-            clojure.main)
-  (:import clojure.lang.LineNumberingPushbackReader
+ pinkgorilla.nrepl.middleware.sandboxed_interruptible-eval
+  (:require
+   [clojail.testers :refer [secure-tester]]
+   [clojail.core :refer [sandbox]]
+   [nrepl.transport :as t]
+   [nrepl.misc :refer [response-for returning]]
+   [nrepl.middleware :refer [set-descriptor!]]
+   [nrepl.middleware.interruptible-eval :refer [*msg*]]
+   clojure.main)
+  (:import
+   clojure.lang.LineNumberingPushbackReader
            ;; LineNumberReader - does not play with ^LineNumberReader type meta + clj-kondo
-           (java.io FilterReader StringReader Writer)
-           java.lang.reflect.Field
-           java.util.concurrent.atomic.AtomicLong
-           (java.util.concurrent Executor BlockingQueue ThreadFactory
-                                 SynchronousQueue TimeUnit ThreadPoolExecutor)))
+   (java.io FilterReader StringReader Writer)
+   java.lang.reflect.Field
+   java.util.concurrent.atomic.AtomicLong
+   (java.util.concurrent Executor BlockingQueue ThreadFactory
+                         SynchronousQueue TimeUnit ThreadPoolExecutor)))
 
 #_(def gorilla-repl-tester
     (conj secure-tester-without-def (blanket "gorilla-repl")))

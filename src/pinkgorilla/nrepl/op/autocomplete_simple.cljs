@@ -4,6 +4,8 @@
             [pinkgorilla.nrepl.ws.client :refer [nrepl-op-complete]]
             ))
 
+; from chlorine repl-tooling
+
 (def special-forms
   (mapv str
         '(case* catch def defrecord* deftype* do finally fn* if js* let*

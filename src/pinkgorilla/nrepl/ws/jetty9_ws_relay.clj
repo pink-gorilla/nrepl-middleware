@@ -8,7 +8,7 @@
    [nrepl.core :as nrepl]
    [nrepl.transport :as transport]
   ; Pinkgorilla Libraries
-   [pinkgorilla.middleware.render-values] ; bring into scope
+   [pinkgorilla.nrepl.middleware.render-values] ; bring into scope
    ))
 
 

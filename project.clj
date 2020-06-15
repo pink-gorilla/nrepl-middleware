@@ -42,7 +42,8 @@
                   [compliment "0.3.10"] ; code completion
                   [org.pinkgorilla/gorilla-renderable "3.0.15"]]
 
-  :profiles {:cljs {:repl-options   {:init-ns          demo.core
+  :profiles {:cljs {:source-paths ["profiles/demo/src"]
+                    :repl-options   {:init-ns          demo.app
                                      :port             4001
                                      :nrepl-middleware [shadow.cljs.devtools.server.nrepl/middleware]}
 
@@ -58,14 +59,10 @@
                                    [reagent "0.10.0"
                                     :exclusions [org.clojure/tools.reader
                                                  cljsjs/react
-                                                 cljsjs/react-dom]]
-                                   
-                                   ]}
+                                                 cljsjs/react-dom]]]}
 
-             :dev   {:dependencies [[org.clojure/tools.logging "1.0.0"]
-                                    [com.stuartsierra/component "0.4.0"]
-                                    [com.taoensso/timbre "4.10.0"]             ; clojurescript logging
-                                    [ring "1.7.1"]
+             :relay {:source-paths ["profiles/demo/src"]
+                     :dependencies [[ring "1.7.1"]
                                     [ring-cors "0.1.13"]
                                     [ring/ring-defaults "0.3.2"
                                      :exclusions [javax.servlet/servlet-api]]
@@ -79,7 +76,11 @@
                                      ;:exclusions [org.eclipse.jetty/jetty-server
                                       ;            org.eclipse.jetty/jetty-servlet]
                                     ; ]
+                                    ]}
 
+             :dev   {:dependencies [[org.clojure/tools.logging "1.0.0"]
+                                    [com.stuartsierra/component "0.4.0"]
+                                    [com.taoensso/timbre "4.10.0"]             ; clojurescript logging
                                     [clj-kondo "2020.06.12"]]
                      :plugins [[lein-cljfmt "0.6.6"]
                                [lein-cloverage "1.1.2"]
@@ -121,10 +122,9 @@
 
             "demo"  ^{:doc "Runs demo  via webserver."}
             ["shell" "shadow-cljs" "watch" "demo"]
-            
+
             "relay"
-               ["run" "-m" "demo.core"]
-            }
+            ["with-profile" "+relay" "run" "-m" "demo.app"]}
 
   :release-tasks [["vcs" "assert-committed"]
                   ["bump-version" "release"]

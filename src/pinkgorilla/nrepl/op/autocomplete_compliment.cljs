@@ -1,7 +1,9 @@
-(ns repl-tooling.features.autocomplete.compliment
+(ns pinkgorilla.nrepl.autocomplete-compliment
   (:require [clojure.string :as str]
             [promesa.core :as p]
             [repl-tooling.eval :as eval]))
+
+; from chlorine repl-tooling
 
 (defn- re-escape [str]
   (str/replace str #"[.*+?^${}()|\[\]\\]" "\\$&"))

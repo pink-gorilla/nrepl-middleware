@@ -1,16 +1,14 @@
-(ns demo.core
+(ns demo.app
   (:require
    [taoensso.timbre :as timbre :refer [debug info error]]
+   
    [ring.util.response :as response]
    [ring.middleware.cors :refer [wrap-cors]]
-   [nrepl.server]
-   [pinkgorilla.middleware.cider :refer [cider-handler]]
-   ;[com.stuartsierra.component :as c]
    [ring.adapter.jetty9 :refer [run-jetty]]
-   ;[pinkgorilla.nrepl.server :refer [new-cider-repl-server]]
-   ;[pinkgorilla.web.serving-with-jetty :refer [add-jetty-server]]
-   [pinkgorilla.nrepl.ws.jetty9-ws-relay :refer [ws-processor]]
    
+   [nrepl.server]
+   [pinkgorilla.nrepl.middleware.cider :refer [cider-handler]]
+   [pinkgorilla.nrepl.ws.jetty9-ws-relay :refer [ws-processor]]   
    [pinkgorilla.ui.hiccup_renderer] ; for side effects
    )
   (:gen-class))

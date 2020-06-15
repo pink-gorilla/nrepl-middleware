@@ -9,8 +9,8 @@
 
 ```
 npm install
-lein relay
-lein demo
+lein relay    ; this runs http server with websocket relay
+lein demo     ; browser app served with shadow-cljs dev server
 
 ```
 
@@ -45,9 +45,14 @@ Logging:
 nrepl ws relay:
 - relay nrepl client is stored in session, but we dont have session 
   middleware on that route. I think it is recreating the connections for
-  each request.
+  each request. ls-sessions gives me 20 sessions! for 1 browser.
 - how are nrepl relay connections disgarded?  
 - no conflict with existing notebook implementations?
+
+-clojail: refactor or out.
+
+
+
 
 
 

@@ -1,10 +1,10 @@
-(ns pinkgorilla.nrepl.server
+(ns pinkgorilla.nrepl.server-component
   (:require
    [clojure.tools.logging :as log]
    [com.stuartsierra.component :as component]
    [nrepl.server]
    [nrepl.core]
-   [pinkgorilla.middleware.cider :refer [cider-handler]]))
+   [pinkgorilla.nrepl.middleware.cider :refer [cider-handler]]))
 
 (def conn
   "open a single connection to the nREPL server 

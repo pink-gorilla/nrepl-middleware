@@ -1,4 +1,4 @@
-(ns demo.core
+(ns demo.app
   (:require-macros
    [cljs.core.async.macros :refer [go go-loop]])
   (:require
@@ -9,7 +9,7 @@
    [cljs-uuid-utils.core :as uuid]
    [pinkgorilla.nrepl.ws.connection :refer [ws-connect!]]
    [pinkgorilla.nrepl.ws.client :refer [nrepl-client! nrepl-op]]
-   [pinkgorilla.nrepl.op.describe :refer [describe-req ls-sessions]]
+   [pinkgorilla.nrepl.op.admin :refer [describe ls-sessions]]
    [pinkgorilla.nrepl.op.eval :refer [nrepl-eval]]
    [pinkgorilla.nrepl.op.cider :refer [stacktrace resolve-symbol doc-string completions]]
    [demo.ui :refer [app]]))
@@ -59,7 +59,7 @@
         (info "first fragment: " c)
         (reset! d c))
       
-      (let [c (<! (describe-req conn))]
+      (let [c (<! (describe conn))]
         (info "describe result: " c)
         (reset! d c)
         )

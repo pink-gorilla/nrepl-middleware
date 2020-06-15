@@ -19,7 +19,7 @@
  :builds {:demo {:target :browser
                  :output-dir "target/demo/public"
                  :asset-path "/"
-                 :modules {:main {:entries [demo.core]}}
+                 :modules {:main {:entries [demo.app]}}
                  :compiler-options {;; preferrably implicit by shadow-cljs compile/watch/release
                                                         ;; Beware: releasing :none not supported by shadow
                                                         ;; :optimizations   :none

@@ -1,4 +1,4 @@
-(ns pinkgorilla.nrepl.jee-interop
+(ns pinkgorilla.nrepl.server.jee-interop
   ;; (:use compojure.core)
   (:require
    [taoensso.timbre :refer [debug info]]
@@ -12,7 +12,7 @@
    [nrepl.server :as nrepl-server]
    [nrepl.core :as nrepl]
    [nrepl [transport :as transport]]
-   [pinkgorilla.middleware.cider :as mw-cider]))
+   [pinkgorilla.nrepl.middleware.cider :as mw-cider]))
 
 (def handler (atom (mw-cider/cider-handler)))
 

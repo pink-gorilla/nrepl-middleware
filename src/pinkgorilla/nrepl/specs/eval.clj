@@ -1,4 +1,4 @@
-(ns pinkgorilla.nrepl.specs.eval-specs)
+(ns pinkgorilla.nrepl.specs.eval)
 
 
 

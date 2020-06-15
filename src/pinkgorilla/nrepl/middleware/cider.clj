@@ -1,8 +1,8 @@
-(ns pinkgorilla.middleware.cider
+(ns pinkgorilla.nrepl.middleware.cider
   (:require
-   [pinkgorilla.middleware.handle :refer [nrepl-handler]]
-   [pinkgorilla.middleware.sandboxed_interruptible-eval]
-   [pinkgorilla.middleware.render-values :as render-mw] ;; it's essential this import comes after the previous one! It
+   [pinkgorilla.nrepl.middleware.handle :refer [nrepl-handler]]
+   [pinkgorilla.nrepl.middleware.sandboxed_interruptible-eval]
+   [pinkgorilla.nrepl.middleware.render-values :as render-mw] ;; it's essential this import comes after the previous one! It
     ;; refers directly to a var in nrepl (as a hack to workaround a weakness in nREPL's middleware resolution).
    ;; [cider.nrepl]
    ))
