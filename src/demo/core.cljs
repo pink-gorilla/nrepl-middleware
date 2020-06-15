@@ -2,19 +2,23 @@
   (:require-macros
    [cljs.core.async.macros :refer [go go-loop]])
   (:require
-   [taoensso.timbre :refer [debug info warn error]]
+   [taoensso.timbre :as timbre :refer [debug info warn error]]
    [cljs.core.async :as async :refer [<! >! chan timeout close!]]
    [reagent.dom]
    [reagent.core :as r]
    [cljs-uuid-utils.core :as uuid]
    [pinkgorilla.nrepl.ws.connection :refer [ws-connect!]]
    [pinkgorilla.nrepl.ws.client :refer [nrepl-client! nrepl-op]]
-   [pinkgorilla.nrepl.ui.describe :refer [describe]]
    [pinkgorilla.nrepl.op.describe :refer [describe-req]]
    [pinkgorilla.nrepl.op.eval :refer [nrepl-eval]]
+   [pinkgorilla.nrepl.op.cider :refer [stacktrace resolve-symbol doc-string completions]]
    [demo.ui :refer [app]]))
 
 (enable-console-print!)
+
+;(timbre/set-level! :trace) ; Uncomment for more logging
+;  (timbre/set-level! :debug)
+(timbre/set-level! :info)
 
 (defn conn-raw 
   "demo nrepl websocket 
@@ -56,7 +60,7 @@
         (reset! d c))
       
       (let [c (<! (describe-req conn))]
-        (info "all fragments: " c)
+        (info "describe result: " c)
         (reset! d c)
         )
       
@@ -64,6 +68,31 @@
         (info "eval result: " r)
         ;(reset! d c)
         )
+      
+      (let [r (<! (nrepl-eval conn "(throw Exception \"b\")"))
+            x (<! (stacktrace conn))
+            ]
+        (info "stacktrace result: " x)
+        ;(reset! d c)
+        )
+      
+        (let [r (<! (resolve-symbol conn "pprint-table" "clojure.pprint"))]
+          (info "resolve symbol result: " r)
+        ;(reset! d c)
+          )
+
+         (let [r (<! (doc-string conn "doseq" "clojure.core"))]
+           (info "docstring result: " r)
+        ;(reset! d c)
+           )
+      
+      
+         (let [r (<! (completions conn "ma" "user" "(def a 4)"))]
+           (info "completion result: " r)
+        ;(reset! d c)
+           )
+      
+      
       
       
       (<! (timeout 15000))

@@ -1,33 +1,30 @@
 (ns pinkgorilla.nrepl.op.cider
   (:require
    [taoensso.timbre :refer-macros [info warn]]
-   [pinkgorilla.nrepl.ws.client :refer [make-request!]]))
+   [pinkgorilla.nrepl.ws.client :refer [nrepl-op-complete]]))
 
 
-(defn get-completions
+(defn completions
   "Query the REPL server for autocompletion suggestions. 
-   Relies on the cider-nrepl middleware.
-   We call the given callback with the list of symbols once the REPL server replies."
-  [state symbol ns context]
-  (make-request!
-   state
+   Relies on the cider-nrepl middleware."
+  [conn symbol ns context]
+  (nrepl-op-complete
+   conn
    {:op "complete" :symbol symbol :ns ns :context context}
-   :transform-fn
    (fn [fragments]
-     (map (:completions msg) fragments) ;  #(:candidate %)
+     (map :completions fragments) ;  #(:candidate %)
      )))
 
-(defn get-completion-doc
+(defn doc-string
   "Queries the REPL server for docs for the given symbol. 
-   Relies on the cider-nrepl middleware.
-   Calls back with the documentation text"
-  [state symbol ns callback]
-  (make-request!
-   state
+   Relies on the cider-nrepl middleware."
+  [conn symbol ns]
+  (nrepl-op-complete
+   conn
    {:op "complete-doc" :symbol symbol :ns ns}
-   :transform-fn
    (fn [fragments]
      (map :completion-doc fragments))))
+
 
 (defn resolve-symbol
   "resolve a symbol to get its namespace takes the symbol and the namespace 
@@ -35,25 +32,25 @@
    Relies on the cider-nrepl middleware. 
    Returns:
    - the symbol and the symbol's namespace"
-  [state symbol ns]
-  (make-request!
-   state
+  [conn symbol ns]
+  (nrepl-op-complete
+   conn
    {:op "info" :symbol symbol :ns ns}
-   :transform-fn
    (fn [fragments]
-     (map #({:symbol (:name %)
-             :ns (:ns &)}) fragments))))
+     (let [last-status (:status (last fragments))
+           no-info? (contains? last-status :no-info)]
+       (if no-info? :no-info
+           (map #(select-keys % [:name :ns]) fragments))))))
 
-(defn stacktrace!
+(defn stacktrace
   "resolve a symbol to get its namespace takes the symbol and the namespace that should be used as context.
   Relies on the cider-nrepl middleware. Calls back with the symbol and the symbol's namespace"
-  [state]
-  (make-request!
-   state
+  [conn]
+  (nrepl-op-complete
+   conn
    {:op "stacktrace"}
-   :transform-fn
    (fn [fragments]
-     (map :exception fragments))))
+     (map :stacktrace fragments))))
 
 
 (comment

@@ -32,6 +32,10 @@ Browser:
   The request channel will be closed after the last fragment is received. 
 - layer3:    
 
+Logging:
+- Lots of logging with timbre at DEBUG level
+- If you dot want lots of output, set loglevel to INFO
+
 
 # Notes new release / notebook integration:
 

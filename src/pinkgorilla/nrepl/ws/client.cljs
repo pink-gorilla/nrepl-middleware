@@ -50,7 +50,7 @@
          request-id (or (:id message) (uuid/uuid-string (uuid/make-random-uuid)))
          nrepl-msg  (merge message {:id request-id})]
      (swap! requests assoc (keyword request-id) request-ch)
-     (info "ws sending ws message: " nrepl-msg)
+     (debug "ws sending ws message: " nrepl-msg)
      (go
        (>! input-ch nrepl-msg))
      request-ch)))

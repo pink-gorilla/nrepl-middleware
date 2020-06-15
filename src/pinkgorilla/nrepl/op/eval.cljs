@@ -42,8 +42,7 @@
     (swap! result assoc :value (conj (:value @result) (parse-value value)))) ; (parse-value value)
 
   (when root-ex ;; root exception ?? what is this ?? where does it come from ? cider? nrepl?
-    (swap! result assoc :root-ex root-ex)
-    (info "Got root-ex" root-ex "for" (:id message))))
+    (swap! result assoc :root-ex root-ex)))
 
 
 (defn ^:export nrepl-eval
