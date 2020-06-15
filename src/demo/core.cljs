@@ -5,47 +5,59 @@
    [taoensso.timbre :refer [debug info warn error]]
    [cljs.core.async :as async :refer [<! >! chan timeout close!]]
    [reagent.dom]
+   [reagent.core :as r]
    [cljs-uuid-utils.core :as uuid]
-   [pinkgorilla.nrepl.ws.connection :refer [ws-connect!]]))
+   [pinkgorilla.nrepl.ws.connection :refer [ws-connect!]]
+   [pinkgorilla.nrepl.ws.client :refer [nrepl-client! nrepl-op]]
+   [pinkgorilla.nrepl.ui.describe :refer [describe]]
+   [demo.ui :refer [app]]))
 
 (enable-console-print!)
 
-(defn nrepl-conn-info [conn]
-  (let [{:keys [connected? session-id]} conn]
-    [:div 
-     [:p "NRepl connected:" (str @connected?)]
-      [:p "NRepl ession-id:" (str @session-id)]
-    ]
-    )
-  )
+(defn conn-raw [ws-url]
+  (let [{:keys [connected? session-id input-ch output-ch] :as conn}
+        (ws-connect! ws-url)]
 
-(defn app [conn]
-  [:div
-   [:h1 "NRepl demo"]
-   [nrepl-conn-info conn]
-   ]
-  )
-
-(defn ^:export  start []
-  (js/console.log "Starting...")
-  (println "starting with println")
-
-  (let [{:keys [connected? session-id input-ch output-ch] :as conn} (ws-connect! "ws://localhost:9000/nrepl")]
+    ; print rcvd messages
     (go-loop []
       (let [msg (<! output-ch)]
         (info "DEMO RCVD: " msg)
         (recur)))
+
+     ; send messages
     (go-loop []
       (<! (timeout 5000))
       (info "connected: " @connected? "session id: " @session-id)
       (>! input-ch {:op "describe" :id (uuid/uuid-string (uuid/make-random-uuid))})
       (<! (timeout 15000))
       (recur))
-    
-      (reagent.dom/render [app conn]
-                            (.getElementById js/document "app"))
-    
-    ))
+
+    conn))
+
+(defn conn-req [ws-url d]
+  (let [{:keys [connected? session-id] :as conn}
+        (nrepl-client! ws-url)]
+ ; send messages
+    (go-loop [c 1]
+      (<! (timeout 5000))
+      (info "connected: " @connected? "session id: " @session-id)
+      (let [c (<! (nrepl-op conn {:op "describe"}))]
+        (info "first fragment: " c)
+        (reset! d c))
+      (<! (timeout 15000))
+      (recur 1))
+    conn))
+
+(defn ^:export  start []
+  (js/console.log "Starting...")
+  (println "starting with println")
+
+  (let [d (r/atom nil)
+        ;conn (conn-raw "ws://localhost:9000/nrepl")
+        conn (conn-req "ws://localhost:9000/nrepl" d)]
+
+    (reagent.dom/render [app conn d]
+                        (.getElementById js/document "app"))))
 
 ;(make-request! conn {:op "describe"})
 

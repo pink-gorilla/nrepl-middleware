@@ -13,3 +13,14 @@ lein relay
 lein demo
 
 ```
+
+
+Notes new release:
+
+nrepl ws relay:
+- relay nrepl client is stored in session, but we dont have session 
+  middleware on that route. I think it is recreating the connections for
+  each request.
+- no conflict with existing notebook implementations?
+
+

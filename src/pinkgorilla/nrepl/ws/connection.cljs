@@ -62,9 +62,13 @@
 
 (defn ws-connect!
   "creates an nrepl connection via websocket.
+   input:
+   ws-url       url to establish the websocket with  
    output: 
    {:input-ch   core.async channel where to send nrepl messages to
     :output-ch  core.async channel to receive messages 
+    :connected? reagent atom, true when connection established,
+                and ready to receive requests (is set after op: clone)
    }
    "
   
@@ -100,7 +104,8 @@
     {:session-id session-id
      :input-ch input-ch
      :output-ch output-ch
-     :connected? connected?}))
+     :connected? connected?
+     }))
 
 
 
