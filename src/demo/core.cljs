@@ -9,7 +9,7 @@
    [cljs-uuid-utils.core :as uuid]
    [pinkgorilla.nrepl.ws.connection :refer [ws-connect!]]
    [pinkgorilla.nrepl.ws.client :refer [nrepl-client! nrepl-op]]
-   [pinkgorilla.nrepl.op.describe :refer [describe-req]]
+   [pinkgorilla.nrepl.op.describe :refer [describe-req ls-sessions]]
    [pinkgorilla.nrepl.op.eval :refer [nrepl-eval]]
    [pinkgorilla.nrepl.op.cider :refer [stacktrace resolve-symbol doc-string completions]]
    [demo.ui :refer [app]]))
@@ -91,6 +91,15 @@
            (info "completion result: " r)
         ;(reset! d c)
            )
+        
+           (let [r (<! (ls-sessions conn))]
+             (info "ls-sessions result: " r)
+        ;(reset! d c)
+             )
+
+        
+        
+        
       
       
       

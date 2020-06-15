@@ -39,6 +39,7 @@
                   [cider/cider-nrepl "0.22.4"]
                   [cider/piggieback "0.4.2"]
                   [clojail "1.0.6"] ; sandboxing
+                  [compliment "0.3.10"] ; code completion
                   [org.pinkgorilla/gorilla-renderable "3.0.15"]]
 
   :profiles {:cljs {:repl-options   {:init-ns          demo.core
