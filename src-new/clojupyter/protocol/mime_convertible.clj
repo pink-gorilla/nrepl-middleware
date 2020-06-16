@@ -5,7 +5,3 @@
 (defprotocol PMimeConvertible
   (to-mime [o]))
 
-(redefn to-json-str u/to-json-str)
-(def stream-to-string
-  "Returns JSON representation (string) of `v`. DEPRECATED - use `to-json-str` instead."
-  u/to-json-str)

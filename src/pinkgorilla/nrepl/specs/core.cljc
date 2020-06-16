@@ -1,5 +1,5 @@
 (ns pinkgorilla.nrepl.specs.core
-  (:require  
+  (:require
    [clojure.spec.alpha :as s]))
 
 (s/def :nrepl-msg/ns clojure.core/string?)

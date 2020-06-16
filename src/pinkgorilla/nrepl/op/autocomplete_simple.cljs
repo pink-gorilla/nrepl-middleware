@@ -1,8 +1,7 @@
 (ns pinkgorilla.nrepl.autocomplete-simple
-  (:require 
+  (:require
    [clojure.string :as str]
-            [pinkgorilla.nrepl.ws.client :refer [nrepl-op-complete]]
-            ))
+   [pinkgorilla.nrepl.ws.client :refer [nrepl-op-complete]]))
 
 ; from chlorine repl-tooling
 
@@ -14,10 +13,10 @@
 (def ^:private valid-prefix #"/?([a-zA-Z0-9\-.$!?\/><*=\?_]+)")
 
 #_(defn- normalize-results [result]
-  (vec (some->> result
-                helpers/parse-result
-                :result
-                (map (fn [c] {:type :function :candidate c})))))
+    (vec (some->> result
+                  helpers/parse-result
+                  :result
+                  (map (fn [c] {:type :function :candidate c})))))
 
 (def ^:private re-char-escapes
   (->> "\\.*+|?()[]{}$^"
@@ -46,14 +45,14 @@
                  "vec"
                  "))")]
     (if (not-empty prefix)
-        (nrepl-op-complete
-         conn
-         {:op "describe"}
-         (fn [fragments]
-           (let [f (first fragments)]
-             (select-keys f [:versions :ops])))))
-      
-      (.. (eval/eval repl cmd {:namespace ns-name :ignore true})
-          (then normalize-results)
-          (catch (constantly [])))
-      (p/promise []))))
+      (nrepl-op-complete
+       conn
+       {:op "describe"}
+       (fn [fragments]
+         (let [f (first fragments)]
+           (select-keys f [:versions :ops])))))
+
+    (.. (eval/eval repl cmd {:namespace ns-name :ignore true})
+        (then normalize-results)
+        (catch (constantly [])))
+    (p/promise [])))

@@ -8,21 +8,20 @@
 ; op: close
 ; op: clone
 
+
 (defn describe [conn]
   (nrepl-op-complete
    conn
    {:op "describe"}
    (fn [fragments]
      (let [f (first fragments)]
-          (select-keys f [:versions :ops])))))
-
+       (select-keys f [:versions :ops])))))
 
 (defn ls-sessions [conn]
   (nrepl-op-complete
    conn
    {:op "ls-sessions"}
    (fn [fragments]
-       (apply conj (map :sessions fragments))
-     )))
+     (apply conj (map :sessions fragments)))))
 
 

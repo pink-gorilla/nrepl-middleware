@@ -3,7 +3,6 @@
    [taoensso.timbre :refer-macros [info warn]]
    [pinkgorilla.nrepl.ws.client :refer [nrepl-op-complete]]))
 
-
 (defn completions
   "Query the REPL server for autocompletion suggestions. 
    Relies on the cider-nrepl middleware."
@@ -24,7 +23,6 @@
    {:op "complete-doc" :symbol symbol :ns ns}
    (fn [fragments]
      (map :completion-doc fragments))))
-
 
 (defn resolve-symbol
   "resolve a symbol to get its namespace takes the symbol and the namespace 
@@ -53,7 +51,6 @@
      (let [stacktraces (->> (map :stacktrace fragments)
                             (remove nil?))] ; done message does not have stacktrace normally
        (apply concat stacktraces)))))
-
 
 (comment
 

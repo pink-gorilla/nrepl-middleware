@@ -5,7 +5,7 @@
    [nrepl.middleware.print]
    [nrepl.middleware :as middleware]
    [pinkgorilla.nrepl.middleware.formatter :as formatter]
-   [pinkgorilla.ui.gorilla-renderable :refer [#_render render-renderable-meta]])
+   [picasso.converter :refer [->picasso]])
   (:import nrepl.transport.Transport))
 
 
@@ -20,7 +20,7 @@
 
 
 (defn render-value [value]
-  (let [r (render-renderable-meta value)]
+  (let [r (->picasso value)]
     r))
 
 (defn convert-response [msg resp]

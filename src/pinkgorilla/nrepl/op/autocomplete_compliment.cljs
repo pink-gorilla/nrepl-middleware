@@ -35,20 +35,20 @@
          (catch (constantly []))))))
 
 #_(defn for-cljs [repl cmd-for-cljs-env ns-name text prefix row col]
-  (p/let [ns (when ns-name (symbol ns-name))
-          context (make-context text prefix row col)
-          code `(do
-                  (~'clojure.core/require 'compliment.sources.cljs)
-                  (~'clojure.core/binding [compliment.sources.cljs/*compiler-env*
-                                           ~cmd-for-cljs-env]
-                                          (compliment.sources.cljs/candidates ~prefix
-                                                                              '~ns
-                                                                              ~context)))
-          {:keys [result]} (.catch (eval/eval repl code) (constantly {:result []}))
-          clj-result (for-clojure repl ns-name text prefix row col
-                                  [:compliment.sources.local-bindings/local-bindings
-                                   :compliment.sources.keywords/keywords])]
-    (->> result
-         (concat clj-result)
-         distinct
-         (sort-by :candidate))))
+    (p/let [ns (when ns-name (symbol ns-name))
+            context (make-context text prefix row col)
+            code `(do
+                    (~'clojure.core/require 'compliment.sources.cljs)
+                    (~'clojure.core/binding [compliment.sources.cljs/*compiler-env*
+                                             ~cmd-for-cljs-env]
+                                            (compliment.sources.cljs/candidates ~prefix
+                                                                                '~ns
+                                                                                ~context)))
+            {:keys [result]} (.catch (eval/eval repl code) (constantly {:result []}))
+            clj-result (for-clojure repl ns-name text prefix row col
+                                    [:compliment.sources.local-bindings/local-bindings
+                                     :compliment.sources.keywords/keywords])]
+      (->> result
+           (concat clj-result)
+           distinct
+           (sort-by :candidate))))

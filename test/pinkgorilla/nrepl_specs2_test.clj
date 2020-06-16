@@ -3,7 +3,7 @@
    [clojure.test :refer [#_testing is deftest]]
    ;[clojure.spec.alpha :as s]
    ; bring the specs into scope:
-   [pinkgorilla.kernel.nrepl-specs]))
+   [pinkgorilla.nrepl.specs.core]))
 
 (def msg-eval-error
   {:err

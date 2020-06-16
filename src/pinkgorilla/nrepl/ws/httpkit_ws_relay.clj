@@ -49,7 +49,6 @@
          (future (nrepl.server/handle* msg my-cider-handler write)))
        (client)))))
 
-
 (defn process-ws-request [con-id transport message]
   (println "request rcvd: " con-id " msg: " message)
   (let [data-edn (edn/read-string message)
@@ -80,11 +79,13 @@
 
 
 ; send heartbeats to all connected websockets.
+
+
 #_(future
-  (loop []
-    (doseq [client @clients]
-      (http/send! (key client)
-                  (pr-str {:heartbeat (rand 10)})
-                  false))
-    (Thread/sleep 10000)
-    (recur)))
+    (loop []
+      (doseq [client @clients]
+        (http/send! (key client)
+                    (pr-str {:heartbeat (rand 10)})
+                    false))
+      (Thread/sleep 10000)
+      (recur)))

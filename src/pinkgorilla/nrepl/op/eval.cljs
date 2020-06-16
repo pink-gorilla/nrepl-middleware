@@ -25,7 +25,6 @@
       data2)
     (catch js/Error e (info "parse-value ex: " e " tried to parse: " value))))
 
-
 (defn- on-eval-fragment
   "result is an atom, containing the eval result.
    processes a fragment-response and modifies result-atom accordingly."
@@ -43,7 +42,6 @@
 
   (when root-ex ;; root exception ?? what is this ?? where does it come from ? cider? nrepl?
     (swap! result assoc :root-ex root-ex)))
-
 
 (defn ^:export nrepl-eval
   "evaluates a clj-snippet"
@@ -72,14 +70,12 @@
     (go
       (cb (<! ch)))))
 
-
 (defn ^:export fn-eval
   "executes a clojure ```function-as-string``` (from clojurescript) "
   [conn function-as-string & params]
   (let [_ (info "params: " params)
         code (concat ["(" function-as-string] params [")"])]
-     (nrepl-eval conn code)))
-
+    (nrepl-eval conn code)))
 
 (comment
 

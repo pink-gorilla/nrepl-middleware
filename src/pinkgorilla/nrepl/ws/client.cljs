@@ -11,7 +11,6 @@
    [reagent.core :as r]
    [pinkgorilla.nrepl.ws.connection]))
 
-
 #_(defn- filtered-chan!
     "takes the global fragment channel, and creates a new channel
    that only contains response (fragments) related to the request.
@@ -55,26 +54,23 @@
        (>! input-ch nrepl-msg))
      request-ch)))
 
-
-(defn nrepl-op-complete 
+(defn nrepl-op-complete
   ([conn msg]
    (nrepl-op-complete conn msg nil))
   ([conn msg transform-fn]
-  (let [result-ch (chan)
-        fragments (atom [])
-        fragments-ch (nrepl-op conn msg)
-        result-fn (fn [](if transform-fn 
-                  (transform-fn @fragments)
-                  @fragments))
-        ]
-    (go-loop [msg (<! fragments-ch)]
-      (if msg
-        (do (swap! fragments conj msg)
-            (recur (<! fragments-ch)))
-        (do (>! result-ch (result-fn))
-            (close! fragments-ch))))
-    result-ch)))
-
+   (let [result-ch (chan)
+         fragments (atom [])
+         fragments-ch (nrepl-op conn msg)
+         result-fn (fn [] (if transform-fn
+                            (transform-fn @fragments)
+                            @fragments))]
+     (go-loop [msg (<! fragments-ch)]
+       (if msg
+         (do (swap! fragments conj msg)
+             (recur (<! fragments-ch)))
+         (do (>! result-ch (result-fn))
+             (close! fragments-ch))))
+     result-ch)))
 
 (defn- chan-for-incoming-nrepl-msg
   "processes an incoming message that comes from channel (which comes 

@@ -30,15 +30,12 @@
   :dependencies  [;[org.clojure/clojure "1.10.1"]
                   ;[org.clojure/spec.alpha "0.2.187"]
                   ;[org.clojure/data.json "0.2.6"]
-                  [jarohen/chord "0.8.1" ; nrepl websocket
-                   :exclusions [com.cognitect/transit-clj
-                                com.cognitect/transit-cljs]] ; websockets with core.async
                   [nrepl "0.7.0"]
                   [cider/cider-nrepl "0.22.4"]
                   [cider/piggieback "0.4.2"]
                   [clojail "1.0.6"] ; sandboxing
                   [compliment "0.3.10"] ; code completion
-                  [org.pinkgorilla/gorilla-renderable "3.0.15"]]
+                  [org.pinkgorilla/gorilla-renderable "3.1.2"]]
 
   :profiles {:cljs {:source-paths ["profiles/demo/src"]
                     :repl-options   {:init-ns          demo.app
@@ -57,7 +54,11 @@
                                    [reagent "0.10.0"
                                     :exclusions [org.clojure/tools.reader
                                                  cljsjs/react
-                                                 cljsjs/react-dom]]]}
+                                                 cljsjs/react-dom]]
+                                   [jarohen/chord "0.8.1" ; nrepl websocket
+                                    :exclusions [com.cognitect/transit-clj
+                                                 com.cognitect/transit-cljs]] ; websockets with core.async                                   
+                                   ]}
 
              :relay {:source-paths ["profiles/demo/src"]
                      :dependencies [[ring "1.7.1"]
@@ -68,8 +69,7 @@
                                     ;[javax.servlet/javax.servlet-api "4.0.1"]
                                     [compojure "1.6.1"] ; Routing
                                     ;[org.eclipse.jetty.websocket/websocket-server "9.4.12.v20180830"]
-                                    [info.sunng/ring-jetty9-adapter "0.12.5"]
-                                    ]}
+                                    [info.sunng/ring-jetty9-adapter "0.12.5"]]}
 
              :dev   {:dependencies [[org.clojure/tools.logging "1.0.0"]
                                     [com.taoensso/timbre "4.10.0"]             ; clojurescript logging
