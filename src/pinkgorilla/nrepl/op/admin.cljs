@@ -24,4 +24,14 @@
    (fn [fragments]
      (apply conj (map :sessions fragments)))))
 
+(defn interrupt [conn]
+  (nrepl-op-complete
+   conn
+   {:op :interrupt}
+   (fn [fragments]
+     fragments
+             ;(apply conj (map :sessions fragments))
+     )))
+
+
 

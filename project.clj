@@ -1,4 +1,4 @@
-(defproject org.pinkgorilla/gorilla-middleware "0.2.25-SNAPSHOT"
+(defproject org.pinkgorilla/gorilla-middleware "0.3.1-SNAPSHOT"
   :description "nREPL middleware"
   :url "https://github.com/pink-gorilla/nrepl-middleware"
   :license {:name "MIT"}
@@ -35,10 +35,10 @@
                   [cider/piggieback "0.4.2"]
                   [clojail "1.0.6"] ; sandboxing
                   [compliment "0.3.10"] ; code completion
-                  [org.pinkgorilla/gorilla-renderable "3.1.2"]]
+                  [org.pinkgorilla/gorilla-renderable "3.1.2"]] ; picasso
 
   :profiles {:cljs {:source-paths ["profiles/demo/src"]
-                    :repl-options   {:init-ns          demo.app
+                    #_:repl-options   #_{:init-ns          demo.app
                                      :port             4001
                                      :nrepl-middleware [shadow.cljs.devtools.server.nrepl/middleware]}
 

@@ -12,7 +12,7 @@
    [pinkgorilla.nrepl.op.admin :refer [describe ls-sessions]]
    [pinkgorilla.nrepl.op.eval :refer [nrepl-eval]]
    [pinkgorilla.nrepl.op.cider :refer [stacktrace resolve-symbol doc-string completions]]
-   [demo.ui :refer [app]]))
+   [demo.views]))
 
 (enable-console-print!)
 
@@ -97,27 +97,23 @@
         ;(reset! d c)
              )
 
-        
-        
-        
-      
-      
-      
-      
       (<! (timeout 15000))
       (recur 1))
     conn))
 
 (defn ^:export  start []
-  (js/console.log "Starting...")
-  (println "starting with println")
+  (info "nrepl-demo starting ..")
 
   (let [d (r/atom nil)
         ;conn (conn-raw "ws://localhost:9000/nrepl")
         conn (conn-req "ws://localhost:9000/nrepl" d)]
 
-    (reagent.dom/render [app conn d]
+    (reagent.dom/render [demo.views/app conn d]
                         (.getElementById js/document "app"))))
 
+
 ;(make-request! conn {:op "describe"})
+;
+(defn ^:export  stop []
+  (js/console.log "Stopping..."))
 

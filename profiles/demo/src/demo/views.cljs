@@ -1,13 +1,9 @@
-(ns demo.ui
+(ns demo.views
   (:require-macros
    [cljs.core.async.macros :refer [go go-loop]])
   (:require
    [taoensso.timbre :refer [debug info warn error]]
-   [cljs.core.async :as async :refer [<! >! chan timeout close!]]
-   [reagent.core :as r]
-   [pinkgorilla.nrepl.ws.connection :refer [ws-connect!]]
    [pinkgorilla.nrepl.ui.describe :refer [describe]]))
-
 
 
 (defn nrepl-conn-info [conn]

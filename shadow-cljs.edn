@@ -9,17 +9,17 @@
  :dev-http {8000 {:roots ["target/node_modules/public"  ;  css and png from selected npm dependencies
                           "target/demo/public" ; demo ui bundle
                           "profiles/demo/public" ; demo ui resources (html, data files)
-                          "resources/public"; resources we ship without npm
                   ;"classpath:public" 
                   ;"classpath:resources"
                   ;"classpath:resources/public"
-                          ]
-                  }}
+                          ]}}
 
  :builds {:demo {:target :browser
                  :output-dir "target/demo/public"
                  :asset-path "/"
                  :modules {:main {:entries [demo.app]}}
+                 :devtools {:before-load demo.app/stop
+                            :after-load demo.app/start}
                  :compiler-options {;; preferrably implicit by shadow-cljs compile/watch/release
                                                         ;; Beware: releasing :none not supported by shadow
                                                         ;; :optimizations   :none
