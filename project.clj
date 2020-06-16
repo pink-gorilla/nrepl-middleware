@@ -1,4 +1,4 @@
-(defproject org.pinkgorilla/gorilla-middleware "0.3.1-SNAPSHOT"
+(defproject org.pinkgorilla/nrepl-middleware "0.3.1-SNAPSHOT"
   :description "nREPL middleware"
   :url "https://github.com/pink-gorilla/nrepl-middleware"
   :license {:name "MIT"}
@@ -30,17 +30,27 @@
   :dependencies  [;[org.clojure/clojure "1.10.1"]
                   ;[org.clojure/spec.alpha "0.2.187"]
                   ;[org.clojure/data.json "0.2.6"]
+
+                  ; clojure
                   [nrepl "0.7.0"]
                   [cider/cider-nrepl "0.22.4"]
                   [cider/piggieback "0.4.2"]
                   [clojail "1.0.6"] ; sandboxing
                   [compliment "0.3.10"] ; code completion
-                  [org.pinkgorilla/gorilla-renderable "3.1.2"]] ; picasso
+                  [org.pinkgorilla/gorilla-renderable "3.1.2"] ; picasso
+
+                  ;clojurescript
+                  [jarohen/chord "0.8.1" ; nrepl websocket
+                   :exclusions [com.cognitect/transit-clj
+                                com.cognitect/transit-cljs]] ; websockets with core.async                                   
+                  [com.taoensso/timbre "4.10.0"]             ; clojurescript logging
+                  [com.lucasbradstreet/cljs-uuid-utils "1.0.2"] ;; awb99: in encoding, and clj/cljs proof
+] 
 
   :profiles {:cljs {:source-paths ["profiles/demo/src"]
                     #_:repl-options   #_{:init-ns          demo.app
-                                     :port             4001
-                                     :nrepl-middleware [shadow.cljs.devtools.server.nrepl/middleware]}
+                                         :port             4001
+                                         :nrepl-middleware [shadow.cljs.devtools.server.nrepl/middleware]}
 
                     :dependencies [[org.clojure/core.async "1.2.603"]
                                    [org.clojure/clojurescript "1.10.773"]
@@ -49,16 +59,10 @@
                                    ; shadow-cljs MAY NOT be a dependency in lein deps :tree -> if so, bundeler will fail because shadow contains core.async which is not compatible with self hosted clojurescript
                                    [thheller/shadow-cljs "2.10.7"]
                                    [thheller/shadow-cljsjs "0.0.21"]
-                                   [com.taoensso/timbre "4.10.0"]             ; clojurescript logging
-                                   [com.lucasbradstreet/cljs-uuid-utils "1.0.2"] ;; awb99: in encoding, and clj/cljs proof
                                    [reagent "0.10.0"
                                     :exclusions [org.clojure/tools.reader
                                                  cljsjs/react
-                                                 cljsjs/react-dom]]
-                                   [jarohen/chord "0.8.1" ; nrepl websocket
-                                    :exclusions [com.cognitect/transit-clj
-                                                 com.cognitect/transit-cljs]] ; websockets with core.async                                   
-                                   ]}
+                                                 cljsjs/react-dom]]]}
 
              :relay {:source-paths ["profiles/demo/src"]
                      :dependencies [[ring "1.7.1"]

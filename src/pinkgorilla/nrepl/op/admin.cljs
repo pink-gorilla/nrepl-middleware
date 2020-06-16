@@ -22,7 +22,7 @@
    conn
    {:op "ls-sessions"}
    (fn [fragments]
-     (apply conj (map :sessions fragments)))))
+     (into [] (apply conj (map :sessions fragments))))))
 
 (defn interrupt [conn]
   (nrepl-op-complete
