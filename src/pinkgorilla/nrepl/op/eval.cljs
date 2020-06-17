@@ -18,7 +18,7 @@
   (try
     (let [_ (info "value: " value "type " (type value))
           data (read-string value)
-          _ (info "converted: " data "type " (type data))     
+          _ (info "converted: " data "type " (type data))
           ;data2 (read-string data)
           ;_ (info "converted2: " data2 "type " (type data2))
           ]
@@ -40,9 +40,7 @@
   (when ns
     (swap! result assoc :ns ns)
     (swap! result assoc :value (conj (:value @result) value #_(parse-value value)))
-    (swap! result assoc :picasso (conj (:picasso @result) (parse-value picasso)))
-
-    ) ; (parse-value value)
+    (swap! result assoc :picasso (conj (:picasso @result) (parse-value picasso)))) ; (parse-value value)
   (when root-ex ;; root exception ?? what is this ?? where does it come from ? cider? nrepl?
     (swap! result assoc :root-ex root-ex)))
 
