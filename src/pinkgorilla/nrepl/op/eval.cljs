@@ -83,7 +83,7 @@
 
 (comment
 
-  (nrepl-eval conn "(+ 5 5)")
+  ;(nrepl-eval conn "(+ 5 5)")
 
 ; (s*when (some #{"interrupted"} status)
 ;      (C (s*update-result (P assoc :ename "interrupted"))

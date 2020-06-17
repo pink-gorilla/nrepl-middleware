@@ -1,11 +1,13 @@
 (ns pinkgorilla.nrepl.middleware.loader)
-;  (:require
 
+(def ops-sniffer
+  [{:op "eval" :code "(require '[goldly.nrepl.sniffer.middleware])"}
+   {:op "eval" :code "(require '[picasso.default-config])"} ; for side effects
+   {:op "add-middleware"
+    :middleware ['goldly.nrepl.middleware/wrap-pinkie]}])
 
-(send! {:op "eval" :code "(require '[goldly.nrepl.sniffer.middleware])"})
-    ;(send! {:op "eval" :code "\"goldly snippet jack-in ..\""})
-    ;(send! {:op "eval" :code "(require '[pinkgorilla.ui.hiccup_renderer])"})
-(send! {:op "add-middleware"
-        :middleware ['goldly.nrepl.sniffer.middleware/render-values
-                       ;'goldly.nrepl.middleware/wrap-pinkie
-                     ]})
+(def ops-relay
+  [{:op "eval" :code "(require 'pinkgorilla.nrepl.middleware/render-values])"}
+   {:op "eval" :code "(require '[picasso.default-config])"} ; for side effects
+   {:op "add-middleware"
+    :middleware ['pinkgorilla.nrepl.middleware/render-values]}])

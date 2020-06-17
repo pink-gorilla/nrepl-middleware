@@ -45,7 +45,7 @@
                                 com.cognitect/transit-cljs]] ; websockets with core.async                                   
                   [com.taoensso/timbre "4.10.0"]             ; clojurescript logging
                   [com.lucasbradstreet/cljs-uuid-utils "1.0.2"] ;; awb99: in encoding, and clj/cljs proof
-] 
+                  ]
 
   :profiles {:cljs {:source-paths ["profiles/demo/src"]
                     #_:repl-options   #_{:init-ns          demo.app
@@ -104,6 +104,9 @@
 
             "build-shadow-ci"
             ["with-profile" "+cljs" "run" "-m" "shadow.cljs.devtools.cli" "compile" ":demo"] ; :ci
+
+            "lint" ^{:doc "Runs code linter"}
+            ["clj-kondo" "--lint" "src"]
 
             ;"shadow-watch-demo" ["run" "-m" "shadow.cljs.devtools.cli" "watch" ":demo"]
 
