@@ -1,1 +1,55 @@
-{:linters {:unused-namespace {:exclude [pinkgorilla.middleware.render-values]}}}
+{:linters
+ {;:lint-as 
+  ;{org.httpkit.server/with-channel clj-kondo.lint-as/def-catch-all}
+  
+  :unused-namespace
+  ; namespaces in this list are those we get for side-effects.
+  ; it is also possible to do regex search here:
+  ; https://github.com/borkdude/clj-kondo/blob/master/doc/config.md
+  {:level :info
+   
+   :exclude [;pinkgorilla.middleware.render-values
+             ;pinkgorilla.ui.hiccup_renderer
+             picasso.protocols
+            ]}
+
+  :unused-binding 
+  {:level :info
+   
+   }
+  
+  :unused-private-var
+  {:level :info
+   
+   }
+  
+  :unused-referred-var
+  {:level :info
+   :exclude [; dont be strict in referring to logging functions
+             {taoensso.timbre [debug info]}             
+             ]}
+
+  :unresolved-symbol
+  {:level :info
+   ;:creates-vars {org.httpkit.server/with-channel [con]}
+   ;:exclude [; needed for: pinkgorilla/routes.cljs app-routes
+             ;(secretary.core/defroute [query-params projects-path renderer-path])
+    ;         (org.httpkit.server/with-channel [con])
+     ;        (pinkgorilla.nrepl.ws.httpkit-ws-relay [con])
+      ;       ]
+          }
+
+  ;:redundant-let
+  ;{:level :info
+  ; :exclude [pinkgorilla.events/kernel [kernel]]}
+
+  :redundant-do
+  {:level :info ; because the line below does not work, at least make them not ci breaking
+   :exclude [pinkgorilla.nrepl.ws.relay/process-message-mem] ; TODO: this does not work 
+   }
+  
+   
+  
+
+  ; linters end
+  }}

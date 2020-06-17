@@ -6,7 +6,7 @@
 ;      :clj  [pinkgorilla.test-macros :refer [assert-captured-test-results]])
    [clojure.spec.alpha :as s]
    ; bring the specs into scope:
-   [pinkgorilla.kernel.nrepl-specs]))
+   [pinkgorilla.nrepl.specs.core]))
 
 (def done-msg
   {:session "7362f58e-b613-46f8-853c-efcd8b61a590"

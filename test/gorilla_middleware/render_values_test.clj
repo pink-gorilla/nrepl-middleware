@@ -1,11 +1,11 @@
 (ns gorilla-middleware.render_values-test
   (:require
    [clojure.test :refer [testing is deftest]]
-   [pinkgorilla.middleware.formatter :refer [serialize]]))
+   [pinkgorilla.nrepl.middleware.formatter :refer [serialize]]))
 
 ;; TODO: Only force loading for now
-(require 'pinkgorilla.middleware.handle
-         'pinkgorilla.middleware.render-values)
+(require 'pinkgorilla.nrepl.middleware.handle
+         'pinkgorilla.nrepl.middleware.render-values)
 
 (deftest edn-serialization
   (testing "Default EDN serialization"

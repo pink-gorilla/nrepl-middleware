@@ -1,11 +1,11 @@
-(ns pinkgorilla.middleware.render-values
+(ns pinkgorilla.nrepl.middleware.render-values
   (:require
    ;[clojure.tools.logging :refer (info)]
    [nrepl.transport :as transport]
    [nrepl.middleware.print]
    [nrepl.middleware :as middleware]
-   [pinkgorilla.middleware.formatter :as formatter]
-   [pinkgorilla.ui.gorilla-renderable :refer [#_render render-renderable-meta]])
+   [pinkgorilla.nrepl.middleware.formatter :as formatter]
+   [picasso.converter :refer [->picasso]])
   (:import nrepl.transport.Transport))
 
 
@@ -20,7 +20,7 @@
 
 
 (defn render-value [value]
-  (let [r (render-renderable-meta value)]
+  (let [r (->picasso value)]
     r))
 
 (defn convert-response [msg resp]
@@ -31,7 +31,7 @@
    ;; effect that the string will end up double-escaped.
    ;; (assoc resp :value (json/generate-string (render/render v)))
   (if-let [[_ v] (and (:as-html msg) (find resp :value))]
-    (assoc resp :value (formatter/serialize (render-value v)))
+    (assoc resp :picasso (formatter/serialize (render-value v)))
     resp))
 
 (defn render-values

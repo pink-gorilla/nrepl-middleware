@@ -1,7 +1,6 @@
-(ns pinkgorilla.kernel.nrepl-specs
-  (:require  [clojure.spec.alpha :as s]))
-
-(println "adding nrepl specs...")
+(ns pinkgorilla.nrepl.specs.core
+  (:require
+   [clojure.spec.alpha :as s]))
 
 (s/def :nrepl-msg/ns clojure.core/string?)
 (s/def :nrepl-msg/fn clojure.core/string?)

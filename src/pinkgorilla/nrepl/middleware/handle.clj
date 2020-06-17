@@ -1,8 +1,8 @@
-(ns pinkgorilla.middleware.handle
+(ns pinkgorilla.nrepl.middleware.handle
   (:require
    [nrepl.server :as srv]
-   [pinkgorilla.middleware.sandboxed_interruptible-eval]
-   [pinkgorilla.middleware.render-values :as render-mw] ;; it's essential this import comes after the previous one! It
+   [pinkgorilla.nrepl.middleware.sandboxed_interruptible-eval]
+   [pinkgorilla.nrepl.middleware.render-values :as render-mw] ;; it's essential this import comes after the previous one! It
     ;; refers directly to a var in nrepl (as a hack to workaround
     ;; a weakness in nREPL's middleware resolution).
    ))
@@ -13,7 +13,7 @@
   (if sandbox
     (->> middlewares
          (map #(if (= (-> % meta :name name) "interruptible-eval")
-                 #'pinkgorilla.middleware.sandboxed_interruptible-eval/interruptible-eval
+                 #'pinkgorilla.nrepl.middleware.sandboxed_interruptible-eval/interruptible-eval
                  %))
          (into []))
     middlewares))
