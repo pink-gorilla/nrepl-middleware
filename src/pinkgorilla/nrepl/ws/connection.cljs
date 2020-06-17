@@ -47,8 +47,8 @@
                     (recur true))
                   (do
                     (error "waiting for :new-session. dumping: " message)
-                    (recur false)))))))
-        (fail-fn "nrepl websocket session was disconnected!")))))
+                    (recur false))))))
+          (fail-fn "nrepl websocket session was disconnected!"))))))
 
 (defn- process-user-messages [ws-ch input-ch output-ch session-id connected?]
   (go-loop [first true]

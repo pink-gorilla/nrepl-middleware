@@ -6,6 +6,7 @@
    [nrepl.transport :as t]
    [nrepl.misc :refer [response-for returning]]
    [nrepl.middleware :refer [set-descriptor!]]
+   [nrepl.middleware.print]
    [nrepl.middleware.interruptible-eval :refer [*msg*]]
    clojure.main)
   (:import

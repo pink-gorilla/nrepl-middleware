@@ -6,13 +6,26 @@
   ; namespaces in this list are those we get for side-effects.
   ; it is also possible to do regex search here:
   ; https://github.com/borkdude/clj-kondo/blob/master/doc/config.md
-  {:exclude [;pinkgorilla.middleware.render-values
+  {:level :info
+   
+   :exclude [;pinkgorilla.middleware.render-values
              ;pinkgorilla.ui.hiccup_renderer
              picasso.protocols
             ]}
 
+  :unused-binding 
+  {:level :info
+   
+   }
+  
+  :unused-private-var
+  {:level :info
+   
+   }
+  
   :unused-referred-var
-  {:exclude [; dont be strict in referring to logging functions
+  {:level :info
+   :exclude [; dont be strict in referring to logging functions
              {taoensso.timbre [debug info]}             
              ]}
 

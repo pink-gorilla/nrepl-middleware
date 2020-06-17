@@ -27,32 +27,32 @@
 (defn- re-escape [prefix]
   (str/escape (str prefix) re-char-escapes))
 
-(defn for-clj [conn ns-name txt-prefix]
-  (let [prefix (->> txt-prefix (re-seq valid-prefix) last last)
-        cmd (str "(clojure.core/let [collect #(clojure.core/map "
-                 "(clojure.core/comp str first) "
-                 "(%1 %2)) "
-                 "refers (collect clojure.core/ns-map *ns*)"
-                 "from-ns (->> (clojure.core/ns-aliases *ns*) "
-                 "(clojure.core/mapcat (fn [[k v]] "
-                 "(clojure.core/map #(str k \"/\" %) "
-                 "(collect clojure.core/ns-publics v)))))] "
-                 "(clojure.core/->> refers "
-                 "(concat from-ns) "
-                 "(clojure.core/filter #(re-find #\""
-                 (re-escape txt-prefix) "\" %)) "
-                 "(clojure.core/sort)"
-                 "vec"
-                 "))")]
-    (if (not-empty prefix)
-      (nrepl-op-complete
-       conn
-       {:op "describe"}
-       (fn [fragments]
-         (let [f (first fragments)]
-           (select-keys f [:versions :ops])))))
+#_(defn for-clj [conn ns-name txt-prefix]
+    (let [prefix (->> txt-prefix (re-seq valid-prefix) last last)
+          cmd (str "(clojure.core/let [collect #(clojure.core/map "
+                   "(clojure.core/comp str first) "
+                   "(%1 %2)) "
+                   "refers (collect clojure.core/ns-map *ns*)"
+                   "from-ns (->> (clojure.core/ns-aliases *ns*) "
+                   "(clojure.core/mapcat (fn [[k v]] "
+                   "(clojure.core/map #(str k \"/\" %) "
+                   "(collect clojure.core/ns-publics v)))))] "
+                   "(clojure.core/->> refers "
+                   "(concat from-ns) "
+                   "(clojure.core/filter #(re-find #\""
+                   (re-escape txt-prefix) "\" %)) "
+                   "(clojure.core/sort)"
+                   "vec"
+                   "))")]
+      (if (not-empty prefix)
+        (nrepl-op-complete
+         conn
+         {:op "describe"}
+         (fn [fragments]
+           (let [f (first fragments)]
+             (select-keys f [:versions :ops])))))
 
-    (.. (eval/eval repl cmd {:namespace ns-name :ignore true})
-        (then normalize-results)
-        (catch (constantly [])))
-    (p/promise [])))
+      (.. (eval/eval repl cmd {:namespace ns-name :ignore true})
+          (then normalize-results)
+          (catch (constantly [])))
+      (p/promise [])))

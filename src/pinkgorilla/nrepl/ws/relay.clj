@@ -15,7 +15,7 @@
   (loop [s replies-seq]
     (let [msg (first s)]
       (reply-fn msg)
-      (if-not (contains-pred (:status msg))
+      (when-not (contains-pred (:status msg))
         (recur (rest s))))))
 
 (defn pr-str-with-meta [data]
