@@ -31,7 +31,7 @@
    ;; effect that the string will end up double-escaped.
    ;; (assoc resp :value (json/generate-string (render/render v)))
   (if-let [[_ v] (and (:as-html msg) (find resp :value))]
-    (assoc resp :value (formatter/serialize (render-value v)))
+    (assoc resp :picasso (formatter/serialize (render-value v)))
     resp))
 
 (defn render-values

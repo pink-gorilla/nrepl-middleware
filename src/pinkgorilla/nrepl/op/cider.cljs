@@ -12,7 +12,8 @@
    {:op "complete" :symbol symbol :ns ns :context context}
    (fn [fragments]
      ;(map :completions fragments) ;  #(:candidate %)
-     (apply conj (map :completions fragments)))))
+     (into []
+           (apply conj (map :completions fragments))))))
 
 (defn doc-string
   "Queries the REPL server for docs for the given symbol. 
