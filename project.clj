@@ -81,7 +81,7 @@
                      :plugins [[lein-cljfmt "0.6.6"]
                                [lein-cloverage "1.1.2"]
                                [lein-shell "0.5.0"]
-                               [lein-codox "0.10.7"]
+                               ;[lein-codox "0.10.7"] ; docs
                                [lein-ancient "0.6.15"]
                                [min-java-version "0.1.0"]]
 
@@ -90,7 +90,9 @@
 
                      :cloverage {:codecov? true
                                  ;; In case we want to exclude stuff
-                                 ;; :ns-exclude-regex [#".*util.instrument"]
+                                  :ns-exclude-regex [#".*relay"
+                                                     #"pinkgorilla.nrepl.ws.*"
+                                                     ]
                                  ;; :test-ns-regex [#"^((?!debug-integration-test).)*$$"]
                                  }
                      ;; TODO : Make cljfmt really nice : https://devhub.io/repos/bbatsov-cljfmt

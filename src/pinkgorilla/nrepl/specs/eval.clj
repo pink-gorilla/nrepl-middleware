@@ -43,7 +43,7 @@
               :clojure.error/column 1,
               :clojure.error/phase :compile-syntax-check,
               :clojure.error/source "NO_SOURCE_PATH",
-              :clojure.error/symbol throw},
+              :clojure.error/symbol "throw"},
    :message "Syntax error compiling throw at (1:1).",
    :session "4f44bee8-78d1-47da-a757-65e721a55a14",
    :data "{:clojure.error/phase :compile-syntax-check, :clojure.error/line 1, :clojure.error/column 1, :clojure.error/source \"NO_SOURCE_PATH\", :clojure.error/symbol throw}"})
