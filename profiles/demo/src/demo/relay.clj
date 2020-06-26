@@ -1,14 +1,16 @@
-(ns demo.app
+(ns demo.relay
   (:require
    [taoensso.timbre :as timbre :refer [debug info error]]
-   
    [ring.util.response :as response]
    [ring.middleware.cors :refer [wrap-cors]]
    [ring.adapter.jetty9 :refer [run-jetty]]
    [nrepl.server]
-   [picasso.default-config] ; for side effects   
+   [picasso.default-config] ; side-effects   
    [pinkgorilla.nrepl.middleware.cider :refer [cider-handler]]
-   [pinkgorilla.nrepl.ws.jetty9-ws-relay :refer [ws-processor]])
+   [pinkgorilla.nrepl.ws.jetty9-ws-relay :refer [ws-processor]]
+   [pinkgorilla.nrepl.client] ; side-effects
+   [pinkgorilla.nrepl.sniffer.core] ; side-effects
+   )
   (:gen-class))
 
 (defn html-response [html]

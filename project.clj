@@ -31,15 +31,17 @@
                   ;[org.clojure/spec.alpha "0.2.187"]
                   ;[org.clojure/data.json "0.2.6"]
 
-                  ; clojure
-                  [nrepl "0.7.0"]
-                  [cider/cider-nrepl "0.22.4"]
-                  [cider/piggieback "0.4.2"]
+                  ; nrepl
+                  [nrepl "0.8.0-alpha5"]
+                  ; [nrepl "0.7.0"] ; this lacks add-middleware
+                  [cider/cider-nrepl "0.25.2"]
+                  ;[cider/cider-nrepl "0.22.4"]
+                  [cider/piggieback "0.5.0"]
                   [clojail "1.0.6"] ; sandboxing
                   [compliment "0.3.10"] ; code completion
                   [org.pinkgorilla/picasso "3.1.4"]
 
-                  ;clojurescript
+                  ; clojurescript
                   [jarohen/chord "0.8.1" ; nrepl websocket
                    :exclusions [com.cognitect/transit-clj
                                 com.cognitect/transit-cljs]] ; websockets with core.async                                   
@@ -47,7 +49,10 @@
                   [com.lucasbradstreet/cljs-uuid-utils "1.0.2"] ;; awb99: in encoding, and clj/cljs proof
                   ]
 
-  :profiles {:cljs {:source-paths ["profiles/demo/src"]
+  :profiles {:sniffer {:source-paths ["profiles/sniffer/src"]
+                       :dependencies []}
+
+             :cljs {:source-paths ["profiles/demo/src"]
                     #_:repl-options   #_{:init-ns          demo.app
                                          :port             4001
                                          :nrepl-middleware [shadow.cljs.devtools.server.nrepl/middleware]}
@@ -57,7 +62,7 @@
                                    [org.clojure/tools.analyzer "1.0.0"]
 
                                    ; shadow-cljs MAY NOT be a dependency in lein deps :tree -> if so, bundeler will fail because shadow contains core.async which is not compatible with self hosted clojurescript
-                                   [thheller/shadow-cljs "2.10.7"]
+                                   [thheller/shadow-cljs "2.10.13"]
                                    [thheller/shadow-cljsjs "0.0.21"]
                                    [reagent "0.10.0"
                                     :exclusions [org.clojure/tools.reader
@@ -90,9 +95,8 @@
 
                      :cloverage {:codecov? true
                                  ;; In case we want to exclude stuff
-                                  :ns-exclude-regex [#".*relay"
-                                                     #"pinkgorilla.nrepl.ws.*"
-                                                     ]
+                                 :ns-exclude-regex [#".*relay"
+                                                    #"pinkgorilla.nrepl.ws.*"]
                                  ;; :test-ns-regex [#"^((?!debug-integration-test).)*$$"]
                                  }
                      ;; TODO : Make cljfmt really nice : https://devhub.io/repos/bbatsov-cljfmt
@@ -113,7 +117,7 @@
             ;"shadow-watch-demo" ["run" "-m" "shadow.cljs.devtools.cli" "watch" ":demo"]
 
             "build-test"  ^{:doc "Builds Bundle. Gets executed automatically before unit tests."}
-            ["with-profile" "+test" "shell" "shadow-cljs" "compile" "ci"]
+            ["with-profile" "+test" "run" "-m" "shadow.cljs.devtools.cli" "compile" "ci"]
 
             "test-run" ^{:doc "Runs unit tests. Does not build the bundle first.."}
             ["shell" "./node_modules/karma/bin/karma" "start" "--single-run"]
@@ -122,10 +126,13 @@
             ["do" "build-test" ["test-run"]]
 
             "demo"  ^{:doc "Runs demo  via webserver."}
-            ["shell" "shadow-cljs" "watch" "demo"]
+            ["with-profile" "+cljs" "run" "-m" "shadow.cljs.devtools.cli" "watch" "demo"]
 
             "relay"
-            ["with-profile" "+relay" "run" "-m" "demo.app"]}
+            ["with-profile" "+relay" "run" "-m" "demo.relay"]
+
+            "sniffer"
+            ["with-profile" "+sniffer" "run" "-m" "sniffer.app"]}
 
   :release-tasks [["vcs" "assert-committed"]
                   ["bump-version" "release"]

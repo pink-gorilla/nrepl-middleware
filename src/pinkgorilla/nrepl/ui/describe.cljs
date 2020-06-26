@@ -9,9 +9,11 @@
     (let [nrepl-version (get-in server-description [:versions :nrepl :version-string])
           clj-version (get-in server-description [:versions :clojure :version-string])
           java-version (get-in server-description [:versions :java :version-string])
+          cider-version (get-in server-description [:aux :cider-version :version-string])
           ops (get-in server-description [:ops])]
       [:div
        [:p (str " nREPL " nrepl-version)]
+       [:p (str " Cider " cider-version)]
        [:p "Clojure" clj-version]
        [:p "Java" java-version]
        [:p "OPs" (str (keys ops))]

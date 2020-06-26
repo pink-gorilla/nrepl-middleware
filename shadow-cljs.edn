@@ -1,12 +1,15 @@
 {:lein {:profile "+cljs"}
-
  :source-paths ["src"]
 
-; :nrepl {:port 9000
-;         :middleware []} ; optional list of namespace-qualified symbol
+ :nrepl {:port 12000
+          ; optional list of namespace-qualified symbol
+         :middleware ;  #pinkgorilla.nrepl.middleware.cider/cider-middleware
+         [cider.nrepl/wrap-complete
+          cider.nrepl/wrap-info
+          cider.nrepl/wrap-stacktrace]}
 
  ; shadow dev http server settings
- :dev-http {8000 {:roots ["target/node_modules/public"  ;  css and png from selected npm dependencies
+ :dev-http {8003 {:roots ["target/node_modules/public"  ;  css and png from selected npm dependencies
                           "target/demo/public" ; demo ui bundle
                           "profiles/demo/public" ; demo ui resources (html, data files)
                   ;"classpath:public" 
