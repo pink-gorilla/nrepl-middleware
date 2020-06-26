@@ -74,7 +74,7 @@
   (send! s pprint {:op "close"})
 
   ; testing
-  (def s (nrepl/connect :port 39719))
+  (def s2 (nrepl/connect :port 39719))
 
 
  ; 
