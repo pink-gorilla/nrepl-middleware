@@ -47,6 +47,7 @@
                                 com.cognitect/transit-cljs]] ; websockets with core.async                                   
                   [com.taoensso/timbre "4.10.0"]             ; clojurescript logging
                   [com.lucasbradstreet/cljs-uuid-utils "1.0.2"] ;; awb99: in encoding, and clj/cljs proof
+                  [clj-commons/pomegranate "1.2.0"] ; add-dependency in clj kernel TODO : Replace pomegranate with tools alpha
                   ]
 
   :profiles {:sniffer {:source-paths ["profiles/sniffer/src"]
@@ -126,7 +127,7 @@
             ["do" "build-test" ["test-run"]]
 
             "demo"  ^{:doc "Runs demo  via webserver."}
-            ["with-profile" "+cljs" "run" "-m" "shadow.cljs.devtools.cli" "watch" "demo"]
+            ["with-profile" "cljs" "run" "-m" "shadow.cljs.devtools.cli" "watch" "demo"]
 
             "relay"
             ["with-profile" "+relay" "run" "-m" "demo.relay"]

@@ -29,13 +29,15 @@
 (defn- on-eval-fragment
   "result is an atom, containing the eval result.
    processes a fragment-response and modifies result-atom accordingly."
-  [result {:keys [out err root-ex ns value picasso status] :as message}]
+  [result {:keys [out err root-ex ns value picasso datafy-id status] :as message}]
     ; console
   (when out
     (swap! result assoc :out (str (:out @result) out)))
     ;; eval error
   (when err
     (swap! result assoc :err err))
+  (when datafy-id
+    (swap! result assoc :datafy-id datafy-id))
     ; value /namespace
   (when ns
     (swap! result assoc :ns ns)

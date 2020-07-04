@@ -5,7 +5,9 @@
    [nrepl.middleware.print]
    [nrepl.middleware :as middleware]
    [pinkgorilla.nrepl.middleware.formatter :as formatter]
-   [picasso.converter :refer [->picasso]])
+   [picasso.converter :refer [->picasso]]
+   [pinkgorilla.notebook.repl] ; side-effects
+   [pinkgorilla.nrepl.middleware.datafy :refer [datafy-id nav!]])
   (:import nrepl.transport.Transport))
 
 
@@ -23,26 +25,41 @@
   (let [r (->picasso value)]
     r))
 
-(defn convert-response [msg resp]
+(defn add-datafy [resp v]
+  (if-let [d (datafy-id v)]
+    (assoc resp :datafy-id d)
+    resp))
+
+(defn convert-response [{:keys [op] :as msg} resp]
    ;; we have to transform the rendered value to EDN here, as otherwise
    ;; it will be pr'ed by the print middleware (which comes with the
    ;; eval middleware), meaning that it won't be mapped to EDN when the
    ;; whole message is mapped to EDN later. This has the unfortunate side
    ;; effect that the string will end up double-escaped.
    ;; (assoc resp :value (json/generate-string (render/render v)))
-  (if-let [[_ v] (and (:as-html msg) (find resp :value))]
-    (assoc resp :picasso (formatter/serialize (render-value v)))
-    resp))
+  (if (= op "gorilla-nav")
+    (let [id (:datafy-id msg)
+          k (:datafy-k msg)
+          v (:datafy-v msg)
+          nav (nav! id k v)]
+      (assoc resp :nav (formatter/serialize nav)))
+    (if-let [[_ v] (and (:as-picasso msg) (find resp :value))]
+      (-> (assoc resp :picasso (formatter/serialize (render-value v)))
+          (add-datafy v))
+      resp)))
 
-(defn render-values
-  [handler]
-  (fn [{:keys [^Transport transport] :as msg}]
-    (handler (assoc msg :transport (reify Transport
-                                     (recv [this] (.recv transport))
-                                     (recv [this timeout] (.recv transport timeout))
-                                     (send [this resp]
-                                       (.send transport (convert-response msg resp))
-                                       this))))))
+(defn render-values-req
+  [{:keys [^Transport transport] :as request}]
+  (reify Transport
+    (recv [this] (.recv transport))
+    (recv [this timeout] (.recv transport timeout))
+    (send [this resp]
+      (.send transport (convert-response request resp))
+      this)))
+
+(defn render-values [handler]
+  (fn [{:keys [op] :as request}]
+    (handler (assoc request :transport (render-values-req request)))))
 
 
 ;; TODO: No idea whether this still applies to nrepl 0.6
@@ -55,4 +72,4 @@
 (middleware/set-descriptor! #'render-values
                             {:requires #{#'nrepl.middleware.print/wrap-print}
                              :expects  #{"eval"}
-                             :handles  {}})
+                             :handles  {"gorilla-nav" "datafy nav"}})

@@ -35,7 +35,7 @@
              (not (str/starts-with? code "(with-in-str ")) ;vscode load file to repl
              (not (str/starts-with? code "(in-ns '")) ; vs code does this before evals
              (not (symbol? value)) ; response to in-ns
-             #_(:as-html msg))
+             #_(:as-picasso msg))
     (let [pinkie (if value (render-value value) nil)
           eval-result {:session session
                        :id id

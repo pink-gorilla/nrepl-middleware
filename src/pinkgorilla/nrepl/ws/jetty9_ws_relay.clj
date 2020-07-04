@@ -9,7 +9,7 @@
    [nrepl.transport :as transport]
   ; Pinkgorilla Libraries
    [pinkgorilla.nrepl.ws.relay :refer [on-ws-receive]]
-   [pinkgorilla.nrepl.middleware.render-values] ; bring into scope
+   [pinkgorilla.nrepl.middleware.render-values] ; side-effects
    ))
 
 (defn ws-processor
