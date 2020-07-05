@@ -8,13 +8,13 @@
    [pinkgorilla.nrepl.ws.client :refer [nrepl-op-complete]]))
 
 (defn ^:export nrepl-nav
-  "evaluates a clj-snippet"
-  [conn datafy-id k v]
+  [conn idx k v]
   (nrepl-op-complete
    conn
-   {:op "gorilla-nav"
-    :datafy-id datafy-id
-    :datafy-k k
-    :datafy-v v}
+   {:op "gorillanav"
+    :datafy (pr-str {:idx idx
+                     :k k
+                     :v v})}
    (fn [fragments]
+     (into [] (map :datafy fragments))
      fragments)))

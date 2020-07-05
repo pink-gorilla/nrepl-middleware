@@ -1,4 +1,4 @@
-(ns pinkgorilla.nrepl.autocomplete-simple
+(ns pinkgorilla.nrepl.op.autocomplete-simple
   (:require
    [clojure.string :as str]
    [pinkgorilla.nrepl.ws.client :refer [nrepl-op-complete]]))

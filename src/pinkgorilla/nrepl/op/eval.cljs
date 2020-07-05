@@ -16,9 +16,9 @@
    "
   [value]
   (try
-    (let [_ (info "value: " value "type " (type value))
+    (let [_ (info "value: " value)
           data (read-string value)
-          _ (info "converted: " data "type " (type data))
+          _ (info "converted: " data)
           ;data2 (read-string data)
           ;_ (info "converted2: " data2 "type " (type data2))
           ]
@@ -29,15 +29,15 @@
 (defn- on-eval-fragment
   "result is an atom, containing the eval result.
    processes a fragment-response and modifies result-atom accordingly."
-  [result {:keys [out err root-ex ns value picasso datafy-id status] :as message}]
+  [result {:keys [out err root-ex ns value picasso datafy status] :as message}]
     ; console
   (when out
     (swap! result assoc :out (str (:out @result) out)))
     ;; eval error
   (when err
     (swap! result assoc :err err))
-  (when datafy-id
-    (swap! result assoc :datafy-id datafy-id))
+  (when datafy
+    (swap! result assoc :datafy datafy))
     ; value /namespace
   (when ns
     (swap! result assoc :ns ns)

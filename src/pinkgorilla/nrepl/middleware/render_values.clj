@@ -1,15 +1,20 @@
 (ns pinkgorilla.nrepl.middleware.render-values
   (:require
-   ;[clojure.tools.logging :refer (info)]
+   [taoensso.timbre :as timbre :refer [debug info warn error]]
+   ;[clojure.tools.reader.edn :as edn]
+   [clojure.edn :as edn]
+  ; [clojure.tagged-literals]
    [nrepl.transport :as transport]
    [nrepl.middleware.print]
    [nrepl.middleware :as middleware]
    [pinkgorilla.nrepl.middleware.formatter :as formatter]
+   [nrepl.misc :refer [response-for]]
    [picasso.converter :refer [->picasso]]
    [pinkgorilla.notebook.repl] ; side-effects
    [pinkgorilla.nrepl.middleware.datafy :refer [datafy-id nav!]])
   (:import nrepl.transport.Transport))
 
+(set! *default-data-reader-fn* tagged-literal)
 
 ;; TODO: This might no longer be true as of nrepl 0.6
 
@@ -27,7 +32,7 @@
 
 (defn add-datafy [resp v]
   (if-let [d (datafy-id v)]
-    (assoc resp :datafy-id d)
+    (assoc resp :datafy (pr-str d))
     resp))
 
 (defn convert-response [{:keys [op] :as msg} resp]
@@ -37,16 +42,25 @@
    ;; whole message is mapped to EDN later. This has the unfortunate side
    ;; effect that the string will end up double-escaped.
    ;; (assoc resp :value (json/generate-string (render/render v)))
-  (if (= op "gorilla-nav")
-    (let [id (:datafy-id msg)
-          k (:datafy-k msg)
-          v (:datafy-v msg)
-          nav (nav! id k v)]
-      (assoc resp :nav (formatter/serialize nav)))
-    (if-let [[_ v] (and (:as-picasso msg) (find resp :value))]
-      (-> (assoc resp :picasso (formatter/serialize (render-value v)))
-          (add-datafy v))
-      resp)))
+  ;(info "op:" op)
+  ;(if (= op "gorillanav")
+  ;  (let [id (:datafy-id msg)
+  ;        k (:datafy-k msg)
+  ;        v (:datafy-v msg)
+  ;        nav (nav! id k v)]
+  ;    (assoc resp :nav (formatter/serialize nav)))
+  (if-let [[_ v] (and (:as-picasso msg) (find resp :value))]
+    (-> (assoc resp :picasso (formatter/serialize (render-value v)))
+        (add-datafy v))
+    resp))
+
+#_(defn current-time
+    [h]
+    (fn [{:keys [op transport] :as msg}]
+      (if (= "time?" op)
+        (nrepl.transport/send transport
+                              (response-for msg :status :done :time (System/currentTimeMillis)))
+        (h msg))))
 
 (defn render-values-req
   [{:keys [^Transport transport] :as request}]
@@ -57,9 +71,29 @@
       (.send transport (convert-response request resp))
       this)))
 
+(defn decode [datafy-str]
+  (edn/read-string
+   {:readers  *data-readers*
+    #_{;; 'js (with-meta identity {:punk/literal-tag 'js})
+              ;'inst cljs.tagged-literals/read-inst
+              ;'uuid cljs.tagged-literals/read-uuid
+              ;'queue cljs.tagged-literals/read-queue
+       }
+    :default tagged-literal}
+   datafy-str))
+
 (defn render-values [handler]
-  (fn [{:keys [op] :as request}]
-    (handler (assoc request :transport (render-values-req request)))))
+  (fn [{:keys [op transport] :as request}]
+    (if (= "gorillanav" op)
+      (let [dfy (decode (:datafy request))
+            {:keys [idx k v]} dfy
+            nav (nav! idx k v)]
+        (nrepl.transport/send transport
+                              (response-for request
+                                            :status :done
+                                            :datafy (pr-str nav))))
+
+      (handler (assoc request :transport (render-values-req request))))))
 
 
 ;; TODO: No idea whether this still applies to nrepl 0.6
@@ -72,4 +106,4 @@
 (middleware/set-descriptor! #'render-values
                             {:requires #{#'nrepl.middleware.print/wrap-print}
                              :expects  #{"eval"}
-                             :handles  {"gorilla-nav" "datafy nav"}})
+                             :handles  {"gorillanav" "datafy nav"}})

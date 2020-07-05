@@ -1,4 +1,4 @@
-(ns pinkgorilla.nrepl.autocomplete-compliment
+(ns pinkgorilla.nrepl.op.autocomplete-compliment
   (:require [clojure.string :as str]
             [promesa.core :as p]
             [repl-tooling.eval :as eval]))

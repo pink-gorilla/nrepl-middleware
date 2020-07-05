@@ -10,6 +10,7 @@
    [pinkgorilla.nrepl.ws.jetty9-ws-relay :refer [ws-processor]]
    [pinkgorilla.nrepl.client] ; side-effects
    [pinkgorilla.nrepl.sniffer.core] ; side-effects
+   [picasso.datafy.file] ; side-effects
    )
   (:gen-class))
 

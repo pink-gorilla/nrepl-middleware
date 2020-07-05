@@ -39,7 +39,7 @@
                   [cider/piggieback "0.5.0"]
                   [clojail "1.0.6"] ; sandboxing
                   [compliment "0.3.10"] ; code completion
-                  [org.pinkgorilla/picasso "3.1.4"]
+                  [org.pinkgorilla/picasso "3.1.18"]
 
                   ; clojurescript
                   [jarohen/chord "0.8.1" ; nrepl websocket

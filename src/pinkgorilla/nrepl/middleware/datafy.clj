@@ -22,15 +22,61 @@
 (def items (atom {}))
 
 (defn datafy-id [x]
-  (when (satisfies? clojure.core.protocols/Datafiable x)
-    (let [d (clojure.datafy/datafy x)
-          id (next-id)]
-      (info "datafy id: " id)
-      (swap! items assoc id d)
-      id)))
+  (if (satisfies? clojure.core.protocols/Datafiable x)
+    (let [dx (clojure.datafy/datafy x)
+          idx (next-id)]
+      (info "datafy id: " idx)
+      (swap! items assoc idx dx)
+      {:idx idx
+       :value dx
+       :meta (meta dx)})
+    {:value x
+     :meta (meta x)}))
 
-(defn nav! [id k v]
-  (let [d (get @items id)]
-    (clojure.datafy/nav d k v)))
+(defn hack-value [idx item k]
+  (info "hack-value idx" idx "item:" item  "key: " k " type: " (type item))
+  (cond
+    (seq? item) (nth item k)
+    :else (get item k)))
 
+(get [1 2 3] 1)
+
+(defn nav! [idx k v]
+  (info "nav! idx:" idx " key:" k " val:" v)
+  (let [item (get @items idx)
+        v (hack-value idx item k)
+        _ (info "hacked value: " v)
+        x* (clojure.datafy/nav item k v)
+        ;d* (clojure.datafy/datafy x*)
+        ]
+    #_{:idx idx
+       :value d*
+       :meta (meta d*)}
+    (datafy-id x*)))
+
+(comment
+  (def d [5 6 7])
+  (meta (clojure.datafy/datafy d))
+  (clojure.datafy/nav (clojure.datafy/datafy d) 1 (get d 1))
+
+  (def n (clojure.datafy/datafy *ns*))
+  n
+  (meta n)
+  (clojure.datafy/datafy (clojure.datafy/nav n :imports Appendable))
+
+  (def v (clojure.datafy/datafy [7 6 5]))
+  v
+  (meta v)
+
+  ;
+  (require '[picasso.datafy.file])
+  (def p (clojure.datafy/datafy (picasso.datafy.file/make-path "/")))
+  p
+  (def p1 (clojure.datafy/nav p :children (get p :children)))
+  (def p2 (clojure.datafy/nav (clojure.datafy/datafy p1) 3 (nth p1 3)))
+  (clojure.datafy/datafy p2)
+
+
+ ; 
+  )
 
