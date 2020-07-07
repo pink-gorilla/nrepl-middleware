@@ -21,11 +21,12 @@
 
 (def items (atom {}))
 
+; no logging in datafy-id as this gets sent to nrepl-client as it captures std-out
 (defn datafy-id [x]
   (if (satisfies? clojure.core.protocols/Datafiable x)
     (let [dx (clojure.datafy/datafy x)
           idx (next-id)]
-      (info "datafy id: " idx)
+      ;(info "datafy id: " idx)
       (swap! items assoc idx dx)
       {:idx idx
        :value dx
