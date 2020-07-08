@@ -11,9 +11,9 @@
    conn
    {:op "complete" :symbol symbol :ns ns :context context}
    (fn [fragments]
-     ;(map :completions fragments) ;  #(:candidate %)
-     (into []
-           (apply conj (map :completions fragments))))))
+     {:candidates
+      (into []
+            (apply conj (map :completions fragments)))})))
 
 (defn doc-string
   "Queries the REPL server for docs for the given symbol. 
@@ -23,7 +23,7 @@
    conn
    {:op "complete-doc" :symbol symbol :ns ns}
    (fn [fragments]
-     (map :completion-doc fragments))))
+     {:docstring (:completion-doc (first fragments))})))
 
 (defn resolve-symbol
   "resolve a symbol to get its namespace takes the symbol and the namespace 
@@ -38,8 +38,10 @@
    (fn [fragments]
      (let [last-status (:status (last fragments))
            no-info? (contains? last-status :no-info)]
-       (if no-info? :no-info
-           (map #(select-keys % [:name :ns]) fragments))))))
+       {:resolve
+        (if no-info?
+          :no-info
+          (map #(select-keys % [:name :ns]) fragments))}))))
 
 (defn stacktrace
   "resolve a symbol to get its namespace takes the symbol and the namespace that should be used as context.
