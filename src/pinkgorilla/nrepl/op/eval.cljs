@@ -1,9 +1,9 @@
 (ns pinkgorilla.nrepl.op.eval
   (:require-macros
-   [cljs.core.async.macros :refer [go go-loop]])
+   [cljs.core.async.macros :refer [go]])
   (:require
-   [taoensso.timbre :refer-macros [info warn]]
-   [cljs.core.async :as async :refer [<! >! put! chan timeout close!]]
+   [taoensso.timbre :refer-macros [debug info warn]]
+   [cljs.core.async :as async :refer [<!]]
    [cljs.reader :refer [read-string]]
    [reagent.core :as r]
    [pinkgorilla.nrepl.ws.client :refer [nrepl-op-complete]]))
@@ -16,9 +16,9 @@
    "
   [value]
   (try
-    (let [_ (info "value: " value)
+    (let [_ (debug "value: " value)
           data (read-string value)
-          _ (info "converted: " data)
+          _ (debug "converted: " data)
           ;data2 (read-string data)
           ;_ (info "converted2: " data2 "type " (type data2))
           ]

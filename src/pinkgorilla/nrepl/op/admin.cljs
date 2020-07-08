@@ -3,11 +3,9 @@
    [clojure.string :as str]
    [pinkgorilla.nrepl.ws.client :refer [nrepl-op-complete]]))
 
-
 ;todo:
 ; op: close
 ; op: clone
-
 
 (defn describe [conn]
   (nrepl-op-complete
@@ -22,7 +20,7 @@
    conn
    {:op "ls-sessions"}
    (fn [fragments]
-     (into [] (apply conj (map :sessions fragments))))))
+     {:sessions (into [] (apply conj (map :sessions fragments)))})))
 
 (defn interrupt [conn]
   (nrepl-op-complete
