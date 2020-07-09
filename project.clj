@@ -6,6 +6,16 @@
                                      :username :env/release_username
                                      :password :env/release_password
                                      :sign-releases false}]]
+
+  :release-tasks [["vcs" "assert-committed"]
+                  ["bump-version" "release"]
+                  ["vcs" "commit" "Release %s"]
+                  ["vcs" "tag" "v" "--no-sign"]
+                  ["deploy"]
+                  ["bump-version"]
+                  ["vcs" "commit" "Begin %s"]
+                  ["vcs" "push"]]
+
   :min-lein-version "2.9.3"
   :min-java-version "1.11"
 
@@ -32,14 +42,12 @@
                   ;[org.clojure/data.json "0.2.6"]
 
                   ; nrepl
-                  [nrepl "0.8.0-alpha5"]
-                  ; [nrepl "0.7.0"] ; this lacks add-middleware
+                  [nrepl "0.8.0-alpha5"]  ; 0.7.0 lacks add-middleware
                   [cider/cider-nrepl "0.25.2"]
-                  ;[cider/cider-nrepl "0.22.4"]
                   [cider/piggieback "0.5.0"]
                   [clojail "1.0.6"] ; sandboxing
                   [compliment "0.3.10"] ; code completion
-                  [org.pinkgorilla/picasso "3.1.18"]
+                  [org.pinkgorilla/picasso "3.1.18"] ; render values
 
                   ; clojurescript
                   [jarohen/chord "0.8.1" ; nrepl websocket
@@ -71,15 +79,15 @@
                                                  cljsjs/react-dom]]]}
 
              :relay-jetty {:source-paths ["profiles/demo/src"]
-                     :dependencies [[ring "1.7.1"]
-                                    [ring-cors "0.1.13"]
-                                    [ring/ring-defaults "0.3.2"
-                                     :exclusions [javax.servlet/servlet-api]]
+                           :dependencies [[ring "1.7.1"]
+                                          [ring-cors "0.1.13"]
+                                          [ring/ring-defaults "0.3.2"
+                                           :exclusions [javax.servlet/servlet-api]]
                                     ;[javax.websocket/javax.websocket-api "1.1"]
                                     ;[javax.servlet/javax.servlet-api "4.0.1"]
                                     ;[compojure "1.6.1"] ; Routing
                                     ;[org.eclipse.jetty.websocket/websocket-server "9.4.12.v20180830"]
-                                    [info.sunng/ring-jetty9-adapter "0.12.5"]]}
+                                          [info.sunng/ring-jetty9-adapter "0.12.5"]]}
 
              :dev   {:dependencies [[org.clojure/tools.logging "1.0.0"]
                                     [com.taoensso/timbre "4.10.0"]             ; clojurescript logging
@@ -94,7 +102,7 @@
                      :aliases {"clj-kondo"
                                ["run" "-m" "clj-kondo.main"]}
 
-                     :cloverage {:codecov? true
+                     :cloverage {:codecov? false
                                  ;; In case we want to exclude stuff
                                  :ns-exclude-regex [#".*relay"
                                                     #"pinkgorilla.nrepl.ws.*"]
@@ -135,14 +143,7 @@
             "sniffer"
             ["with-profile" "+sniffer" "run" "-m" "sniffer.app"]}
 
-  :release-tasks [["vcs" "assert-committed"]
-                  ["bump-version" "release"]
-                  ["vcs" "commit" "Release %s"]
-                  ["vcs" "tag" "v" "--no-sign"]
-                  ["deploy"]
-                  ["bump-version"]
-                  ["vcs" "commit" "Begin %s"]
-                  ["vcs" "push"]]
+
 
   ;:repl-options {:init-ns pinkgorilla.middleware.cljs}
   )
