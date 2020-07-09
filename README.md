@@ -8,10 +8,9 @@
 ## Demo
 
 ```
+lein relay-jetty  ; this runs jetty http server with websocket relay
 npm install
-lein relay    ; this runs http server with websocket relay
-lein demo     ; browser app served with shadow-cljs dev server
-
+lein demo         ; browser app served with shadow-cljs dev server
 ```
 
 ## Design of websocket relay

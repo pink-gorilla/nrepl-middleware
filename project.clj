@@ -70,14 +70,14 @@
                                                  cljsjs/react
                                                  cljsjs/react-dom]]]}
 
-             :relay {:source-paths ["profiles/demo/src"]
+             :relay-jetty {:source-paths ["profiles/demo/src"]
                      :dependencies [[ring "1.7.1"]
                                     [ring-cors "0.1.13"]
                                     [ring/ring-defaults "0.3.2"
                                      :exclusions [javax.servlet/servlet-api]]
                                     ;[javax.websocket/javax.websocket-api "1.1"]
                                     ;[javax.servlet/javax.servlet-api "4.0.1"]
-                                    [compojure "1.6.1"] ; Routing
+                                    ;[compojure "1.6.1"] ; Routing
                                     ;[org.eclipse.jetty.websocket/websocket-server "9.4.12.v20180830"]
                                     [info.sunng/ring-jetty9-adapter "0.12.5"]]}
 
@@ -129,8 +129,8 @@
             "demo"  ^{:doc "Runs demo  via webserver."}
             ["with-profile" "cljs" "run" "-m" "shadow.cljs.devtools.cli" "watch" "demo"]
 
-            "relay"
-            ["with-profile" "+relay" "run" "-m" "demo.relay"]
+            "relay-jetty"
+            ["with-profile" "+relay-jetty" "run" "-m" "demo.relay-jetty"]
 
             "sniffer"
             ["with-profile" "+sniffer" "run" "-m" "sniffer.app"]}
