@@ -22,6 +22,7 @@
   (let [ws-handler (jetty-relay-handler)
         relay-config (:relay config)
         {:keys [port route]} relay-config]
+    (info "starting jetty relay at port " port "..")
     (run-jetty ws-handler {:port port
                            :websockets {route ws-handler}
                            :allow-null-path-info true
