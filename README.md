@@ -8,9 +8,9 @@
 ## Demo
 
 ```
-lein relay-jetty  ; this runs jetty http server with websocket relay
+lein relay-jetty  ; this runs jetty http server with websocket relay (port 9000)
 npm install
-lein demo         ; browser app served with shadow-cljs dev server
+lein demo         ; browser app served with shadow-cljs dev server port 8000
 ```
 
 ## Design of websocket relay

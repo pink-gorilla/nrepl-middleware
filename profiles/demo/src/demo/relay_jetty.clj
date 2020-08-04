@@ -9,7 +9,7 @@
 
 (def demo-config
   {:nrepl-server {:port 9100}
-   :relay {:port 9200
+   :relay {:port 9000
            :route "/nrepl"}})
 
 (defn -main []

@@ -9,12 +9,10 @@
           cider.nrepl/wrap-stacktrace]}
 
  ; shadow dev http server settings
- :dev-http {8003 {:roots ["target/node_modules/public"  ;  css and png from selected npm dependencies
+ :dev-http {8000 {:roots ["target/node_modules/public"  ;  css and png from selected npm dependencies
                           "target/demo/public" ; demo ui bundle
                           "profiles/demo/public" ; demo ui resources (html, data files)
                   ;"classpath:public" 
-                  ;"classpath:resources"
-                  ;"classpath:resources/public"
                           ]}}
 
  :builds {:demo {:target :browser

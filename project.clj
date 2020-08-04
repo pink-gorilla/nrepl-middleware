@@ -28,13 +28,17 @@
   :uberjar-exclusions [#"cider/nrepl.*\.class$"]
 
   :managed-dependencies [[org.clojure/clojure "1.10.1"]
-                         [org.clojure/core.async "1.2.603"]
+                         [org.clojure/core.async "1.3.610"]
                          [org.clojure/clojurescript "1.10.773"]
                          [com.cognitect/transit-clj "1.0.324"]
                          [com.cognitect/transit-cljs "0.8.264"]
-                         [com.fasterxml.jackson.core/jackson-core "2.11.0"]
+                         [com.fasterxml.jackson.core/jackson-core "2.11.2"]
                          [cheshire "5.10.0"]
-                         [org.clojure/tools.reader "1.3.2"]]
+                         [org.clojure/tools.reader "1.3.2"]
+                         [com.google.code.findbugs/jsr305 "3.0.2"]
+
+                         
+                         ]
 
 
   :dependencies  [;[org.clojure/clojure "1.10.1"]
@@ -42,8 +46,8 @@
                   ;[org.clojure/data.json "0.2.6"]
 
                   ; nrepl
-                  [nrepl "0.8.0-alpha5"]  ; 0.7.0 lacks add-middleware
-                  [cider/cider-nrepl "0.25.2"]
+                  [nrepl "0.8.0"]  ; 0.7.0 lacks add-middleware
+                  [cider/cider-nrepl "0.25.3"]
                   [cider/piggieback "0.5.0"]
                   [clojail "1.0.6"] ; sandboxing
                   [compliment "0.3.10"] ; code completion
@@ -66,7 +70,7 @@
                                          :port             4001
                                          :nrepl-middleware [shadow.cljs.devtools.server.nrepl/middleware]}
 
-                    :dependencies [[org.clojure/core.async "1.2.603"]
+                    :dependencies [[org.clojure/core.async "1.3.610"]
                                    [org.clojure/clojurescript "1.10.773"]
                                    [org.clojure/tools.analyzer "1.0.0"]
 
@@ -79,19 +83,18 @@
                                                  cljsjs/react-dom]]]}
 
              :relay-jetty {:source-paths ["profiles/demo/src"]
-                           :dependencies [[ring "1.7.1"]
+                           :dependencies [[ring "1.8.1"]
                                           [ring-cors "0.1.13"]
                                           [ring/ring-defaults "0.3.2"
                                            :exclusions [javax.servlet/servlet-api]]
                                     ;[javax.websocket/javax.websocket-api "1.1"]
                                     ;[javax.servlet/javax.servlet-api "4.0.1"]
-                                    ;[compojure "1.6.1"] ; Routing
                                     ;[org.eclipse.jetty.websocket/websocket-server "9.4.12.v20180830"]
-                                          [info.sunng/ring-jetty9-adapter "0.12.5"]]}
+                                          [info.sunng/ring-jetty9-adapter "0.14.0"]]}
 
-             :dev   {:dependencies [[org.clojure/tools.logging "1.0.0"]
+             :dev   {:dependencies [[org.clojure/tools.logging "1.1.0"]
                                     [com.taoensso/timbre "4.10.0"]             ; clojurescript logging
-                                    [clj-kondo "2020.06.12"]]
+                                    [clj-kondo "2020.07.29"]]
                      :plugins [[lein-cljfmt "0.6.6"]
                                [lein-cloverage "1.1.2"]
                                [lein-shell "0.5.0"]
