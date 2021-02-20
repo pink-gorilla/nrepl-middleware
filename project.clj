@@ -62,7 +62,10 @@
                   [clj-commons/pomegranate "1.2.0"] ; add-dependency in clj kernel TODO : Replace pomegranate with tools alpha
                   ]
 
-  :profiles {:sniffer {:source-paths ["profiles/sniffer/src"]
+  :profiles {:client {:source-paths ["profiles/client/src"]
+                       :dependencies []}
+             
+             :sniffer {:source-paths ["profiles/sniffer/src"]
                        :dependencies []}
 
              :cljs {:source-paths ["profiles/demo/src"]
@@ -143,8 +146,13 @@
             "relay-jetty"
             ["with-profile" "+relay-jetty" "run" "-m" "demo.relay-jetty"]
 
+            "client"
+            ["with-profile" "+client" "run" "-m" "client.app"]
+            
             "sniffer"
-            ["with-profile" "+sniffer" "run" "-m" "sniffer.app"]}
+            ["with-profile" "+sniffer" "run" "-m" "sniffer.app"]
+            
+            }
 
 
 

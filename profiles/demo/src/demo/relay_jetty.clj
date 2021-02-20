@@ -3,12 +3,11 @@
    [taoensso.timbre :as timbre :refer [debug info error]]
    [pinkgorilla.nrepl.service.nrepl-server :refer [run-nrepl-server]]
    [pinkgorilla.nrepl.service.add-middleware :refer [add-middleware!]]
-   [pinkgorilla.nrepl.service.relay-jetty :refer [run-relay-jetty]]
-   [pinkgorilla.nrepl.client]) ; side-effects
+   [pinkgorilla.nrepl.service.relay-jetty :refer [run-relay-jetty]])
   (:gen-class))
 
 (def demo-config
-  {:nrepl-server {:bind "127.0.0.1" 
+  {:nrepl-server {:bind "127.0.0.1"
                   :port 9100}
    :relay {:port 9000
            :route "/nrepl"}})

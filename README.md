@@ -9,9 +9,18 @@
 
 ```
 lein relay-jetty  ; this runs jetty http server with websocket relay (port 9000)
+
+lein client listen   ; will listenn to sniffed evals
+lein client ide      ; will do a few evals that wil show up on listen
+
 npm install
 lein demo         ; browser app served with shadow-cljs dev server port 8000
+
+
+
 ```
+
+
 
 ## Design of websocket relay
 

@@ -7,11 +7,12 @@
    [nrepl.transport :as transport]
    [nrepl.middleware.print]
    [nrepl.middleware :as middleware]
-   [pinkgorilla.nrepl.middleware.formatter :as formatter]
    [nrepl.misc :refer [response-for]]
+   [pinkgorilla.nrepl.middleware.formatter :as formatter]
+   [pinkgorilla.nrepl.middleware.datafy :refer [datafy-id nav!]]
    [picasso.converter :refer [->picasso]]
    [pinkgorilla.notebook.repl] ; side-effects
-   [pinkgorilla.nrepl.middleware.datafy :refer [datafy-id nav!]])
+   )
   (:import nrepl.transport.Transport))
 
 (set! *default-data-reader-fn* tagged-literal)
@@ -103,7 +104,8 @@
 ;; the linearized middlware stack between the eval middleware and the pr-values middleware. A bit of a hack!
 
 
-(middleware/set-descriptor! #'render-values
-                            {:requires #{#'nrepl.middleware.print/wrap-print}
-                             :expects  #{"eval"}
-                             :handles  {"gorilla-nav" "datafy nav"}})
+(middleware/set-descriptor!
+ #'render-values
+ {:requires #{#'nrepl.middleware.print/wrap-print}
+  :expects  #{"eval"}
+  :handles  {"gorilla-nav" "datafy nav"}})

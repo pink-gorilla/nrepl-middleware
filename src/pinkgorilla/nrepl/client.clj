@@ -14,15 +14,7 @@
    - convert to async channels ?   "
   (:require
    [clojure.pprint :refer [pprint]]
-   [clojure.core.async :refer [chan >! go]]
-   [nrepl.core :as nrepl]
-   [pinkgorilla.nrepl.logger :refer [new-log-session!]]))
-
-(defn port-from-file []
-  (try
-    (Integer/parseInt (slurp ".nrepl-port"))
-    (catch clojure.lang.ExceptionInfo e 0)
-    (catch Exception e 0)))
+   [nrepl.core :as nrepl]))
 
 
 (defn- set-session-id! [state fragments]
@@ -31,8 +23,7 @@
     (when-let [f (first fragments)]
       (when-let [id (:new-session f)]
         (println "setting session id: " id)
-        (swap! state assoc :session-id id)
-        (new-log-session! id)))))
+        (swap! state assoc :session-id id)))))
 
 (defn- add-session-id [state msg]
   (if-let [session-id (:session-id @state)]
@@ -40,49 +31,61 @@
     msg))
 
 (defn process-responses [state on-receive-fn fragments]
-  (set-session-id! state fragments)
+  
   (on-receive-fn fragments)
   :nrepl-rep-rcvd)
 
-(defn send!
-  [state on-receive-fn msg]
+(defn request!
+  "makes a nrepl request.
+   waits until all responses are received
+   returns the fragments
+   "
+  [state msg]
   ;(println "send! msg" msg " state: " @state " fn: " on-receive-fn)
   (if-let [client (:client @state)]
     (->> (add-session-id state msg)
          (nrepl/message client)
-         doall
-         (process-responses state on-receive-fn))
+         doall)
+    (do
+      (println "cannot send nrepl msg. not connected!")
+      nil)))
+
+(defn message!
+  [state msg]
+  (if-let [client (:client @state)]
+    (do
+      (println "nrepl-request: " msg)
+      (->> msg
+         ;(nrepl/message client)
+           client
+           doall))
     (println "cannot send nrepl msg. not connected!")))
 
-(defn exec-async! [state msg]
-  (let [chan-eval-result (chan)
-        on-receive-fn (fn [r]
-                        (go (>! chan-eval-result r)))]
-    (send! state on-receive-fn msg)
-    chan-eval-result))
 
 (defn connect! [port]
   (let [transport (nrepl/connect :port port)  ; :host "172.18.0.5"
         client (nrepl/client transport Long/MAX_VALUE)  ; 15000 
         state (atom {:transport transport
                      :client client
-                     :session-id nil})]
-    (send! state pprint {:op "clone"})
+                     :session-id nil})
+        clone-response (request! state {:op "clone"})
+        ]
+    (set-session-id! state clone-response)    
+    (pprint clone-response)
     state))
 
-(comment
-
-  (def s (connect! 33117))
-  @s
-
-  (send! s pprint {:op "ls-sessions"})
-  (send! s pprint {:op "describe"})
-  (send! s pprint {:op "ls-middleware"})
-  (send! s pprint {:op "close"})
-
-  ; testing
-  (def s2 (nrepl/connect :port 39719))
+(defn disconnect! [state]
+  (let [transport (:transport @state)]
+    (println "disconnecting client nrepl session.")
+    (swap! state dissoc :transport :client)
+    (.close transport)))
 
 
- ; 
-  )
+(defn messages-print
+  [state msg]
+  (if-let [client (:client @state)]
+    (loop [fragments (client msg)]
+      (let [f (take 1 fragments)]
+        (println f)
+        (recur (rest fragments))))
+    (println "cannot send nrepl msg. not connected!")))

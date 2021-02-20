@@ -5,9 +5,7 @@
    [ring.middleware.cors :refer [wrap-cors]]
    [ring.adapter.jetty9 :refer [run-jetty]]
    [pinkgorilla.nrepl.handler.cider :refer [cider-handler]]
-   [pinkgorilla.nrepl.ws.jetty9-ws-relay :refer [ws-processor]]
-   [pinkgorilla.nrepl.client] ; side-effects
-   ))
+   [pinkgorilla.nrepl.ws.jetty9-ws-relay :refer [ws-processor]]))
 
 (defn jetty-relay-handler []
   (let [nrepl-handler (atom (cider-handler))
