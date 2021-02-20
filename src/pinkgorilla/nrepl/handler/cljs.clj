@@ -1,7 +1,7 @@
-(ns pinkgorilla.nrepl.middleware.cljs
+(ns pinkgorilla.nrepl.handler.cljs
   "Experimental CLJS - not quite sure if that makes sense at all"
   (:require
-   [pinkgorilla.nrepl.middleware.handle :refer [nrepl-handler]]
+   [pinkgorilla.nrepl.handler.nrepl-handler :refer [nrepl-handler]]
    [pinkgorilla.nrepl.middleware.sandboxed_interruptible-eval]
    [pinkgorilla.nrepl.middleware.render-values :as render-mw] ;; it's essential this import comes after the previous one! It
     ;; refers directly to a var in nrepl (as a hack to workaround

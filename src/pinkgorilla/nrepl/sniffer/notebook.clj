@@ -4,11 +4,11 @@
    [picasso.default-config] ; side-effects 
    [picasso.converter :refer [->picasso]]
    [pinkgorilla.nrepl.logger :refer [log!]]
-   [pinkgorilla.nrepl.sniffer.core :as sniffer]))
+   [pinkgorilla.nrepl.service.add-middleware :refer [current-session-id]]))
 
 (defn our-msg? [msg]
   (let [msg-session-id (:session msg)
-        our-session-id (sniffer/current-session-id)]
+        our-session-id (current-session-id)]
     (and our-session-id
          (= our-session-id msg-session-id))))
 

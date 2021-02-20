@@ -43,7 +43,7 @@
    ;; effect that the string will end up double-escaped.
    ;; (assoc resp :value (json/generate-string (render/render v)))
   ;(info "op:" op)
-  ;(if (= op "gorillanav")
+  ;(if (= op "gorilla-nav")
   ;  (let [id (:datafy-id msg)
   ;        k (:datafy-k msg)
   ;        v (:datafy-v msg)
@@ -84,7 +84,7 @@
 
 (defn render-values [handler]
   (fn [{:keys [op transport] :as request}]
-    (if (= "gorillanav" op)
+    (if (= "gorilla-nav" op)
       (let [dfy (decode (:datafy request))
             {:keys [idx k v]} dfy
             nav (nav! idx k v)]
@@ -106,4 +106,4 @@
 (middleware/set-descriptor! #'render-values
                             {:requires #{#'nrepl.middleware.print/wrap-print}
                              :expects  #{"eval"}
-                             :handles  {"gorillanav" "datafy nav"}})
+                             :handles  {"gorilla-nav" "datafy nav"}})

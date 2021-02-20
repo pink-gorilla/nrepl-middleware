@@ -18,6 +18,13 @@
    [nrepl.core :as nrepl]
    [pinkgorilla.nrepl.logger :refer [new-log-session!]]))
 
+(defn port-from-file []
+  (try
+    (Integer/parseInt (slurp ".nrepl-port"))
+    (catch clojure.lang.ExceptionInfo e 0)
+    (catch Exception e 0)))
+
+
 (defn- set-session-id! [state fragments]
   ;(println "set-session-id!")
   (when-not (:session-id @state)

@@ -4,7 +4,7 @@
    ;[ring.util.response :as response]
    [ring.middleware.cors :refer [wrap-cors]]
    [ring.adapter.jetty9 :refer [run-jetty]]
-   [pinkgorilla.nrepl.middleware.cider :refer [cider-handler]]
+   [pinkgorilla.nrepl.handler.cider :refer [cider-handler]]
    [pinkgorilla.nrepl.ws.jetty9-ws-relay :refer [ws-processor]]
    [pinkgorilla.nrepl.client] ; side-effects
    ))

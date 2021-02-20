@@ -1,4 +1,4 @@
-(ns pinkgorilla.nrepl.middleware.handle
+(ns pinkgorilla.nrepl.handler.nrepl-handler
   (:require
    [nrepl.server :as srv]
    [pinkgorilla.nrepl.middleware.sandboxed_interruptible-eval]

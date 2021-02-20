@@ -1,6 +1,6 @@
-(ns pinkgorilla.nrepl.middleware.cider
+(ns pinkgorilla.nrepl.handler.cider
   (:require
-   [pinkgorilla.nrepl.middleware.handle :refer [nrepl-handler]]
+   [pinkgorilla.nrepl.handler.nrepl-handler :refer [nrepl-handler]]
     ;; [cider.nrepl]
    ))
 

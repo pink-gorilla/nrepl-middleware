@@ -1,4 +1,4 @@
-(ns pinkgorilla.nrepl.sniffer.middleware
+(ns pinkgorilla.nrepl.middleware.sniffer
   (:require
    ;[clojure.tools.logging :refer (info)]
    [clojure.core.async :refer [chan >! go]]
@@ -70,10 +70,17 @@
 ;; the linearized middlware stack between the eval middleware and the pr-values middleware. A bit of a hack!
 
 
-(middleware/set-descriptor! #'render-values-sniffer
-                            {:requires #{#'nrepl.middleware.print/wrap-print}
-                             :expects  #{"eval"}
-                             :handles {"pinkieeval" "eval with pinkie conversion"}})
+(middleware/set-descriptor!
+ #'render-values-sniffer
+ {:requires #{#'nrepl.middleware.print/wrap-print}
+  :expects  #{"eval"}
+  :handles {"pinkieeval"
+            {:doc "Provides a list of completion candidates."
+             :requires {"prefix" "The prefix to complete."}
+             :optional {"ns" "The namespace in which we want to obtain completion candidates. Defaults to `*ns*`."
+                        "complete-fn" "The fully qualified name of a completion function to use instead of the default one (e.g. `my.ns/completion`)."
+                        "options" "A map of options supported by the completion function."}
+             :returns {"completions" "A list of completion candidates. Each candidate is a map with `:candidate` and `:type` keys. Vars also have a `:ns` key."}}}})
 
 #_(defn send-to-pinkie! [{:keys [code] :as req} {:keys [value] :as resp}]
     (when (and code true); (contains? resp :value))
