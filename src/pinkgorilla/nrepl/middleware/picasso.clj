@@ -36,7 +36,7 @@
 (defn add-picasso [resp]
   (if-let [[_ v] (find resp :value)]
     (-> (assoc resp :picasso (formatter/serialize (render-value v))
-                    :meta (formatter/serialize (meta v)))
+               :meta (formatter/serialize (meta v)))
         (add-datafy v))
     resp))
 

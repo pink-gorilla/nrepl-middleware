@@ -42,7 +42,6 @@
 (defn sniff-off []
   (swap! state assoc :session-id-source nil))
 
-
 (defn response-sniff-source!
   [req]
   (sniff-on req)
@@ -85,6 +84,7 @@
 ; a clean nrepl middleware is found in:
 ; https://github.com/RickMoynihan/nrebl.middleware/blob/master/src/nrebl/middleware.clj
 
+
 (defn commands [req resp]
   (let [v  (:value resp)]
     (when v
@@ -94,7 +94,6 @@
         :gorilla/off (do (log "disabling sniffing.")
                          (sniff-off))
         nil))))
-
 
 (defn eval-response [{:keys [code] :as req} {:keys [value] :as resp}]
   (when (and code true); (contains? resp :value))
