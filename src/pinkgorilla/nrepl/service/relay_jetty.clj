@@ -3,7 +3,6 @@
    [taoensso.timbre :as timbre :refer [info]]
    ;[ring.util.response :as response]
    ;[ring.middleware.cors :refer [wrap-cors]]
-   [ring.adapter.jetty9 :refer [run-jetty]]
    [pinkgorilla.nrepl.handler.nrepl-handler :refer [make-default-handler]]
    [pinkgorilla.nrepl.ws.jetty9-ws-relay :refer [ws-processor]]))
 
@@ -17,7 +16,9 @@
     ws-handler))
 
 (defn run-relay-jetty [config]
+  (require 'ring.adapter.jetty9)
   (let [ws-handler (jetty-relay-handler)
+        run-jetty (resolve 'ring.adapter.jetty9/run-jetty)
         {:keys [port route]} (:relay config)]
     (info "starting jetty relay at port " port "..")
     (run-jetty ws-handler {:port port
