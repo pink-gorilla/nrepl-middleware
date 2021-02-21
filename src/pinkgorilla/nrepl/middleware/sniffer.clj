@@ -9,7 +9,7 @@
 
 (def state (atom {:msg-sink nil
                   :session-id-sink nil}
-                  :session-id-source nil))
+                 :session-id-source nil))
 
 (defn session-id-
   "extracts the id from a session.
@@ -54,7 +54,7 @@
 
 (defn response-eval-forward
   [msg]
-  (let [msg-listener (:msg-listener @state)
+  (let [msg-listener (:msg-sink @state)
         msg-forward (dissoc msg :session :transport
                             :nrepl.middleware.print/print-fn
                             :nrepl.middleware.caught/caught-fn)
@@ -67,11 +67,21 @@
 ; a clean nrepl middleware is found in:
 ; https://github.com/RickMoynihan/nrebl.middleware/blob/master/src/nrebl/middleware.clj
 
+(defn eval-response [{:keys [code] :as req} {:keys [value] :as resp}]
+  (when (and code true); (contains? resp :value))
+    (let [msg-listener (:msg-sink @state)
+          msg-forward (dissoc resp :session :transport
+                              :nrepl.middleware.print/print-fn
+                              :nrepl.middleware.caught/caught-fn)
+          msg-resp (response-for msg-listener {:sniffer-forward msg-forward})]
+      ; printing not allowed here - nrepl would capture this as part of the eval request 
+      ;(println "sniffer forwarding response:" msg-resp)
+      msg-resp)))
 
 (defn- wrap-sniffer-sender
   "Wraps a `Transport` with code which prints the value of messages sent to
   it using the provided function."
-  [{:keys [id op ^Transport transport] :as request}]
+  [{:keys [id op ^Transport transport session] :as request}]
   (reify Transport
     (recv [this]
       (.recv transport))
@@ -79,10 +89,12 @@
       (.recv transport timeout))
     (send [this resp]
       (.send transport resp)
+      (when (and (= (session-id- session) (:session-id-source @state))
+                 (:code request))
+        (transport/send (:transport (:msg-sink @state))
+                        (eval-response request resp)))
       #_(send-to-pinkie! request resp)
-      this
-      )
-    ))
+      this)))
 
 (defn wrap-sniffer
   [handler]
@@ -116,13 +128,13 @@
  #'wrap-sniffer
  {:requires #{#'nrepl.middleware.print/wrap-print}
   :expects  #{"eval"}
-  :handles {"sniffer-status" 
+  :handles {"sniffer-status"
             {:doc "status of sniffer middleware"}
-            
-            "sniffer-source"     
+
+            "sniffer-source"
             {:doc "start sniffing current session"}
-            
-            "sniffer-sink"   
+
+            "sniffer-sink"
             {:doc "called from notebook. destination for forwarded events "}}})
 
 
