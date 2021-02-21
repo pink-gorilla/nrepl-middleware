@@ -5,7 +5,7 @@
 
 ;; TODO: Only force loading for now
 (require ;'pinkgorilla.nrepl.middleware.handle
-         'pinkgorilla.nrepl.middleware.picasso)
+ 'pinkgorilla.nrepl.middleware.picasso)
 
 (deftest edn-serialization
   (testing "Default EDN serialization"
