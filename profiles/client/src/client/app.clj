@@ -21,9 +21,14 @@
               {:op "sniffer-source"}  ; this starts sniffing on this session
 
               ; this ops get forwarded
-              {:op "eval"  :code "(+ 2 2)"}
+              {:op "eval"  :code "^:X (+ 2 2)"}
               {:op "eval"  :code "^:R [:p/vega (+ 8 8)]"}
-              {:op "eval"  :code "(time (reduce + (range 1e6)))"}
+              {:op "eval"  :code "^:U (time (reduce + (range 1e6)))"}
+              
+              {:op "eval"  :code ":gorilla/off"}
+              {:op "eval"  :code "\"NO\""}
+              {:op "eval"  :code ":gorilla/on"}
+              {:op "eval"  :code "\"YES\""}
               
               ; evals inside notebook would have this flag. check if it works:
               {:op "eval" :as-picasso 1 :code "^:R [:p (+ 8 8)]"}])

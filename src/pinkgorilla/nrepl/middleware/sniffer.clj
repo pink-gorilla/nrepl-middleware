@@ -1,10 +1,14 @@
 (ns pinkgorilla.nrepl.middleware.sniffer
+  " observes a ide nrepl connection
+    sends evals to a sink (typiccally pinkgorilla notebook)
+   "
   (:require
    ;[clojure.tools.logging :refer (info)]
    [nrepl.transport :as transport]
    [nrepl.middleware :as middleware]
    [nrepl.middleware.print]
    [nrepl.misc :refer [response-for] :as misc]
+   [pinkgorilla.nrepl.logger :refer [log]]
    [pinkgorilla.nrepl.middleware.picasso :refer [add-picasso]])
   (:import nrepl.transport.Transport))
 
@@ -30,16 +34,25 @@
   (response-for msg {:status :done
                      :sniffer-status (status-)}))
 
-(defn response-sniff-source!
-  [{:keys [session] :as msg}]
+(defn sniff-on [{:keys [session] :as req}]
   (let [session (session-id- session)]
-    (println "sniffer - setting source session id:" session)
-    (swap! state assoc :session-id-source session)
-    (println "sniffer - state:" (status-))
-    (response-for msg {:status :done
-                       :sniffer-status (status-)})))
+    ;(println "sniffer - setting source session id:" session)
+    (swap! state assoc :session-id-source session)))
+
+(defn sniff-off []
+  (swap! state assoc :session-id-source nil))
+
+
+(defn response-sniff-source!
+  [req]
+  (sniff-on req)
+  (println "sniffer - state:" (status-))
+  (response-for req {:status :done
+                     :sniffer-status (status-)}))
 
 (defn response-sniff-sink!
+  "registers a sink, so sniffer knows to which nrepl-session
+   to send the sniffed evals to"
   [{:keys [session] :as msg}]
   (let [session (session-id- session)]
     (println "sink msg:" msg)
@@ -54,19 +67,33 @@
                        :sniffer-status (status-)})))
 
 (defn response-eval-forward
+  "forwards an nrepl message to the sink."
   [msg]
   (let [msg-listener (:msg-sink @state)
         msg-forward (dissoc msg :session :transport
+                            :nrepl.middleware.print/keys
                             :nrepl.middleware.print/print-fn
                             :nrepl.middleware.caught/caught-fn)
         msg (response-for msg-listener {:status :done
                                         :sniffer-forward msg-forward})]
     (println "sniffer forwarding to " (:session-id-sink @state) "message: " msg-forward)
+    (when (:code msg)
+      (println "code meta data: " (meta (:code msg))))
     msg))
 
 
 ; a clean nrepl middleware is found in:
 ; https://github.com/RickMoynihan/nrebl.middleware/blob/master/src/nrebl/middleware.clj
+
+(defn commands [req resp]
+  (let [v  (:value resp)]
+    (when v
+      (case v
+        :gorilla/on (do (log "enabling sniffing.")
+                        (sniff-on resp))
+        :gorilla/off (do (log "disabling sniffing.")
+                         (sniff-off))
+        nil))))
 
 
 (defn eval-response [{:keys [code] :as req} {:keys [value] :as resp}]
@@ -94,6 +121,7 @@
       (.recv transport timeout))
     (send [this resp]
       (.send transport resp)
+      (commands request resp)
       (when (and (= (session-id- session) (:session-id-source @state))
                  (:code request))
         (transport/send (:transport (:msg-sink @state))
