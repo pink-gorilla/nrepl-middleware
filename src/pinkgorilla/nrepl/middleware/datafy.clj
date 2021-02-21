@@ -3,7 +3,7 @@
    [taoensso.timbre :as timbre :refer [debug info warn error]]
    [clojure.core.protocols]
    [clojure.datafy]
-   [picasso.converter :refer [->picasso]]))
+   #_[picasso.converter :refer [->picasso]]))
 
 
 ; https://github.com/RickMoynihan/nrebl.middleware
@@ -40,8 +40,6 @@
     (seq? item) (nth item k)
     :else (get item k)))
 
-(get [1 2 3] 1)
-
 (defn nav! [idx k v]
   (info "nav! idx:" idx " key:" k " val:" v)
   (let [item (get @items idx)
@@ -56,6 +54,7 @@
     (datafy-id x*)))
 
 (comment
+  (get [1 2 3] 1)
   (def d [5 6 7])
   (meta (clojure.datafy/datafy d))
   (clojure.datafy/nav (clojure.datafy/datafy d) 1 (get d 1))

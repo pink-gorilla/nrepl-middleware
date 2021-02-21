@@ -35,10 +35,7 @@
                          [com.fasterxml.jackson.core/jackson-core "2.11.2"]
                          [cheshire "5.10.0"]
                          [org.clojure/tools.reader "1.3.2"]
-                         [com.google.code.findbugs/jsr305 "3.0.2"]
-
-                         
-                         ]
+                         [com.google.code.findbugs/jsr305 "3.0.2"]]
 
 
   :dependencies  [;[org.clojure/clojure "1.10.1"]
@@ -62,9 +59,9 @@
                   [clj-commons/pomegranate "1.2.0"] ; add-dependency in clj kernel TODO : Replace pomegranate with tools alpha
                   ]
 
-  :profiles {:sniffer {:source-paths ["profiles/sniffer/src"]
+  :profiles {:client {:source-paths ["profiles/client/src"]
                        :dependencies []}
-
+             
              :cljs {:source-paths ["profiles/demo/src"]
                     #_:repl-options   #_{:init-ns          demo.app
                                          :port             4001
@@ -108,7 +105,8 @@
                      :cloverage {:codecov? false
                                  ;; In case we want to exclude stuff
                                  :ns-exclude-regex [#".*relay"
-                                                    #"pinkgorilla.nrepl.ws.*"]
+                                                    #"pinkgorilla.nrepl.ws.*"
+                                                    #"pinkgorilla.nrepl.service.*"]
                                  ;; :test-ns-regex [#"^((?!debug-integration-test).)*$$"]
                                  }
                      ;; TODO : Make cljfmt really nice : https://devhub.io/repos/bbatsov-cljfmt
@@ -143,8 +141,10 @@
             "relay-jetty"
             ["with-profile" "+relay-jetty" "run" "-m" "demo.relay-jetty"]
 
-            "sniffer"
-            ["with-profile" "+sniffer" "run" "-m" "sniffer.app"]}
+            "client"
+            ["with-profile" "+client" "run" "-m" "client.app"]
+                        
+            }
 
 
 

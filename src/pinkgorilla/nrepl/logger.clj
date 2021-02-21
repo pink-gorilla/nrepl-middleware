@@ -36,28 +36,21 @@
               :nrepl.middleware.print/options
               :nrepl.middleware.caught/caught-fn)))
 
-(def log-file-nrepl "target/nrepl.txt")
-(def log-file-snippets "target/nrepl-snippets.txt")
-(def log-file-published "target/nrepl-published.txt")
+(def log-file "target/nrepl.txt")
 
-(defn new-log-session! [session-id]
-  (spit log-file-nrepl (str "new session: " session-id) :append true)
-  (spit log-file-snippets (str "new session: " session-id) :append true)
-  (spit log-file-published (str "new session: " session-id)) :append true)
-
-(defn on-nrepl-eval [msg  resp]
-  (when (not (ignore? msg resp))
-    (spit log-file-nrepl
-          (str "\r\n\r\n" "req " (pr-str (msg-safe msg))
+(defn log-resp [req resp]
+  (when (not (ignore? req resp))
+    (spit log-file
+          (str "\r\n\r\n" "req " (pr-str (msg-safe req))
                "\r\n" "res " (pr-str (resp-safe resp)))
           :append true)))
 
-(defn log! [msg]
-  (spit log-file-snippets
-        (str "\r\n" (pr-str msg))
+(defn log-req [req]
+  (spit log-file
+        (str "\r\n\r\n req-only" (pr-str req))
         :append true))
 
-(defn log-publish! [msg]
-  (spit log-file-published
-        (str "\r\n" (pr-str msg))
+(defn log [text]
+  (spit log-file
+        (str "\r\n" text)
         :append true))

@@ -1,28 +1,26 @@
-(ns pinkgorilla.nrepl.middleware.render-values
+(ns pinkgorilla.nrepl.middleware.picasso
   (:require
    [taoensso.timbre :as timbre :refer [debug info warn error]]
    ;[clojure.tools.reader.edn :as edn]
    [clojure.edn :as edn]
   ; [clojure.tagged-literals]
    [nrepl.transport :as transport]
-   [nrepl.middleware.print]
    [nrepl.middleware :as middleware]
-   [pinkgorilla.nrepl.middleware.formatter :as formatter]
    [nrepl.misc :refer [response-for]]
+   [pinkgorilla.nrepl.middleware.formatter :as formatter]
+   [pinkgorilla.nrepl.middleware.datafy :refer [datafy-id nav!]]
    [picasso.converter :refer [->picasso]]
-   [pinkgorilla.notebook.repl] ; side-effects
-   [pinkgorilla.nrepl.middleware.datafy :refer [datafy-id nav!]])
+   [nrepl.middleware.print] ; in middleware description/required middleware
+   )
   (:import nrepl.transport.Transport))
 
 (set! *default-data-reader-fn* tagged-literal)
-
-;; TODO: This might no longer be true as of nrepl 0.6
 
 ;; Stolen from:
 ;; https://github.com/clojure/tools.nrepl/blob/master/src/main/clojure/clojure/tools/nrepl/middleware/pr_values.clj
 ;; and as a result the structure of this follows that code rather closely
 
-;; This middleware function calls the gorilla-repl render protocol on the value that results from the evaluation, and
+;; This middleware adds :picasso key to the response protocol on the value that results from the evaluation, and
 ;; then converts the result to edn.
 
 
@@ -35,7 +33,14 @@
     (assoc resp :datafy (pr-str d))
     resp))
 
-(defn convert-response [{:keys [op] :as msg} resp]
+(defn add-picasso [resp]
+  (if-let [[_ v] (find resp :value)]
+    (-> (assoc resp :picasso (formatter/serialize (render-value v))
+               :meta (formatter/serialize (meta v)))
+        (add-datafy v))
+    resp))
+
+(defn convert-response [{:keys [op] :as req} resp]
    ;; we have to transform the rendered value to EDN here, as otherwise
    ;; it will be pr'ed by the print middleware (which comes with the
    ;; eval middleware), meaning that it won't be mapped to EDN when the
@@ -43,26 +48,17 @@
    ;; effect that the string will end up double-escaped.
    ;; (assoc resp :value (json/generate-string (render/render v)))
   ;(info "op:" op)
-  ;(if (= op "gorillanav")
-  ;  (let [id (:datafy-id msg)
-  ;        k (:datafy-k msg)
-  ;        v (:datafy-v msg)
+  ;(if (= op "gorilla-nav")
+  ;  (let [id (:datafy-id req)
+  ;        k (:datafy-k req)
+  ;        v (:datafy-v req)
   ;        nav (nav! id k v)]
   ;    (assoc resp :nav (formatter/serialize nav)))
-  (if-let [[_ v] (and (:as-picasso msg) (find resp :value))]
-    (-> (assoc resp :picasso (formatter/serialize (render-value v)))
-        (add-datafy v))
+  (if (:as-picasso req)
+    (add-picasso resp)
     resp))
 
-#_(defn current-time
-    [h]
-    (fn [{:keys [op transport] :as msg}]
-      (if (= "time?" op)
-        (nrepl.transport/send transport
-                              (response-for msg :status :done :time (System/currentTimeMillis)))
-        (h msg))))
-
-(defn render-values-req
+(defn transport-picasso-render
   [{:keys [^Transport transport] :as request}]
   (reify Transport
     (recv [this] (.recv transport))
@@ -82,18 +78,19 @@
     :default tagged-literal}
    datafy-str))
 
-(defn render-values [handler]
-  (fn [{:keys [op transport] :as request}]
-    (if (= "gorillanav" op)
-      (let [dfy (decode (:datafy request))
-            {:keys [idx k v]} dfy
-            nav (nav! idx k v)]
-        (nrepl.transport/send transport
-                              (response-for request
-                                            :status :done
-                                            :datafy (pr-str nav))))
+(defn response-nav [request]
+  (let [dfy (decode (:datafy request))
+        {:keys [idx k v]} dfy
+        nav (nav! idx k v)]
+    (response-for request
+                  :status :done
+                  :datafy (pr-str nav))))
 
-      (handler (assoc request :transport (render-values-req request))))))
+(defn wrap-picasso [handler]
+  (fn [{:keys [op transport] :as request}]
+    (if (= "gorilla-nav" op)
+      (nrepl.transport/send transport (response-nav request))
+      (handler (assoc request :transport (transport-picasso-render request))))))
 
 
 ;; TODO: No idea whether this still applies to nrepl 0.6
@@ -103,7 +100,8 @@
 ;; the linearized middlware stack between the eval middleware and the pr-values middleware. A bit of a hack!
 
 
-(middleware/set-descriptor! #'render-values
-                            {:requires #{#'nrepl.middleware.print/wrap-print}
-                             :expects  #{"eval"}
-                             :handles  {"gorillanav" "datafy nav"}})
+(middleware/set-descriptor!
+ #'wrap-picasso
+ {:requires #{#'nrepl.middleware.print/wrap-print}
+  :expects  #{"eval"}
+  :handles  {"gorilla-nav"  {:doc "datafy/nav"}}})

@@ -2,17 +2,17 @@
   (:require
    [taoensso.timbre :as timbre :refer [info]]
    [nrepl.server]
-   [pinkgorilla.nrepl.middleware.cider :refer [cider-handler]]
-   [picasso.default-config] ; side-effects   
-   [picasso.datafy.file] ; side-effects
-   ;[pinkgorilla.nrepl.sniffer.core] ; side-effects
-   ))
+   [pinkgorilla.nrepl.handler.nrepl-handler :refer [make-default-handler]]))
 
 (defn run-nrepl-server [config]
   (let [nrepl-server-config (:nrepl-server config)
-        {:keys [port]} nrepl-server-config]
-    (info "starting nrepl server at port " port "..")
-    (let [nrepl-server (nrepl.server/start-server :port port
-                                                  :handler (cider-handler))]
+        {:keys [bind port]
+         :or {bind "127.0.0.1"
+              port 9000}}
+        nrepl-server-config]
+    (info "nrepl server starting at " (str bind ":" port) "..")
+    (let [nrepl-server (nrepl.server/start-server :bind bind
+                                                  :port port
+                                                  :handler (make-default-handler))]
       nrepl-server)))
 

@@ -11,7 +11,7 @@
   [conn idx k v]
   (nrepl-op-complete
    conn
-   {:op "gorillanav"
+   {:op "gorilla-nav"
     :datafy (pr-str {:idx idx
                      :k k
                      :v v})}
