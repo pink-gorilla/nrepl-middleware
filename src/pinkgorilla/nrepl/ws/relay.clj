@@ -6,7 +6,7 @@
    [nrepl.core :as nrepl]
    [nrepl.transport :as transport]
   ; Pinkgorilla Libraries
-   [pinkgorilla.nrepl.middleware.render-values] ; bring into scope
+   ;[pinkgorilla.nrepl.middleware.render-values] ; bring into scope
    ))
 
 ;; Not as nice as doall, but doall does not work with piped transports / read-timeout (in mem)

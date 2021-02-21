@@ -65,9 +65,6 @@
   :profiles {:client {:source-paths ["profiles/client/src"]
                        :dependencies []}
              
-             :sniffer {:source-paths ["profiles/sniffer/src"]
-                       :dependencies []}
-
              :cljs {:source-paths ["profiles/demo/src"]
                     #_:repl-options   #_{:init-ns          demo.app
                                          :port             4001
@@ -148,10 +145,7 @@
 
             "client"
             ["with-profile" "+client" "run" "-m" "client.app"]
-            
-            "sniffer"
-            ["with-profile" "+sniffer" "run" "-m" "sniffer.app"]
-            
+                        
             }
 
 

@@ -14,8 +14,8 @@
    ;{:op "close"} ; this needs to have param of the session to be closed
    ]) ; 
 
-(def ops-relay
-  [{:op "eval" :code "(require 'pinkgorilla.nrepl.middleware/render-values])"}
+(def ops-picasso
+  [{:op "eval" :code "(require '[pinkgorilla.nrepl.middleware.picasso])"}
    {:op "eval" :code "(require '[picasso.default-config])"} ; for side effects
    {:op "add-middleware"
-    :middleware ['pinkgorilla.nrepl.middleware/render-values]}])
+    :middleware ['pinkgorilla.nrepl.middleware.picasso/wrap-picasso]}])

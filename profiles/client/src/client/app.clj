@@ -17,21 +17,26 @@
               {:op "eval" :code "(+ 1 1)"}
 
               {:op "sniffer-status"}
-              {:op "eval" :code ":gorilla/sniff-on"} 
+              {:op "eval" :code ":gorilla/sniff-on"}
               {:op "sniffer-source"}  ; this starts sniffing on this session
 
               ; this ops get forwarded
-              {:op "eval" :code "(+ 2 2)"}
-              {:op "eval" :code "^:R [:p/vega (+ 8 8)]"}
-              {:op "eval" :code "(time (reduce + (range 1e6)))"}
-              ;{:op "pinkieeval" :code "^:R [:p (+ 8 8)]"}
-              ])
+              {:op "eval" :as-picasso 1 :code "(+ 2 2)"}
+              {:op "eval" :as-picasso 1 :code "^:R [:p/vega (+ 8 8)]"}
+              {:op "eval" :as-picasso 1 :code "(time (reduce + (range 1e6)))"}
+              {:op "eval" :as-picasso 1 :code "^:R [:p (+ 8 8)]"}])
 
-(defn eval [state msg]
-  (println "\r\n" msg) 
-  (->> msg 
-        (client/request! state)
+(defn neval [state msg]
+  (println "\r\n" msg)
+  (->> msg
+       (client/request! state)
        print-fragments))
+
+(defn print-forwarded [msg]
+  (let [msg-forward (:sniffer-forward (first msg))]
+    (if msg-forward
+      (println msg-forward)
+      (println msg))))
 
 (defn -main [& args]
   (let [port 9100
@@ -39,14 +44,14 @@
         ;_ (println "args:" args "mode:" mode)
         _ (println "nrepl-client: connecting to nrepl server at port" port)
         state (client/connect! port)
-        eval (partial eval state)]
+        neval (partial neval state)]
     (case mode
-      "sink" 
-      (println (client/request-rolling! state {:op "sniffer-sink"} println))
+      "sink"
+      (println (client/request-rolling! state {:op "sniffer-sink"} print-forwarded))
 
       "ide"
-      (doall (map eval ops-ide))
-      
+      (doall (map neval ops-ide))
+
       ; else:
       (do (println "To listen (notebook mode): lein client listen")
           (println "To eval (ide mode: lein client ide)")))

@@ -126,7 +126,7 @@
 
 (middleware/set-descriptor!
  #'wrap-sniffer
- {:requires #{#'nrepl.middleware.print/wrap-print}
+ {:requires #{#'pinkgorilla.nrepl.middleware.picasso/wrap-picasso}
   :expects  #{"eval"}
   :handles {"sniffer-status"
             {:doc "status of sniffer middleware"}

@@ -1,18 +1,15 @@
-(ns pinkgorilla.nrepl.middleware.render-values
+(ns pinkgorilla.nrepl.middleware.picasso
   (:require
    [taoensso.timbre :as timbre :refer [debug info warn error]]
    ;[clojure.tools.reader.edn :as edn]
    [clojure.edn :as edn]
   ; [clojure.tagged-literals]
    [nrepl.transport :as transport]
-   [nrepl.middleware.print]
    [nrepl.middleware :as middleware]
    [nrepl.misc :refer [response-for]]
    [pinkgorilla.nrepl.middleware.formatter :as formatter]
    [pinkgorilla.nrepl.middleware.datafy :refer [datafy-id nav!]]
-   [picasso.converter :refer [->picasso]]
-   [pinkgorilla.notebook.repl] ; side-effects
-   )
+   [picasso.converter :refer [->picasso]])
   (:import nrepl.transport.Transport))
 
 (set! *default-data-reader-fn* tagged-literal)
@@ -34,7 +31,7 @@
     (assoc resp :datafy (pr-str d))
     resp))
 
-(defn convert-response [{:keys [op] :as msg} resp]
+(defn convert-response [{:keys [op] :as req} resp]
    ;; we have to transform the rendered value to EDN here, as otherwise
    ;; it will be pr'ed by the print middleware (which comes with the
    ;; eval middleware), meaning that it won't be mapped to EDN when the
@@ -43,12 +40,12 @@
    ;; (assoc resp :value (json/generate-string (render/render v)))
   ;(info "op:" op)
   ;(if (= op "gorilla-nav")
-  ;  (let [id (:datafy-id msg)
-  ;        k (:datafy-k msg)
-  ;        v (:datafy-v msg)
+  ;  (let [id (:datafy-id req)
+  ;        k (:datafy-k req)
+  ;        v (:datafy-v req)
   ;        nav (nav! id k v)]
   ;    (assoc resp :nav (formatter/serialize nav)))
-  (if-let [[_ v] (and (:as-picasso msg) (find resp :value))]
+  (if-let [[_ v] (and (:as-picasso req) (find resp :value))]
     (-> (assoc resp :picasso (formatter/serialize (render-value v)))
         (add-datafy v))
     resp))
@@ -82,7 +79,7 @@
                   :status :done
                   :datafy (pr-str nav))))
 
-(defn render-values [handler]
+(defn wrap-picasso [handler]
   (fn [{:keys [op transport] :as request}]
     (if (= "gorilla-nav" op)
       (nrepl.transport/send transport (response-nav request))
@@ -97,7 +94,7 @@
 
 
 (middleware/set-descriptor!
- #'render-values
+ #'wrap-picasso
  {:requires #{#'nrepl.middleware.print/wrap-print}
   :expects  #{"eval"}
-  :handles  {"gorilla-nav" "datafy nav"}})
+  :handles  {"gorilla-nav"  {:doc "datafy/nav"}}})
