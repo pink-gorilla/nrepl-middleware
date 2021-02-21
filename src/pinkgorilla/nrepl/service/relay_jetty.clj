@@ -2,7 +2,7 @@
   (:require
    [taoensso.timbre :as timbre :refer [info]]
    ;[ring.util.response :as response]
-   [ring.middleware.cors :refer [wrap-cors]]
+   ;[ring.middleware.cors :refer [wrap-cors]]
    [ring.adapter.jetty9 :refer [run-jetty]]
    [pinkgorilla.nrepl.handler.nrepl-handler :refer [make-default-handler]]
    [pinkgorilla.nrepl.ws.jetty9-ws-relay :refer [ws-processor]]))
