@@ -9,7 +9,9 @@
    [nrepl.misc :refer [response-for]]
    [pinkgorilla.nrepl.middleware.formatter :as formatter]
    [pinkgorilla.nrepl.middleware.datafy :refer [datafy-id nav!]]
-   [picasso.converter :refer [->picasso]])
+   [picasso.converter :refer [->picasso]]
+   [nrepl.middleware.print] ; in middleware description/required middleware
+   )
   (:import nrepl.transport.Transport))
 
 (set! *default-data-reader-fn* tagged-literal)
