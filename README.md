@@ -5,19 +5,28 @@
 - middleware that renders evalued results
 - nrepl client 
 
-## Demo
+## Middleware cli demo
+
+To test picasso and sniffer middleware run 3 different terminal windows
+and execute this 3 commands in this order
 
 ```
 lein relay-jetty  ; this runs jetty http server with websocket relay (port 9000)
+lein client sink   ; will listenn to sniffed evals
+lein client ide   ; will do a few evals that wil show up on listen
+```
 
-lein client listen   ; will listenn to sniffed evals
-lein client ide      ; will do a few evals that wil show up on listen
+## WebRelay websocket demo
 
+To see a simple websocket frontend, run in 2 terminal windows:
+
+```
+lein relay-jetty  ; this runs jetty http server with websocket relay (port 9000)
+```
+
+```
 npm install
 lein demo         ; browser app served with shadow-cljs dev server port 8000
-
-
-
 ```
 
 

@@ -17,13 +17,11 @@
 
 (set! *default-data-reader-fn* tagged-literal)
 
-;; TODO: This might no longer be true as of nrepl 0.6
-
 ;; Stolen from:
 ;; https://github.com/clojure/tools.nrepl/blob/master/src/main/clojure/clojure/tools/nrepl/middleware/pr_values.clj
 ;; and as a result the structure of this follows that code rather closely
 
-;; This middleware function calls the gorilla-repl render protocol on the value that results from the evaluation, and
+;; This middleware adds :picasso key to the response protocol on the value that results from the evaluation, and
 ;; then converts the result to edn.
 
 
@@ -55,15 +53,8 @@
         (add-datafy v))
     resp))
 
-#_(defn current-time
-    [h]
-    (fn [{:keys [op transport] :as msg}]
-      (if (= "time?" op)
-        (nrepl.transport/send transport
-                              (response-for msg :status :done :time (System/currentTimeMillis)))
-        (h msg))))
 
-(defn render-values-req
+(defn transport-picasso-render
   [{:keys [^Transport transport] :as request}]
   (reify Transport
     (recv [this] (.recv transport))
@@ -83,18 +74,19 @@
     :default tagged-literal}
    datafy-str))
 
+(defn response-nav [request]
+  (let [dfy (decode (:datafy request))
+        {:keys [idx k v]} dfy
+        nav (nav! idx k v)]
+    (response-for request
+                  :status :done
+                  :datafy (pr-str nav))))
+
 (defn render-values [handler]
   (fn [{:keys [op transport] :as request}]
     (if (= "gorilla-nav" op)
-      (let [dfy (decode (:datafy request))
-            {:keys [idx k v]} dfy
-            nav (nav! idx k v)]
-        (nrepl.transport/send transport
-                              (response-for request
-                                            :status :done
-                                            :datafy (pr-str nav))))
-
-      (handler (assoc request :transport (render-values-req request))))))
+      (nrepl.transport/send transport (response-nav request))
+      (handler (assoc request :transport (transport-picasso-render request))))))
 
 
 ;; TODO: No idea whether this still applies to nrepl 0.6

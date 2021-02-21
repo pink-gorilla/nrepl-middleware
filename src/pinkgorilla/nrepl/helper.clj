@@ -9,7 +9,7 @@
     (catch clojure.lang.ExceptionInfo e 0)
     (catch Exception e 0)))
 
-(defn print-eval-result [fragments]
+(defn print-fragments [fragments]
   (doall
    (map-indexed
     (fn [i f]

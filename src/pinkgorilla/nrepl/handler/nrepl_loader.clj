@@ -9,7 +9,7 @@
    {:op "eval" :code "(require '[pinkgorilla.nrepl.middleware.sniffer])"}
    {:op "eval" :code "(require '[picasso.default-config])"} ; for side effects
    {:op "add-middleware"
-    :middleware ["pinkgorilla.nrepl.middleware.sniffer/render-values-sniffer"]}
+    :middleware ["pinkgorilla.nrepl.middleware.sniffer/wrap-sniffer"]}
    {:op "ls-middleware"}
    ;{:op "close"} ; this needs to have param of the session to be closed
    ]) ; 
