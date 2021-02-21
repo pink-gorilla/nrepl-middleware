@@ -31,6 +31,13 @@
     (assoc resp :datafy (pr-str d))
     resp))
 
+(defn add-picasso [resp]
+  (if-let [[_ v] (find resp :value)]
+  (-> (assoc resp :picasso (formatter/serialize (render-value v)))
+      (add-datafy v))
+    resp
+  ))
+
 (defn convert-response [{:keys [op] :as req} resp]
    ;; we have to transform the rendered value to EDN here, as otherwise
    ;; it will be pr'ed by the print middleware (which comes with the
@@ -45,9 +52,8 @@
   ;        v (:datafy-v req)
   ;        nav (nav! id k v)]
   ;    (assoc resp :nav (formatter/serialize nav)))
-  (if-let [[_ v] (and (:as-picasso req) (find resp :value))]
-    (-> (assoc resp :picasso (formatter/serialize (render-value v)))
-        (add-datafy v))
+  (if (:as-picasso req)
+    (add-picasso resp)
     resp))
 
 

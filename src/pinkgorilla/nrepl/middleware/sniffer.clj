@@ -4,12 +4,13 @@
    [nrepl.transport :as transport]
    [nrepl.middleware :as middleware]
    [nrepl.middleware.print]
-   [nrepl.misc :refer [response-for] :as misc])
+   [nrepl.misc :refer [response-for] :as misc]
+   [pinkgorilla.nrepl.middleware.picasso :refer [add-picasso]])
   (:import nrepl.transport.Transport))
 
 (def state (atom {:msg-sink nil
-                  :session-id-sink nil}
-                 :session-id-source nil))
+                  :session-id-sink nil
+                  :session-id-source nil}))
 
 (defn session-id-
   "extracts the id from a session.
@@ -73,6 +74,9 @@
           msg-forward (dissoc resp :session :transport
                               :nrepl.middleware.print/print-fn
                               :nrepl.middleware.caught/caught-fn)
+          msg-forward (if (:as-picasso msg-forward)
+                        msg-forward
+                        (add-picasso msg-forward))
           msg-resp (response-for msg-listener {:sniffer-forward msg-forward})]
       ; printing not allowed here - nrepl would capture this as part of the eval request 
       ;(println "sniffer forwarding response:" msg-resp)
@@ -124,10 +128,14 @@
         ;  (handler request)        
         ))))
 
+
+; https://nrepl.org/nrepl/design/middleware.html
 (middleware/set-descriptor!
  #'wrap-sniffer
- {:requires #{#'pinkgorilla.nrepl.middleware.picasso/wrap-picasso}
-  :expects  #{"eval"}
+ {:requires #{}
+  :expects  ; expects get executed before this middleware
+  #{"eval"
+    #'pinkgorilla.nrepl.middleware.picasso/wrap-picasso}
   :handles {"sniffer-status"
             {:doc "status of sniffer middleware"}
 
