@@ -68,6 +68,7 @@
 ; a clean nrepl middleware is found in:
 ; https://github.com/RickMoynihan/nrebl.middleware/blob/master/src/nrebl/middleware.clj
 
+
 (defn eval-response [{:keys [code] :as req} {:keys [value] :as resp}]
   (when (and code true); (contains? resp :value))
     (let [msg-listener (:msg-sink @state)
@@ -130,6 +131,8 @@
 
 
 ; https://nrepl.org/nrepl/design/middleware.html
+
+
 (middleware/set-descriptor!
  #'wrap-sniffer
  {:requires #{}

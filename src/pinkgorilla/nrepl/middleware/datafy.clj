@@ -40,8 +40,6 @@
     (seq? item) (nth item k)
     :else (get item k)))
 
-
-
 (defn nav! [idx k v]
   (info "nav! idx:" idx " key:" k " val:" v)
   (let [item (get @items idx)

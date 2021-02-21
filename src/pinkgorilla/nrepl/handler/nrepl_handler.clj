@@ -26,7 +26,6 @@
         (apply srv/default-handler mw))
       (apply srv/default-handler mw))))
 
-
 (defn make-default-handler []
   (require-cider)
   (require-gorilla)

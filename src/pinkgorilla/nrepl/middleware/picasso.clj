@@ -33,10 +33,9 @@
 
 (defn add-picasso [resp]
   (if-let [[_ v] (find resp :value)]
-  (-> (assoc resp :picasso (formatter/serialize (render-value v)))
-      (add-datafy v))
-    resp
-  ))
+    (-> (assoc resp :picasso (formatter/serialize (render-value v)))
+        (add-datafy v))
+    resp))
 
 (defn convert-response [{:keys [op] :as req} resp]
    ;; we have to transform the rendered value to EDN here, as otherwise
@@ -55,7 +54,6 @@
   (if (:as-picasso req)
     (add-picasso resp)
     resp))
-
 
 (defn transport-picasso-render
   [{:keys [^Transport transport] :as request}]

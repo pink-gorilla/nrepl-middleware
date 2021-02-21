@@ -4,6 +4,7 @@
 ; nrepl docs:
 ; https://nrepl.org/nrepl/ops.html#_add_middleware
 
+
 (def ops-sniffer
   [{:op "describe"}
    {:op "eval" :code "(require '[pinkgorilla.nrepl.middleware.sniffer])"}
@@ -12,7 +13,7 @@
     :middleware ["pinkgorilla.nrepl.middleware.sniffer/wrap-sniffer"]}
    {:op "ls-middleware"}
    ;{:op "close"} ; this needs to have param of the session to be closed
-   ]) ; 
+]) ; 
 
 (def ops-picasso
   [{:op "eval" :code "(require '[pinkgorilla.nrepl.middleware.picasso])"}

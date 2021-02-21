@@ -34,7 +34,6 @@
       (println "cannot send nrepl msg. not connected!")
       nil)))
 
-
 (defn- set-session-id! [state fragments]
    ; "clone", which will cause a new session to be retained. 
   ; The ID of this new session will be returned in a response message 
@@ -47,7 +46,7 @@
         (println "setting session id: " id)
         (swap! state assoc :session-id id)))))
 
-(defn connect! 
+(defn connect!
   "connects to nrepl server
    returns connection-state atom"
   [port]
@@ -56,10 +55,9 @@
         state (atom {:transport transport
                      :client client
                      :session-id nil})
-        clone-response (request! state {:op "clone"})
-        ]
+        clone-response (request! state {:op "clone"})]
      ;Uses :op clone to keep the same session for multiple requests.
-    (set-session-id! state clone-response)    
+    (set-session-id! state clone-response)
     (pprint clone-response)
     state))
 
@@ -67,12 +65,12 @@
 ; "close", which drops the session indicated by the ID in the :session slot. 
 ; The response message's :status will include :session-closed.
 
+
 (defn disconnect! [state]
   (let [transport (:transport @state)]
     (println "disconnecting client nrepl session.")
     (swap! state dissoc :transport :client)
     (.close transport)))
-
 
 (defn request-rolling!
   "make a nrepl request ´msg´ and for each partial reply-fragment
