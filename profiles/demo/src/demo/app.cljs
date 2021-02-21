@@ -106,7 +106,7 @@
 
   (let [d (r/atom nil)
         ;conn (conn-raw "ws://localhost:9000/nrepl")
-        conn (conn-req "ws://localhost:9000/nrepl" d)]
+        conn (conn-req "ws://127.0.0.1:9000/nrepl" d)]
 
     (reagent.dom/render [demo.views/app conn d]
                         (.getElementById js/document "app"))))

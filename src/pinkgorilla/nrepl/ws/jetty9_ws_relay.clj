@@ -2,10 +2,7 @@
   "A websocket handler that passes messages back and forth to an already running nREPL server."
   (:require
    [taoensso.timbre :refer [debug info error]]
-   [clojure.edn :as edn]
    [ring.adapter.jetty9 :as jetty]
-   [nrepl.server :as nrepl-server]
-   [nrepl.core :as nrepl]
    [nrepl.transport :as transport]
   ; Pinkgorilla Libraries
    [pinkgorilla.nrepl.ws.relay :refer [on-ws-receive]]

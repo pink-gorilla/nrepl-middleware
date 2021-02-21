@@ -2,7 +2,7 @@
   (:require
    [taoensso.timbre :as timbre :refer [debug info error]]
    [pinkgorilla.nrepl.service.nrepl-server :refer [run-nrepl-server]]
-   [pinkgorilla.nrepl.service.add-middleware :refer [add-middleware!]]
+   ;[pinkgorilla.nrepl.service.add-middleware :refer [add-middleware!]]
    [pinkgorilla.nrepl.service.relay-jetty :refer [run-relay-jetty]])
   (:gen-class))
 
@@ -15,7 +15,7 @@
 (defn -main []
   (timbre/set-level! :debug)
   (run-nrepl-server demo-config)
-  (add-middleware! demo-config)
-  #_(run-relay-jetty demo-config))
+  ;(add-middleware! demo-config) ; not needed in case of in process nrepl-server
+  (run-relay-jetty demo-config))
 
 

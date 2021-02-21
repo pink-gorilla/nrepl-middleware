@@ -3,11 +3,7 @@
    [taoensso.timbre :refer [debug info error]]
    [clojure.edn :as edn]
    [nrepl.server :as nrepl-server]
-   [nrepl.core :as nrepl]
-   [nrepl.transport :as transport]
-  ; Pinkgorilla Libraries
-   ;[pinkgorilla.nrepl.middleware.render-values] ; bring into scope
-   ))
+   [nrepl.core :as nrepl]))
 
 ;; Not as nice as doall, but doall does not work with piped transports / read-timeout (in mem)
 (defn- process-replies
