@@ -3,6 +3,9 @@
    [taoensso.timbre :as timbre :refer [info]]
    ;[ring.util.response :as response]
    ;[ring.middleware.cors :refer [wrap-cors]]
+   [ring.adapter.jetty9 :refer [run-jetty]]
+   [ring.middleware.session.memory :as memory]  ; contained in ring
+   [ring.middleware.session :as session] ; contained in ring
    [pinkgorilla.nrepl.handler.nrepl-handler :refer [make-default-handler]]
    [pinkgorilla.nrepl.ws.jetty9-ws-relay :refer [ws-processor]]))
 
@@ -15,17 +18,26 @@
   ;ws-handler-wrapped
     ws-handler))
 
+(defn wrap-memory-session
+  "Wraps the supplied handler in session middleware that uses a
+    private memory store."
+  [handler]
+  (let [store (memory/memory-store)]
+    (session/wrap-session handler
+                          {:store store
+                           :cookie-name "nrepl-relay-session"})))
+
 (defn run-relay-jetty [config]
-  (require 'ring.adapter.jetty9)
   (let [ws-handler (jetty-relay-handler)
-        run-jetty (resolve 'ring.adapter.jetty9/run-jetty)
+        ws-handler-wrapped (wrap-memory-session ws-handler)
         {:keys [port route]} (:relay config)]
     (info "starting jetty relay at port " port "..")
-    (run-jetty ws-handler {:port port
-                           :websockets {route ws-handler}
-                           :allow-null-path-info true
-                           ;:join?  false        
-                           })))
+    (run-jetty ws-handler-wrapped
+               {:port port
+                :websockets {route ws-handler} ; wrapped does not work
+                :allow-null-path-info true
+                ;:join?  false        
+                })))
 
 
 

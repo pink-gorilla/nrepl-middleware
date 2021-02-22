@@ -2,6 +2,8 @@
   (:require
    [pinkgorilla.nrepl.ignore :refer [ignore?]]))
 
+(def log-enabled? false)
+
 (defn cut-namespaces [msg]
   (if (get-in msg [:value :namespace-definitions])
     (dissoc msg :value)
@@ -38,19 +40,17 @@
 
 (def log-file "target/nrepl.txt")
 
-(defn log-resp [req resp]
-  (when (not (ignore? req resp))
+(defn log [text]
+  (when log-enabled?
     (spit log-file
-          (str "\r\n\r\n" "req " (pr-str (msg-safe req))
-               "\r\n" "res " (pr-str (resp-safe resp)))
+          (str "\r\n" text)
           :append true)))
 
-(defn log-req [req]
-  (spit log-file
-        (str "\r\n\r\n req-only" (pr-str req))
-        :append true))
+(defn log-resp [req resp]
+  (when (not (ignore? req resp))
+    (log (str "\r\n req " (pr-str (msg-safe req))
+              "\r\n res " (pr-str (resp-safe resp))))))
 
-(defn log [text]
-  (spit log-file
-        (str "\r\n" text)
-        :append true))
+(defn log-req [req]
+  (log (str "\r\n req-only" (pr-str req))))
+

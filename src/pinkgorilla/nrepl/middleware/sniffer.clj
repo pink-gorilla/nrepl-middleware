@@ -123,9 +123,9 @@
       (commands request resp)
       (when (and (= (session-id- session) (:session-id-source @state))
                  (:code request))
-        (transport/send (:transport (:msg-sink @state))
-                        (eval-response request resp)))
-      #_(send-to-pinkie! request resp)
+        (when (:msg-sink @state)
+          (transport/send (:transport (:msg-sink @state))
+                          (eval-response request resp))))
       this)))
 
 (defn wrap-sniffer

@@ -17,8 +17,8 @@
 (enable-console-print!)
 
 ;(timbre/set-level! :trace) ; Uncomment for more logging
-;  (timbre/set-level! :debug)
-(timbre/set-level! :info)
+  (timbre/set-level! :debug)
+;(timbre/set-level! :info)
 
 (defn conn-raw 
   "demo nrepl websocket 

@@ -13,7 +13,7 @@
            :route "/nrepl"}})
 
 (defn -main []
-  (timbre/set-level! :debug)
+  (timbre/set-level! :info)
   (run-nrepl-server demo-config)
   ;(add-middleware! demo-config) ; not needed in case of in process nrepl-server
   (run-relay-jetty demo-config))

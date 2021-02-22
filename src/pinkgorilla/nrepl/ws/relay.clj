@@ -26,15 +26,14 @@
 
 (defn make-nrepl-request
   "Processes websocket messages"
-  [nrepl-handler transport
+  [nrepl-handler
+   transport client
    ws-send-fn ws-id
    msg]
   (let [;data-edn (edn/read-string data)
         ;_ (debug "data edn: " data-edn " meta: " (meta data-edn))
         ;msg (assoc data-edn :as-picasso 1)
-        timeout Long/MAX_VALUE
         [read write] transport
-        client (nrepl.core/client read timeout)
         reply-fn (partial process-replies
                           (partial process-nrepl-message ws-send-fn ws-id)
                           (fn [s] (contains? s :done)))]
@@ -45,12 +44,14 @@
          (future (nrepl.server/handle* msg nrepl-handler write)))
        (client)))))
 
-(defn on-ws-receive [nrepl-handler transport
+(defn on-ws-receive [nrepl-handler transport client
                      ws-send-fn ws-id
                      message]
   (info "request rcvd: " ws-id " msg: " message)
   (let [data-edn (edn/read-string message)
         _ (debug "data edn: " data-edn " meta: " (meta data-edn))
         msg (assoc data-edn :as-picasso 1)]
-    (make-nrepl-request nrepl-handler transport
-                        ws-send-fn ws-id msg)))
+    (make-nrepl-request nrepl-handler
+                        transport client
+                        ws-send-fn ws-id
+                        msg)))

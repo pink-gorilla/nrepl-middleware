@@ -54,16 +54,20 @@ Logging:
 - If you dot want lots of output, set loglevel to INFO
 
 
-# Notes new release / notebook integration:
+# TODO:
 
-- make api similar to existing apis (nrepl / cojupyter / xxx)
+## nrepl-ws-relay close session
+- close of nrepl sessions:
+- if client drops, a timeout needs to detect a closed session
+  this is not implemented yet,
+- to close a nrepl session, the session id needs to be known. 
+  this means we have to read all messages that get forwarded,
+  because otherwise an {:op "clone"} could reset it.
+  
+## nrepl-ws-relay remote nrepl
 - connect to remote nrepl without client middleware setup?
+- add-middleware loading works. ("add-middleware")
+- but in which scenario does this make sense?
 
-nrepl ws relay:
-- relay nrepl client is stored in session, but we dont have session 
-  middleware on that route. I think it is recreating the connections for
-  each request. ls-sessions gives me 20 sessions! for 1 browser.
-- how are nrepl relay connections disgarded?  
-- no conflict with existing notebook implementations?
-
+## sandboxed interruptible
 -clojail: refactor or out.

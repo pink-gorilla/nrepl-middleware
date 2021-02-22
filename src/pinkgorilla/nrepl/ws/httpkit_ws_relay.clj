@@ -10,11 +10,17 @@
    [nrepl.server]
    [nrepl.core]
    [nrepl.transport]
-   [pinkgorilla.nrepl.ws.relay :refer [on-ws-receive]]
-   [pinkgorilla.nrepl.middleware.cider :refer [cider-handler]]))
+   [pinkgorilla.nrepl.handler.nrepl-handler :refer [make-default-handler]]
+   [pinkgorilla.nrepl.ws.relay :refer [on-ws-receive]]))
 
 (def clients (atom {}))
-(def my-cider-handler (cider-handler))
+(def nrepl-handler (make-default-handler))
+
+(defn connect [transport]
+  (let [timeout Long/MAX_VALUE
+        [read write] transport
+        client (nrepl.core/client read timeout)]
+    client))
 
 ; this causes lint errors, and is depreciated
 ; https://github.com/http-kit/http-kit/blob/master/src/org/httpkit/server.clj
@@ -26,7 +32,7 @@
       (let [transport (nrepl.transport/piped-transports)]
         (swap! clients assoc con transport)
         (http/on-receive con (partial on-ws-receive
-                                      my-cider-handler transport
+                                      nrepl-handler transport
                                       http/send! con))
         (http/on-close con (fn [status]
                              (swap! clients dissoc con)
@@ -36,12 +42,15 @@
   (http/as-channel ring-req
                    {:on-open    (fn [ch]
                                   (println "nrepl relay: ws-client connected! conn: " ch)
-                                  (let [transport (nrepl.transport/piped-transports)]
+                                  (let [transport (nrepl.transport/piped-transports)
+                                        client (connect transport)]
                                   ;(swap! clients_ conj ch)
-                                    (swap! clients assoc ch transport)))
+                                    (swap! clients assoc ch [transport client])))
                     :on-receive (fn [ch message]
-                                  (let [transport (ch @clients)]
-                                    (on-ws-receive my-cider-handler transport
+                                  (let [c (ch @clients)
+                                        [transport client] c]
+                                    (on-ws-receive nrepl-handler
+                                                   transport client
                                                    http/send! ch message)))
                     :on-ping     (fn [ch data]
                                    (println "ws ping received"))
