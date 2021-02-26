@@ -1,9 +1,12 @@
 # NREPL Middleware [![GitHub Actions status |pink-gorilla/gorilla-middleware](https://github.com/pink-gorilla/nrepl-middleware/workflows/CI/badge.svg)](https://github.com/pink-gorilla/nrepl-middleware/actions?workflow=CI)[![Codecov Project](https://codecov.io/gh/pink-gorilla/nrepl-middleware/branch/master/graph/badge.svg)](https://codecov.io/gh/pink-gorilla/nrepl-middleware)[![Clojars Project](https://img.shields.io/clojars/v/org.pinkgorilla/nrepl-middleware.svg)](https://clojars.org/org.pinkgorilla/nrepl-middleware)
 
 - This project is used in [Notebook](https://github.com/pink-gorilla/gorilla-notebook) and [Goldly](https://github.com/pink-gorilla/goldly).
+
+## features
 - nrepl websocket relay (browsers can not connect to normal tcp ports)
-- middleware that renders evalued results
-- nrepl client 
+- nrepl middleware that renders evalued results from notebook session
+- nepl middlewre that sniffs evals on other nrepl session
+- nrepl client (clj and cljs)on core.async
 
 ## Middleware cli demo
 
