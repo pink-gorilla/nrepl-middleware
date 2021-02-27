@@ -1,4 +1,4 @@
-(ns pinkgorilla.nrepl.ws.client
+(ns pinkgorilla.nrepl.client.connection
   "A nrepl websocket client
    that passes messages back and forth to an already 
    running nREPL server."
@@ -6,10 +6,9 @@
    [cljs.core.async.macros :refer [go go-loop]])
   (:require
    [cljs.core.async :as async :refer [<! >! chan timeout close!]]
-   [taoensso.timbre :refer [debug debugf info warn error errorf]]
-   [cljs-uuid-utils.core :as uuid]
+   [taoensso.timbre :refer-macros [debug debugf info warn error errorf]]
    [reagent.core :as r]
-   [pinkgorilla.nrepl.ws.connection]))
+   [pinkgorilla.nrepl.client.websocket :refer [ws-connect!]]))
 
 #_(defn- filtered-chan!
     "takes the global fragment channel, and creates a new channel
@@ -32,45 +31,6 @@
                     (callback {:id request-id :fragments @fragments})))
               (recur)))))
       filtered-ch))
-
-(defn nrepl-op
-  "make-request 
-   - sends `message` to websocket (so nrepl/cider can process the request)
-   - returns the eval id.
-   parameter:
-   - state: this gets returned by (ws-start!)
-   - message: a nrepl message (with or without request-id)
-   - callback: optional callback that return all fragments of a request
-   returns:
-   - cannel with response fragments"
-  ([conn message]
-   (let [request-ch (chan)
-         {:keys [requests input-ch]} conn
-         request-id (or (:id message) (uuid/uuid-string (uuid/make-random-uuid)))
-         nrepl-msg  (merge message {:id request-id})]
-     (swap! requests assoc (keyword request-id) request-ch)
-     (debug "ws sending ws message: " nrepl-msg)
-     (go
-       (>! input-ch nrepl-msg))
-     request-ch)))
-
-(defn nrepl-op-complete
-  ([conn msg]
-   (nrepl-op-complete conn msg nil))
-  ([conn msg transform-fn]
-   (let [result-ch (chan)
-         fragments (atom [])
-         fragments-ch (nrepl-op conn msg)
-         result-fn (fn [] (if transform-fn
-                            (transform-fn @fragments)
-                            @fragments))]
-     (go-loop [msg (<! fragments-ch)]
-       (if msg
-         (do (swap! fragments conj msg)
-             (recur (<! fragments-ch)))
-         (do (>! result-ch (result-fn))
-             (close! fragments-ch))))
-     result-ch)))
 
 (defn- chan-for-incoming-nrepl-msg
   "processes an incoming message that comes from channel (which comes 
@@ -100,7 +60,7 @@
   "creates a nrepl connection via websocket
    Intended to be used with nrepl-op"
   [ws-url]
-  (let [conn (pinkgorilla.nrepl.ws.connection/ws-connect! ws-url)
+  (let [conn (ws-connect! ws-url)
         requests (r/atom {}) ; keys: request-id, vals: request-channel
         output-ch (:output-ch conn)]
     ; process incoming responses from nrepl

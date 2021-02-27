@@ -7,7 +7,7 @@
    [ring.middleware.session.memory :as memory]  ; contained in ring
    [ring.middleware.session :as session] ; contained in ring
    [pinkgorilla.nrepl.handler.nrepl-handler :refer [make-default-handler]]
-   [pinkgorilla.nrepl.ws.jetty9-ws-relay :refer [ws-processor]]))
+   [pinkgorilla.nrepl.relay.jetty9-ws-relay :refer [ws-processor]]))
 
 (defn jetty-relay-handler []
   (let [nrepl-handler (atom (make-default-handler))

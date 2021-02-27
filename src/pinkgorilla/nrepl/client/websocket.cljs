@@ -1,4 +1,4 @@
-(ns pinkgorilla.nrepl.ws.connection
+(ns pinkgorilla.nrepl.client.websocket
   "A nrepl websocket client
    that passes messages back and forth to an already 
    running nREPL server."
@@ -6,11 +6,10 @@
    [cljs.core.async.macros :refer [go go-loop]])
   (:require
    [cljs.core.async :as async :refer [<! >! chan timeout close!]]
-   [taoensso.timbre :refer [debug info warn error]]
+   [taoensso.timbre :refer-macros [debug info warn error]]
    [cljs-uuid-utils.core :as uuid]
    [reagent.core :as r]
    [chord.client :as chord])) ; websockets with core.async
-
 
 (defn- reply-msg [msg reply]
   (merge {:id (:id msg)

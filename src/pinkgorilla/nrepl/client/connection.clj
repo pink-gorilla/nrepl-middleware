@@ -1,4 +1,4 @@
-(ns pinkgorilla.nrepl.client
+(ns pinkgorilla.nrepl.client.connection
   "a simple nrepl client.
   
    Usecase
@@ -12,27 +12,8 @@
    - convert to async channels ?   "
   (:require
    [clojure.pprint :refer [pprint]]
-   [nrepl.core :as nrepl]))
-
-(defn- add-session-id [state msg]
-  (if-let [session-id (:session-id @state)]
-    (assoc msg :session session-id)
-    msg))
-
-(defn request!
-  "makes a nrepl request.
-   waits until all responses are received
-   returns the fragments
-   "
-  [state msg]
-  ;(println "send! msg" msg " state: " @state " fn: " on-receive-fn)
-  (if-let [client (:client @state)]
-    (->> (add-session-id state msg)
-         (nrepl/message client)
-         doall)
-    (do
-      (println "cannot send nrepl msg. not connected!")
-      nil)))
+   [nrepl.core :as nrepl]
+   [pinkgorilla.nrepl.client.request :refer [request!]]))
 
 (defn- set-session-id! [state fragments]
    ; "clone", which will cause a new session to be retained. 
@@ -71,17 +52,6 @@
     (println "disconnecting client nrepl session.")
     (swap! state dissoc :transport :client)
     (.close transport)))
-
-(defn request-rolling!
-  "make a nrepl request ´msg´ and for each partial reply-fragment
-   execute ´fun´"
-  [state msg fun]
-  (if-let [client (:client @state)]
-    (loop [fragments (client msg)]
-      (let [f (take 1 fragments)]
-        (fun f)
-        (recur (rest fragments))))
-    (println "cannot send nrepl msg. not connected!")))
 
 
 
