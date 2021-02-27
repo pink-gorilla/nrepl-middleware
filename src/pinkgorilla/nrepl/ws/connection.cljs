@@ -74,7 +74,6 @@
                 and ready to receive requests (is set after op: clone)
    }
    "
-
   [ws-url]
   (let [input-ch (chan)
         output-ch (chan)

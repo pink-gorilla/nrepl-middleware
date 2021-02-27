@@ -18,5 +18,5 @@ pom.xml.asc
 .project
 .settings/*
 .lsp/
-
+.calva/
 
