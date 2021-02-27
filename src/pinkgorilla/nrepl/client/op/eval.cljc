@@ -6,7 +6,7 @@
       :clj [clojure.core :refer [read-string]])
    #?(:cljs [js :refer [Error]]
       ;:clj [java.lang :refer [Error]]
-            )
+      )
    [pinkgorilla.nrepl.client.protocols :refer [init]]))
 
 ;#?(:clj
@@ -25,15 +25,13 @@
     (let [data (read-string value)]
     ;(info "converted value-response" (:value-response data2))
       data)
-    (catch Error e 
+    (catch Error e
       (error "picasso-unwrap parsing %s ex: %s" value e))))
 
-
-
-(defn process-fragment
+(defn- process-fragment
   "result is an atom, containing the eval result.
    processes a fragment-response and modifies result-atom accordingly."
-  [result {:keys [out err root-ex ns value picasso datafy status] :as message}]
+  [result {:keys [out err root-ex ns value picasso datafy]}]
   (-> result
       ; console 
       (cond-> out (assoc :out (str (:out result) out)))
@@ -53,7 +51,6 @@
       (cond-> root-ex (assoc :root-ex root-ex))))
 
 (defmethod init :eval [req]
-  (info "processing :op :eval")
   {:initial-value {:value []
                    :picasso []
                    :ns nil
