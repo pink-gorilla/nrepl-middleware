@@ -31,7 +31,7 @@
     (info "saving client " ws-id)
     (swap! clients assoc ws-id c))
 
-  (when (> (count @clients) 1)
+  #_(when (> (count @clients) 1)
     (info "more than one client: " (count @clients))
     (doall (for [t (keys @clients)]
              (do ;(info "client:" t)

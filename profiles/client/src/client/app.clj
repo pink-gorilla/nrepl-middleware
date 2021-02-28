@@ -1,14 +1,17 @@
 (ns client.app
   (:require
    [clojure.core.async :refer [<! <!! go go-loop]]
-   ;[taoensso.timbre :as timbre :refer [info]]
+   [taoensso.timbre :as timbre :refer [info]]
    [pinkgorilla.nrepl.client.connection :refer [connect! disconnect!]]
-   [pinkgorilla.nrepl.client.request :refer [request! request-rolling!]]
-   [pinkgorilla.nrepl.helper :refer [print-fragments status success?]])
+   ;[pinkgorilla.nrepl.client.request :refer []]
+   ;[pinkgorilla.nrepl.client.request-sync :refer [request-rolling!]]
+   [pinkgorilla.nrepl.helper :refer [print-fragments status success?]]
+   [pinkgorilla.nrepl.client.core :refer [connect send-requests! send-request-sync!]] ; side effects
+   )
   (:gen-class))
 
 ; (timbre/set-level! :trace) ; Uncomment for more logging
-; (timbre/set-level! :debug)
+(timbre/set-level! :debug)
 ; (timbre/set-level! :info)
 
 
@@ -34,11 +37,12 @@
               ; evals inside notebook would have this flag. check if it works:
               {:op "eval" :as-picasso 1 :code "^:R [:p (+ 8 8)]"}])
 
-(defn neval [state msg]
-  (println "\r\n" msg)
-  (->> msg
-       (request! state)
-       print-fragments))
+#_(defn neval [state msg]
+    (println "\r\n" msg)
+    (->> msg
+         (send-request-sync! state)
+       ;print-fragments
+         (println "yeah: ")))
 
 (defn print-forwarded [msg]
   (let [msg-forward (:sniffer-forward (first msg))]
@@ -47,20 +51,26 @@
       (println msg))))
 
 (defn -main [& args]
-  (let [port 9100
+  (let [config {:port 9100}
         [mode] args
         ;_ (println "args:" args "mode:" mode)
-        _ (println "nrepl-client: connecting to nrepl server at port" port)
-        conn (when (or (= mode "sink") (= mode "ide")) (connect! port))
-        neval (partial neval conn)]
+        ;_ (println "nrepl-client: connecting to nrepl server at port" (:port config))
+        conn (when (or (= mode "sink") (= mode "ide")) (connect config))
+        ;neval (partial neval conn)
+        ]
     (case mode
       "sink"
-      (println (request-rolling! conn {:op "sniffer-sink"} print-forwarded))
-
+     ; (println (request-rolling! conn {:op "sniffer-sink"} print-forwarded))
+      (println "bongo")
+      
       "ide"
       (do
-        (doall (map neval ops-ide))
-        (disconnect! conn))
+        ;(doall (map neval ops-ide))
+        (send-requests! conn (take 1 ops-ide))
+        (read-line)
+        (println "quit.")
+        ;(disconnect! conn)
+        )
 
       ; else:
       (do (println "To listen (notebook mode): lein client listen")

@@ -12,47 +12,74 @@
    - convert to async channels ?   "
   (:require
    [clojure.pprint :refer [pprint]]
+   [clojure.core.async :as async :refer [<! >! chan poll! timeout close! go go-loop]]
+   [taoensso.timbre :refer [debug debugf info infof warn warnf errorf]]
    [nrepl.core :as nrepl]
-   [pinkgorilla.nrepl.client.request :refer [request!]]))
+   [nrepl.transport :as nt]
+   [pinkgorilla.nrepl.client.id :refer [guuid]]))
 
-(defn- set-session-id! [state fragments]
+; "close", which drops the session indicated by the ID in the :session slot. 
+; The response message's :status will include :session-closed.
+
+(defn disconnect! [conn]
+  (let [transport (:transport @conn)]
+    (println "disconnecting client nrepl session.")
+    (swap! conn dissoc :transport :client)
+    (.close transport)))
+
+; "interrupt", which will attempt to interrupt the current execution with id provided in the :interrupt-id slot.
+
+(defn- set-session-id! [conn res]
    ; "clone", which will cause a new session to be retained. 
   ; The ID of this new session will be returned in a response message 
   ; in a :new-session slot. The new session's state (dynamic scope, etc)
   ;  will be a copy of the state of the session identified in 
   ;  the :session slot of the request.
-  (when-not (:session-id @state)
-    (when-let [f (first fragments)]
-      (when-let [id (:new-session f)]
-        (println "setting session id: " id)
-        (swap! state assoc :session-id id)))))
-
-(defn connect!
-  "connects to nrepl server
-   returns connection-state atom"
-  [port]
-  (let [transport (nrepl/connect :port port)  ; :host "172.18.0.5"
-        client (nrepl/client transport Long/MAX_VALUE)  ; 15000 
-        state (atom {:transport transport
-                     :client client
-                     :session-id nil})
-        clone-response (request! state {:op "clone"})]
-     ;Uses :op clone to keep the same session for multiple requests.
-    (set-session-id! state clone-response)
-    (pprint clone-response)
-    state))
+  (when-not (:session-id @conn)
+    ;(when (= (:id res) id-req-clone)
+    (if-let [id (:new-session res)]
+      (do (infof "setting session id: %s" id)
+          (swap! conn assoc :session-id id)
+          true)
+      (warnf "cannot set session id from res: %s" res))))
 
 
-; "close", which drops the session indicated by the ID in the :session slot. 
-; The response message's :status will include :session-closed.
+(defn connect! [config]
+  (let [req-ch (chan)
+        res-ch (chan)
+        {:keys [port host transport-fn]
+         :or {transport-fn nt/bencode
+              host "127.0.0.1"}} config
+        _ (infof "nrepl connecting %s:%s %s" host port transport-fn)
+        t (nrepl/connect :port port
+                         :host host
+                         :transport-fn transport-fn)
+        conn (atom {:req-ch req-ch ; core.async channel where to send nrepl messages to
+                    :res-ch res-ch ; core.async channel to receive messages
+                    :transport t
+                    :connected? true
+                    :session-id nil})
+        id-req-clone (guuid)]
+    (go
+      (>! req-ch {:op "clone" :id id-req-clone}))
 
+    (go-loop []
+      (let [session-id-rcvd? (:session-id @conn)]
 
-(defn disconnect! [state]
-  (let [transport (:transport @state)]
-    (println "disconnecting client nrepl session.")
-    (swap! state dissoc :transport :client)
-    (.close transport)))
+        ; req-ch -> nrepl
+        (when-let [req (poll! req-ch)]
+          (debugf "nrepl req  send: %s " req)
+          (nt/send t req))
 
+      ; nrepl res -> res-ch
+        (when-let [res (nt/recv t 5)] ; recv is blocking, after 5ms will return nil if no res rcvd
+          (debugf "nrepl resp rcvd: %s " res)
 
+          (when-not session-id-rcvd?
+            (set-session-id! conn res))
 
-  ; "interrupt", which will attempt to interrupt the current execution with id provided in the :interrupt-id slot.
+          (>! res-ch res))
+        (recur)))
+
+    ; return conn
+    conn))

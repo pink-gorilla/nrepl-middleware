@@ -41,9 +41,10 @@
   :dependencies  [;[org.clojure/clojure "1.10.1"]
                   ;[org.clojure/spec.alpha "0.2.187"]
                   ;[org.clojure/data.json "0.2.6"]
-
-                  ; nrepl
-                  [nrepl "0.8.0"]  ; 0.7.0 lacks add-middleware
+                  [org.clojure/core.async "1.3.610"]
+                  
+                  ; nrepl/kernel
+                  [nrepl "0.8.3"]  ; 0.7.0 lacks add-middleware
                   [cider/cider-nrepl "0.25.8"]
                   [cider/piggieback "0.5.0"]
                   [clojail "1.0.6"] ; sandboxing
@@ -66,8 +67,7 @@
                     #_:repl-options   #_{:init-ns          demo.app
                                          :port             4001
                                          :nrepl-middleware [shadow.cljs.devtools.server.nrepl/middleware]}
-
-                    :dependencies [[org.clojure/core.async "1.3.610"]
+                    :dependencies [
                                    [org.clojure/clojurescript "1.10.773"]
                                    [org.clojure/tools.analyzer "1.0.0"]
 
