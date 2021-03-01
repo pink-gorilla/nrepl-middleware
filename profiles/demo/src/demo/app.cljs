@@ -16,9 +16,11 @@
 
 (enable-console-print!)
 
-;(timbre/set-level! :trace) ; Uncomment for more logging
-  (timbre/set-level! :debug)
-;(timbre/set-level! :info)
+(timbre/set-config!
+ (merge timbre/default-config
+        {:min-level ;:info
+         [[#{"pinkgorilla.nrepl.client.connection"} :debug]
+          [#{"*"} :warn]]}))
 
 (defn conn-raw 
   "demo nrepl websocket 

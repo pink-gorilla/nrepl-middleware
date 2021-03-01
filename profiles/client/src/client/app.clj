@@ -8,10 +8,12 @@
    )
   (:gen-class))
 
-; (timbre/set-level! :trace) ; Uncomment for more logging
-;(timbre/set-level! :debug)
-(timbre/set-level! :info)
-(timbre/set-level! :warn)
+(timbre/set-config!
+ (merge timbre/default-config
+        {:min-level ;:info
+         [[#{"pinkgorilla.nrepl.client.connection"} :debug]
+          [#{"*"} :warn]
+          ]}))
 
 
 (def ops-ide [{:op "describe"}
@@ -37,11 +39,11 @@
               {:op "eval" :as-picasso 1 :code "^:R [:p (+ 8 8)]"}])
 
 (defn neval [state msg]
-    (println "\r\n" msg)
-    (->> msg
-         (send-request-sync! state)
+  (println "\r\n" msg)
+  (->> msg
+       (send-request-sync! state)
        ;print-fragments
-         (println "yeah: ")))
+       (println "yeah: ")))
 
 (defn print-forwarded [msg]
   (let [msg-forward (:sniffer-forward (first msg))]
@@ -55,13 +57,12 @@
         ;_ (println "args:" args "mode:" mode)
         ;_ (println "nrepl-client: connecting to nrepl server at port" (:port config))
         conn (when (or (= mode "sink") (= mode "ide")) (connect config))
-        neval (partial neval conn)
-        ]
+        neval (partial neval conn)]
     (case mode
       "sink"
      ; (println (request-rolling! conn {:op "sniffer-sink"} print-forwarded))
       (println "bongo")
-      
+
       "ide"
       (do
         (doall (map neval ops-ide)) ; blocking
