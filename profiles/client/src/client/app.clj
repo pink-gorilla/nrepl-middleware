@@ -4,17 +4,16 @@
    [taoensso.timbre :as timbre :refer [info]]
    ;[pinkgorilla.nrepl.client.request-sync :refer [request-rolling!]]
    [pinkgorilla.nrepl.helper :refer [print-fragments status success?]]
-   [pinkgorilla.nrepl.client.core :refer [connect disconnect send-request-sync!]] ; side effects
+   [pinkgorilla.nrepl.client.core :refer [connect disconnect send-request-sync! request-rolling!]] ; side effects
    )
   (:gen-class))
 
 (timbre/set-config!
  (merge timbre/default-config
         {:min-level ;:info
-         [[#{"pinkgorilla.nrepl.client.connection"} :debug]
-          [#{"pinkgorilla.nrepl.client.op.eval"} :debug]
-          [#{"*"} :warn]
-          ]}))
+         [;[#{"pinkgorilla.nrepl.client.connection"} :debug]
+          ;[#{"pinkgorilla.nrepl.client.op.eval"} :debug]
+          [#{"*"} :warn]]}))
 
 
 (def ops-ide [{:op "describe"}
@@ -44,7 +43,7 @@
   (->> msg
        (send-request-sync! state)
        ;print-fragments
-       (println "yeah: ")))
+       (println "result: ")))
 
 (defn print-forwarded [msg]
   (let [msg-forward (:sniffer-forward (first msg))]
@@ -61,8 +60,9 @@
         neval (partial neval conn)]
     (case mode
       "sink"
-     ; (println (request-rolling! conn {:op "sniffer-sink"} print-forwarded))
-      (println "bongo")
+      (do
+        (println "printing all sniffing results ... (exit with ctrl+c)")
+        (request-rolling! conn {:op "sniffer-sink"} print-forwarded))
 
       "ide"
       (do
@@ -73,5 +73,5 @@
         (disconnect conn))
 
       ; else:
-      (do (println "To listen (notebook mode): lein client listen")
-          (println "To eval (ide mode): lein client ide")))))
+      (do (println "To listen (notebook mode): lein client sink")
+          (println "To eval (ide mode):        lein client ide")))))
