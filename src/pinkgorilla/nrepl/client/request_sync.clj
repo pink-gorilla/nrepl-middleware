@@ -32,6 +32,11 @@
     (pprint clone-response)
     conn))
 
+(defn disconnect! [conn]
+  (let [transport (:transport @conn)]
+    (println "disconnecting client nrepl session.")
+    (swap! conn dissoc :transport :client)
+    (.close transport)))
 
 (defn- add-session-id [state msg]
   (if-let [session-id (:session-id @state)]

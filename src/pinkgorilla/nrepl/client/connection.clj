@@ -23,7 +23,7 @@
 
 (defn disconnect! [conn]
   (let [transport (:transport @conn)]
-    (println "disconnecting client nrepl session.")
+    (info "disconnecting client nrepl session.")
     (swap! conn dissoc :transport :client)
     (.close transport)))
 

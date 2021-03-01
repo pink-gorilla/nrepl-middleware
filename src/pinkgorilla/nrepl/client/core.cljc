@@ -11,7 +11,7 @@
    [pinkgorilla.nrepl.client.op.cider]
    [pinkgorilla.nrepl.client.op.admin]
 
-   [pinkgorilla.nrepl.client.connection :refer [connect!]]
+   [pinkgorilla.nrepl.client.connection :refer [connect! disconnect!]]
    [pinkgorilla.nrepl.client.multiplexer :refer [create-multiplexer!]]
    [pinkgorilla.nrepl.client.request :as r]))
 
@@ -23,6 +23,12 @@
     {:config config
      :conn conn
      :mx mx}))
+
+(defn disconnect [s]
+    (disconnect! (:conn s))
+  
+  )
+
 
 (defn send-request! [{:keys [conn mx]} req & [partial-results?]]
   (let [result-ch (r/send-request! conn mx partial-results? req)]

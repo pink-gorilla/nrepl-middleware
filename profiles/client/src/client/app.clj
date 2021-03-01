@@ -4,7 +4,7 @@
    [taoensso.timbre :as timbre :refer [info]]
    ;[pinkgorilla.nrepl.client.request-sync :refer [request-rolling!]]
    [pinkgorilla.nrepl.helper :refer [print-fragments status success?]]
-   [pinkgorilla.nrepl.client.core :refer [connect send-request-sync!]] ; side effects
+   [pinkgorilla.nrepl.client.core :refer [connect disconnect send-request-sync!]] ; side effects
    )
   (:gen-class))
 
@@ -12,6 +12,7 @@
  (merge timbre/default-config
         {:min-level ;:info
          [[#{"pinkgorilla.nrepl.client.connection"} :debug]
+          [#{"pinkgorilla.nrepl.client.op.eval"} :debug]
           [#{"*"} :warn]
           ]}))
 
@@ -69,8 +70,7 @@
         ;(send-requests! conn (take 2 ops-ide)) ; 
         (read-line)
         (println "quit.")
-        ;(disconnect! conn)
-        )
+        (disconnect conn))
 
       ; else:
       (do (println "To listen (notebook mode): lein client listen")

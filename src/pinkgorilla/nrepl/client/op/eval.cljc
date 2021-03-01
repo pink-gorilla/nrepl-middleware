@@ -1,7 +1,7 @@
 (ns pinkgorilla.nrepl.client.op.eval
   (:require
-   #?(:cljs [taoensso.timbre :refer-macros [debug info warn error]]
-      :clj [taoensso.timbre :refer [debug info warn error]])
+   #?(:cljs [taoensso.timbre :refer-macros [debug debugf info infof warn error errorf]]
+      :clj [taoensso.timbre :refer [debug debugf info infof warn error errorf]])
    #?(:cljs [cljs.reader :refer [read-string]]
       :clj [clojure.core :refer [read-string]])
    #?(:cljs [js :refer [Error]]
@@ -12,21 +12,39 @@
 ;#?(:clj
 ;   (def Error {}))
 
-(defn- picasso-unwrap
-  "picasso middleware serializes picasso values to edn.
+#?(:cljs
+   (defn- picasso-unwrap
+     "picasso middleware serializes picasso values to edn.
    It does this becaus nrepl might usesay bencode for its connection.
    In this case we would loose meta-data, Therefor picasso values ae sent as string
    on the wire.
    In case nrepl transport is edn (which new versions do), then
    we have edn within edn :-(.
    "
-  [value]
-  (try
-    (let [data (read-string value)]
-    ;(info "converted value-response" (:value-response data2))
-      data)
-    (catch Error e
-      (error "picasso-unwrap parsing %s ex: %s" value e))))
+     [value]
+     (try
+       (debugf "picasso-unwrap %s" value)
+       (when value (read-string value))
+       (catch Error e
+         (error "picasso-unwrap parsing %s ex: %s" value e))))
+
+   :clj
+   (defn- picasso-unwrap
+     "picasso middleware serializes picasso values to edn.
+   It does this becaus nrepl might usesay bencode for its connection.
+   In this case we would loose meta-data, Therefor picasso values ae sent as string
+   on the wire.
+   In case nrepl transport is edn (which new versions do), then
+   we have edn within edn :-(.
+   "
+     [value]
+     (try
+       (debugf "picasso-unwrap %s" value)
+       (when value (read-string value))
+       (catch Exception e
+         (errorf "picasso-unwrap parsing %s ex: %s" value (.getMessage e)))))
+   ;
+   )
 
 (defn- process-fragment
   "result is an atom, containing the eval result.
