@@ -68,8 +68,8 @@
       (do
         (doall (map neval ops-ide)) ; blocking
         ;(send-requests! conn (take 2 ops-ide)) ; 
-        (read-line)
-        (println "quit.")
+        ;(read-line)
+        ;(println "quit.")
         (disconnect conn))
 
       ; else:

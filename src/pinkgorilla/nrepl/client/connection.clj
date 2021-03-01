@@ -24,7 +24,15 @@
 (defn disconnect! [conn]
   (let [transport (:transport @conn)]
     (info "disconnecting client nrepl session.")
-    (swap! conn dissoc :transport :client)
+    (swap! conn dissoc ;:transport 
+           :client :connected?)
+    ;(.close transport)
+    ))
+
+(defn- disconnect-t! [conn]
+  (let [transport (:transport @conn)]
+    (info "disconnecting client nrepl session.")
+    (swap! conn dissoc :transport :client :connected?)
     (.close transport)))
 
 ; "interrupt", which will attempt to interrupt the current execution with id provided in the :interrupt-id slot.
@@ -64,7 +72,8 @@
       (>! req-ch {:op "clone" :id id-req-clone}))
 
     (go-loop []
-      (let [session-id-rcvd? (:session-id @conn)]
+      (let [session-id-rcvd? (:session-id @conn)
+            connected? (:connected? @conn)]
 
         ; req-ch -> nrepl
         (when-let [req (poll! req-ch)]
@@ -79,7 +88,10 @@
             (set-session-id! conn res))
 
           (>! res-ch res))
-        (recur)))
+
+        (if-not connected?
+          (disconnect-t! conn)
+          (recur))))
 
     ; return conn
     conn))
