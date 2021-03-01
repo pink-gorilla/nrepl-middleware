@@ -2,17 +2,16 @@
   (:require
    [clojure.core.async :refer [<! <!! go go-loop]]
    [taoensso.timbre :as timbre :refer [info]]
-   [pinkgorilla.nrepl.client.connection :refer [connect! disconnect!]]
-   ;[pinkgorilla.nrepl.client.request :refer []]
    ;[pinkgorilla.nrepl.client.request-sync :refer [request-rolling!]]
    [pinkgorilla.nrepl.helper :refer [print-fragments status success?]]
-   [pinkgorilla.nrepl.client.core :refer [connect send-requests! send-request-sync!]] ; side effects
+   [pinkgorilla.nrepl.client.core :refer [connect send-request-sync!]] ; side effects
    )
   (:gen-class))
 
 ; (timbre/set-level! :trace) ; Uncomment for more logging
-(timbre/set-level! :debug)
-; (timbre/set-level! :info)
+;(timbre/set-level! :debug)
+(timbre/set-level! :info)
+(timbre/set-level! :warn)
 
 
 (def ops-ide [{:op "describe"}
@@ -37,7 +36,7 @@
               ; evals inside notebook would have this flag. check if it works:
               {:op "eval" :as-picasso 1 :code "^:R [:p (+ 8 8)]"}])
 
-#_(defn neval [state msg]
+(defn neval [state msg]
     (println "\r\n" msg)
     (->> msg
          (send-request-sync! state)
@@ -56,7 +55,7 @@
         ;_ (println "args:" args "mode:" mode)
         ;_ (println "nrepl-client: connecting to nrepl server at port" (:port config))
         conn (when (or (= mode "sink") (= mode "ide")) (connect config))
-        ;neval (partial neval conn)
+        neval (partial neval conn)
         ]
     (case mode
       "sink"
@@ -65,8 +64,8 @@
       
       "ide"
       (do
-        ;(doall (map neval ops-ide))
-        (send-requests! conn (take 1 ops-ide))
+        (doall (map neval ops-ide)) ; blocking
+        ;(send-requests! conn (take 2 ops-ide)) ; 
         (read-line)
         (println "quit.")
         ;(disconnect! conn)

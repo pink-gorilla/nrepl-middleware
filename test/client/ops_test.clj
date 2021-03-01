@@ -1,7 +1,20 @@
 (ns client.ops-test
   (:require
    [clojure.test :refer [testing is deftest]]
-   [pinkgorilla.nrepl.client.core :refer [process-req]]))
+   [pinkgorilla.nrepl.client.protocols :refer [init]]
+   [pinkgorilla.nrepl.client.core] ; side-effects
+   ))
+
+(defn- process-fragment-log [process-fragment result fragment]
+  (let [r (process-fragment result fragment)]
+    (println "processing: " fragment "result: " r)
+    r))
+
+(defn process-req [{:keys [req fragments]}]
+  (let [{:keys [initial-value process-fragment]} (init req)
+        p (partial process-fragment-log process-fragment)]
+    (reduce p initial-value fragments)))
+
 
 ; :ns needs to be in fragment, because otherwise value and pcasso
 ; do not get processed.

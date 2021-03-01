@@ -14,7 +14,10 @@
   (multiple-key-concat [:versions :ops]))
 
 (defmethod init :ls-sessions [req]
-  (multiple-key-concat :sessions))
+  (multiple-key-concat [:sessions]))
+
+(defmethod init :ls-middleware [req]
+  (multiple-key-concat [:middleware]))
 
 (defmethod init :interrupt [req]
   (multiple-key-concat :unknown))

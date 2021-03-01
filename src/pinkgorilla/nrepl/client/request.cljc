@@ -29,13 +29,14 @@
     (swap! result process-fragment res)
     (if (done? res)
       (do
-        (debugf "request %s  done result: %s" request-id @result)
+        (debugf "request %s  done result: %s result-ch: %s" request-id @result result-ch)
         (remove-req-processor mx request-id)
         (go
-          (>! result-ch @result))
-        (close! result-ch))
+          (>! result-ch @result)
+          (close! result-ch)))
       (when partial-results?
-        (>! result-ch @result)))))
+        (go
+          (>! result-ch @result))))))
 
 (defn create-request-processor!
   "make-request 
@@ -87,14 +88,13 @@
         {:keys [req-ch]} @conn]
     (if (req-valid? req)
       (let [result-ch (create-request-processor! mx partial-results? req)]
-        (debugf "send-request! req: %s" req)
-        (debugf "req-ch %s" req-ch)
+        (debugf "send-request! req: %s result-ch: %s" req result-ch)
         (if req-ch
           (go
-            (debug "a")
-            (>! req-ch req)
-            (debug "b"))
+            (>! req-ch req))
           (errorf "send-request! cannot send: no req-ch"))
         result-ch)
-      nil)))
+      (let [ch-err (chan)]
+        (close! ch-err)
+        ch-err))))
 

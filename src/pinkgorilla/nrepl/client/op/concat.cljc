@@ -17,7 +17,7 @@
   {:initial-value [] ;{k []}
    :process-fragment
    (fn [result fragment]
-     (info "prior result: " result)
+     (debug "prior result: " result "ks: " ks)
      (conj result (select-keys fragment ks)))})
 
 (defmethod init :gorilla-nav [req]
@@ -27,7 +27,7 @@
   {:initial-value [] ;{k []}
    :process-fragment
    (fn [result fragment]
-     (info "prior result: " result)
+     (debug "prior result: " result)
      (conj result (dissoc fragment :session :transport :id)))})
 
 (defmethod init :default [req]
