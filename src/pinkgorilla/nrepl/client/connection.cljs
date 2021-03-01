@@ -77,10 +77,10 @@
   (let [input-ch (chan)
         output-ch (chan)
         conn (atom {:session-id nil  ; sent from nrepl on connect, set by receive-msgs!
-              :input-ch input-ch
-              :output-ch output-ch
-              :connected? false
-              :ws-ch nil})]
+                    :input-ch input-ch
+                    :output-ch output-ch
+                    :connected? false
+                    :ws-ch nil})]
     (go-loop [connected-prior? false]
       (info "ws-connecting...")
       (let [{:keys [ws-channel error]} (<! (chord/ws-ch ws-url {:format :edn}))]
@@ -98,20 +98,20 @@
             (swap! conn assoc :ws-ch  ws-channel)
             ;(when-not connected-prior?
             (>! ws-channel {:op "clone" :id "uiui"}) ; )
-            (<! (process-incoming-nrepl-msgs 
-                 (:session-id @conn) 
-                 ws-channel 
-                 output-ch 
+            (<! (process-incoming-nrepl-msgs
+                 (:session-id @conn)
+                 ws-channel
+                 output-ch
                  (:connected? @conn)))
             (info "incoming nrepl processing finished (ws closed?)")
             (<! (timeout 3000))
             (recur true)))))
      ; process incoming user messages
-    (process-user-messages 
-     (:ws-ch @conn) 
-     input-ch 
-     output-ch 
-     (:session-id @conn) 
+    (process-user-messages
+     (:ws-ch @conn)
+     input-ch
+     output-ch
+     (:session-id @conn)
      (:connected? @conn))
     conn))
 

@@ -21,6 +21,7 @@
 ; picasso is wrapped as edn by middleware, you can run (pr-str val)
 ; to create more tests
 
+
 (def code
   {:req {:op :eval :code "1 (println 4) (+ 1 1) (println 5) 3"}
    :fragments [{:value 1 :ns "user" :picasso "1"}

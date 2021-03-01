@@ -51,7 +51,6 @@
           true)
       (warnf "cannot set session id from res: %s" res))))
 
-
 (defn connect! [config]
   (let [req-ch (chan)
         res-ch (chan)

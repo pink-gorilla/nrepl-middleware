@@ -3,8 +3,6 @@
    [pinkgorilla.nrepl.client.protocols :refer [init]]
    [pinkgorilla.nrepl.client.op.concat :refer [single-key-concat multiple-key-concat]]))
 
-
-
 (defmethod init :sniffer-status [req]
   (multiple-key-concat [:sniffer-status]))
 

@@ -2,7 +2,13 @@
   (:require
    [pinkgorilla.nrepl.client.protocols :refer [init]]))
 
-(defn process-req [req]
+(defn xf-res-for-req-eval
+  "transducer for nrepl-req :eval
+   combines multiple res/eval responses 
+   into a result.
+   will only raise the final result
+   "
+  [req]
   (fn [xf]
     (let [{:keys [initial-value process-fragment]} (init req)
           reqs (atom initial-value)]
@@ -19,7 +25,7 @@
 
 (comment
 
-  (into [] (process-req {:op :eval :id 1})
+  (into [] (xf-res-for-req-eval {:op :eval :id 1})
         [{:id 1 :out "1" :ns "user" :value 7}
          {:id 1 :out "2"}
          {:id 1 :out "3"}

@@ -16,8 +16,6 @@
    [pinkgorilla.nrepl.client.multiplexer :refer [create-multiplexer!]]
    [pinkgorilla.nrepl.client.request :as r]))
 
-
-
 (defn connect [config]
   (let [conn (connect! config)
         mx (create-multiplexer! conn)]
@@ -27,7 +25,6 @@
 
 (defn disconnect [s]
   (disconnect! (:conn s)))
-
 
 (defn send-request! [{:keys [conn mx]} req & [partial-results?]]
   (let [result-ch (r/send-request! conn mx partial-results? req)]
@@ -52,7 +49,6 @@
        r))
  ;  
    )
-
 
 (defn request-rolling!
   "make a nrepl request ´req´ and for each partial reply-fragment

@@ -32,12 +32,12 @@
     (swap! clients assoc ws-id c))
 
   #_(when (> (count @clients) 1)
-    (info "more than one client: " (count @clients))
-    (doall (for [t (keys @clients)]
-             (do ;(info "client:" t)
-               (if (identical? ws-id t)
-                 nil
-                 (client-close t)))))))
+      (info "more than one client: " (count @clients))
+      (doall (for [t (keys @clients)]
+               (do ;(info "client:" t)
+                 (if (identical? ws-id t)
+                   nil
+                   (client-close t)))))))
 
 (defn ws-processor
   "Creates a websocket thing (not an actual ring-handler).

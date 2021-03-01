@@ -22,7 +22,6 @@
     (debugf "status: %s done: %s" status done)
     done))
 
-
 (defn process-req-response [mx rps res]
   (info "processing req-rep " res)
   (let [{:keys [request-id result-ch result process-fragment partial-results?]} rps]
