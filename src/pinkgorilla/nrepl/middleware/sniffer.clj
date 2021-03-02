@@ -73,7 +73,7 @@
                             :nrepl.middleware.print/keys
                             :nrepl.middleware.print/print-fn
                             :nrepl.middleware.caught/caught-fn)
-        msg (response-for msg-listener {:status :done
+        msg (response-for msg-listener {;:status :done
                                         :sniffer-forward msg-forward})]
     (println "sniffer forwarding to " (:session-id-sink @state) "message: " msg-forward)
     (when (:code msg)

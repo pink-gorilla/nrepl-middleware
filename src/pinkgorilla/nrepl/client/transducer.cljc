@@ -23,6 +23,11 @@
          (swap! reqs #(process-fragment % res))
          result)))))
 
+
+;(def xf-read-sniffed-evals
+;  (comp )
+
+
 (comment
 
   (into [] (xf-res-for-req-eval {:op :eval :id 1})
@@ -31,6 +36,7 @@
          {:id 1 :out "3"}
          {:id 1 :out "4" :ns "yuppi" :value 9}
          {:id 1 :out "5"}])
+
 
 ;
   )

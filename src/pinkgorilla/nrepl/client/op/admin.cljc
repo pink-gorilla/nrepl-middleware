@@ -1,9 +1,7 @@
 (ns pinkgorilla.nrepl.client.op.admin
   (:require
-   #?(:cljs [taoensso.timbre :refer-macros [debug info warn error]]
-      :clj [taoensso.timbre :refer [debug info warn error]])
    [pinkgorilla.nrepl.client.protocols :refer [init]]
-   [pinkgorilla.nrepl.client.op.concat :refer [single-key-concat multiple-key-concat]]))
+   [pinkgorilla.nrepl.client.op.concat :refer [multiple-key-concat]]))
 
 ;todo:
 ; op: close

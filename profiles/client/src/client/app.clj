@@ -5,6 +5,8 @@
    ;[pinkgorilla.nrepl.client.request-sync :refer [request-rolling!]]
    [pinkgorilla.nrepl.helper :refer [print-fragments status success?]]
    [pinkgorilla.nrepl.client.core :refer [connect disconnect send-request-sync! request-rolling!]] ; side effects
+   ;[pinkgorilla.nrepl.client.connection :refer [connect!]]
+   ;[pinkgorilla.nrepl.client.request :refer [request-rolling!]]
    )
   (:gen-class))
 
@@ -46,26 +48,25 @@
        (println "result: ")))
 
 (defn print-forwarded [msg]
-  (let [msg-forward (:sniffer-forward (first msg))]
-    (if msg-forward
-      (println msg-forward)
-      (println msg))))
+
+  (println ;"msg:" 
+   msg))
 
 (defn -main [& args]
   (let [config {:port 9100}
         [mode] args
         ;_ (println "args:" args "mode:" mode)
-        ;_ (println "nrepl-client: connecting to nrepl server at port" (:port config))
-        conn (when (or (= mode "sink") (= mode "ide")) (connect config))
-        neval (partial neval conn)]
+        ]
     (case mode
       "sink"
       (do
         (println "printing all sniffing results ... (exit with ctrl+c)")
-        (request-rolling! conn {:op "sniffer-sink"} print-forwarded))
+        (-> (connect config)
+            (request-rolling! {:op "sniffer-sink"} print-forwarded)))
 
       "ide"
-      (do
+      (let [conn (connect config)
+            neval (partial neval conn)]
         (doall (map neval ops-ide)) ; blocking
         ;(send-requests! conn (take 2 ops-ide)) ; 
         ;(read-line)

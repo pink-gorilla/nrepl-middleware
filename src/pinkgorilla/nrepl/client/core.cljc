@@ -2,8 +2,8 @@
   (:require
    #?(:clj [clojure.core.async :as async :refer [<! >! chan timeout close! go go-loop <!!]]
       :cljs [cljs.core.async :as async :refer [<! >! chan timeout close!] :refer-macros [go go-loop]])
-   #?(:cljs [taoensso.timbre :refer-macros [debug debugf info infof warn]]
-      :clj [taoensso.timbre :refer [debug debugf info infof warn]])
+   #?(:cljs [taoensso.timbre :refer-macros [debugf info infof]]
+      :clj [taoensso.timbre :refer [debugf info infof]])
 
    ; side-effects (register multi-methods)
    [pinkgorilla.nrepl.client.op.eval]
@@ -28,7 +28,6 @@
 
 (defn send-request! [{:keys [conn mx]} req & [partial-results?]]
   (let [result-ch (r/send-request! conn mx partial-results? req)]
-    (debugf "send-request! result-ch: %s " result-ch)
     result-ch))
 
 #_(defn send-requests!

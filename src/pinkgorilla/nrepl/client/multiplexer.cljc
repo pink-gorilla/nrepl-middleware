@@ -1,11 +1,9 @@
 (ns pinkgorilla.nrepl.client.multiplexer
-  #?(:cljs  (:require-macros
-             [cljs.core.async.macros :refer [go go-loop]]))
   (:require
-   #?(:cljs [taoensso.timbre :refer-macros [debug debugf info warn error errorf]]
-      :clj [taoensso.timbre :refer [debug debugf info warn error errorf]])
-   #?(:clj [clojure.core.async :as async :refer [<! >! chan timeout close! go go-loop]]
-      :cljs [cljs.core.async :as async :refer [<! >! chan timeout close!]])
+   #?(:cljs [taoensso.timbre :refer-macros [debugf errorf]]
+      :clj [taoensso.timbre :refer [ debugf errorf]])
+   #?(:clj [clojure.core.async :as async :refer [<! go-loop]]
+      :cljs [cljs.core.async :as async :refer [<!] :refer-macros [go-loop] ])
    #?(:cljs [reagent.core :refer [atom]])))
 
 (defn- log-msg [msg]

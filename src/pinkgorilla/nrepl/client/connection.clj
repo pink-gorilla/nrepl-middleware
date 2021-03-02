@@ -68,22 +68,26 @@
                     :session-id nil})
         id-req-clone (guuid)]
     (go
-      (>! req-ch {:op "clone" :id id-req-clone}))
+      (nt/send t {:op "clone" :id id-req-clone})
+      ;(>! req-ch {:op "clone" :id id-req-clone})
+      )
 
     (go-loop []
-      (let [session-id-rcvd? (:session-id @conn)
+      (let [session-id (:session-id @conn)
             connected? (:connected? @conn)]
 
         ; req-ch -> nrepl
-        (when-let [req (poll! req-ch)]
-          (debugf "nrepl req  send: %s " req)
-          (nt/send t req))
+        (when session-id
+          (when-let [req (poll! req-ch)]
+            (let [req (if session-id (assoc req :session session-id) req)]
+              (debugf "nrepl req  send: %s " req)
+              (nt/send t req))))
 
-      ; nrepl res -> res-ch
+        ; nrepl res -> res-ch
         (when-let [res (nt/recv t 5)] ; recv is blocking, after 5ms will return nil if no res rcvd
           (debugf "nrepl resp rcvd: %s " res)
 
-          (when-not session-id-rcvd?
+          (when-not session-id
             (set-session-id! conn res))
 
           (>! res-ch res))
