@@ -15,8 +15,9 @@ and execute this 3 commands in this order
 
 ```
 lein relay-jetty  ; this runs jetty http server with websocket relay (port 9000)
-lein client sink   ; will listenn to sniffed evals
-lein client ide   ; will do a few evals that wil show up on listen
+lein client -m sink   ; will listenn to sniffed evals
+lein client -m ide -i ./snippets/sniffer.edn 
+ ; will do a few evals that wil show up on listen
 ```
 
 ## WebRelay websocket demo

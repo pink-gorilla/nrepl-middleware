@@ -1,7 +1,9 @@
 (ns client.app
   (:require
    [clojure.core.async :refer [<! <!! go go-loop]]
+   [clojure.tools.cli :as cli]
    [taoensso.timbre :as timbre :refer [info]]
+   [clojure.core :refer [read-string]]
    ;[pinkgorilla.nrepl.client.request-sync :refer [request-rolling!]]
    [pinkgorilla.nrepl.helper :refer [print-fragments status success?]]
    [pinkgorilla.nrepl.client.core :refer [connect disconnect send-request-sync! request-rolling!]] ; side effects
@@ -10,35 +12,41 @@
    )
   (:gen-class))
 
-(timbre/set-config!
- (merge timbre/default-config
-        {:min-level ;:info
-         [;[#{"pinkgorilla.nrepl.client.connection"} :debug]
+(def cli-options
+  ;; see https://github.com/clojure/tools.cli#example-usage
+  [["-m" "--mode MODE" "mode: ide or sniff"
+    :default :help
+    :parse-fn #(keyword %)]
+   
+   ["-p" "--port PORT" "Port number of the nrepl server."
+    :default 9100
+    :parse-fn #(Integer/parseInt %)
+    :validate [#(< 0 % 0x10000) "Must be a number between 0 and 65536"]]
+
+   ["-h" "--host HOST" "host of the nrepl server."
+    :default "127.0.0.1"]
+
+   ["-i" "--input FILE" "file to load, default: ./snippets.default.edn"
+    :default "./snippets/default.edn"]
+   
+   ["-l" "--log-level LOGLEVEL" ":debug :info :warn :error , default: :warn"
+    :default :warn
+    :parse-fn #(keyword %)
+    ]
+
+;
+   ])
+
+(defn log-config! [level]
+  (timbre/set-config!
+   (merge timbre/default-config
+          {:min-level ;:info
+           [;[#{"pinkgorilla.nrepl.client.connection"} :debug]
           ;[#{"pinkgorilla.nrepl.client.op.eval"} :debug]
-          [#{"*"} :warn]]}))
+            [#{"*"} level]]})))
 
 
-(def ops-ide [{:op "describe"}
-              {:op "ls-sessions"}
-              {:op "ls-middleware"}
-              {:op "eval" :code "(+ 1 1)"}
 
-              {:op "sniffer-status"}
-              {:op "eval" :code ":gorilla/sniff-on"}
-              {:op "sniffer-source"}  ; this starts sniffing on this session
-
-              ; this ops get forwarded
-              {:op "eval"  :code "^:X (+ 2 2)"}
-              {:op "eval"  :code "^:R [:p/vega (+ 8 8)]"}
-              {:op "eval"  :code "^:U (time (reduce + (range 1e6)))"}
-
-              {:op "eval"  :code ":gorilla/off"}
-              {:op "eval"  :code "\"NO\""}
-              {:op "eval"  :code ":gorilla/on"}
-              {:op "eval"  :code "\"YES\""}
-
-              ; evals inside notebook would have this flag. check if it works:
-              {:op "eval" :as-picasso 1 :code "^:R [:p (+ 8 8)]"}])
 
 (defn neval [state msg]
   (println "\r\n" msg)
@@ -48,31 +56,48 @@
        (println "result: ")))
 
 (defn print-forwarded [msg]
-
-  (println ;"msg:" 
-   msg))
+  (println (pr-str msg)))
 
 (defn -main [& args]
-  (let [config {:port 9100}
-        [mode] args
-        ;_ (println "args:" args "mode:" mode)
+  (let [config (cli/parse-opts args cli-options)
+        options (:options config)
         ]
-    (case mode
-      "sink"
+    (println options)
+    (log-config! (:log-level options))
+    (case (:mode options)
+      :sink
       (do
         (println "printing all sniffing results ... (exit with ctrl+c)")
-        (-> (connect config)
+        (-> (connect options)
             (request-rolling! {:op "sniffer-sink"} print-forwarded)))
 
-      "ide"
-      (let [conn (connect config)
-            neval (partial neval conn)]
-        (doall (map neval ops-ide)) ; blocking
+      :ide
+      (let [conn (connect options)
+            neval (partial neval conn)
+            ops (read-string (slurp (:input options)))
+            ]
+        (doall (map neval ops)) ; blocking
         ;(send-requests! conn (take 2 ops-ide)) ; 
         ;(read-line)
-        ;(println "quit.")
+        (println "quit.")
+        (Thread/sleep 1000)
         (disconnect conn))
 
-      ; else:
-      (do (println "To listen (notebook mode): lein client sink")
-          (println "To eval (ide mode):        lein client ide")))))
+      :help
+      (do (println "To listen (notebook mode): lein client -m sink")
+          (println "To eval (ide mode):        lein client -m ide")
+          (println "options:")
+          (println (:summary config))
+          ))))
+
+
+(comment
+
+  (keyword "g")
+
+  (cli/parse-opts [;"-p" "3008" 
+                   "-h" "127.0.0.1"] cli-options)
+
+
+ ; 
+  )

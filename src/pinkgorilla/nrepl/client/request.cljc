@@ -19,7 +19,7 @@
   (let [{:keys [status]} res
         done (or (contains? status :done) ;; res status
                  (some #(= "done" %) status))]
-    (debugf "status: %s done: %s" status done)
+    ;(debugf "status: %s done: %s" status done)
     done))
 
 (defn process-req-response [mx rps res]

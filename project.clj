@@ -42,7 +42,7 @@
                   ;[org.clojure/spec.alpha "0.2.187"]
                   ;[org.clojure/data.json "0.2.6"]
                   [org.clojure/core.async "1.3.610"]
-                  
+
                   ; nrepl/kernel
                   [nrepl "0.8.3"]  ; 0.7.0 lacks add-middleware
                   [cider/cider-nrepl "0.25.8"]
@@ -61,14 +61,14 @@
                   ]
 
   :profiles {:client {:source-paths ["profiles/client/src"]
-                       :dependencies []}
-             
+                      :dependencies [[org.clojure/tools.cli "1.0.194"] ; commandline args
+                                     ]}
+
              :cljs {:source-paths ["profiles/demo/src"]
                     #_:repl-options   #_{:init-ns          demo.app
                                          :port             4001
                                          :nrepl-middleware [shadow.cljs.devtools.server.nrepl/middleware]}
-                    :dependencies [
-                                   [org.clojure/clojurescript "1.10.773"]
+                    :dependencies [[org.clojure/clojurescript "1.10.773"]
                                    [org.clojure/tools.analyzer "1.0.0"]
 
                                    ; shadow-cljs MAY NOT be a dependency in lein deps :tree -> if so, bundeler will fail because shadow contains core.async which is not compatible with self hosted clojurescript
@@ -141,9 +141,7 @@
             ["with-profile" "+relay-jetty" "run" "-m" "demo.relay-jetty"]
 
             "client"
-            ["with-profile" "+client" "run" "-m" "client.app"]
-                        
-            }
+            ["with-profile" "+client" "run" "-m" "client.app"]}
 
 
 
