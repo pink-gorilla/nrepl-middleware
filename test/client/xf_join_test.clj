@@ -1,11 +1,9 @@
-(ns client.transducer2-test
+(ns client.xf-join-test
   (:require
    [clojure.test :refer [testing is deftest]]
-   [clojure.core.async :refer [chan to-chan! close! go  go-loop >! <! <!!]]
    [pinkgorilla.nrepl.client.transducer :refer [res-for-req-join]]
    [pinkgorilla.nrepl.client.core] ; side-effects
    ))
-
 
 ; sniffr messages are created with:
 ; lein client -m sink
@@ -29,14 +27,12 @@
     (into [] xf res-v)))
 
 (deftest xf-join
-  (testing "transducer for req-res-join"
-    (is (= (join sniffer-messages)
-           [{:value [7 9]
-             :picasso [nil nil]
-             :ns "yuppi"
-             :out "12345"
-             :err []
-             :root-ex nil}]))
-    ;
-    ))
+  (let [req-res (join sniffer-messages)
+        r (fn [n]
+            (-> (get req-res n)
+                (get-in [:res :value])))]
+    (testing "transducer for req-res-join"
+      (is (= (count req-res) 11)
 
+     ;   
+          ))))

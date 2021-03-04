@@ -1,13 +1,13 @@
-(ns client.transducer-test
+(ns client.xf-async-test
   (:require
    [clojure.test :refer [testing is deftest]]
    [clojure.core.async :refer [chan to-chan! close! go  go-loop >! <! <!!]]
-   [pinkgorilla.nrepl.client.transducer :refer [xf-res-for-req-eval]]
+   [pinkgorilla.nrepl.client.transducer :refer [res-for-req-eval]]
    [pinkgorilla.nrepl.client.core] ; side-effects
    ))
 
 (defn req-eval [req res-v]
-  (let [xf (xf-res-for-req-eval req)]
+  (let [xf (res-for-req-eval req)]
     (into [] xf res-v)))
 
 (deftest xf-eval
@@ -35,7 +35,7 @@
                          {:id 1 :out "4" :ns "yuppi" :value 9}
                          {:id 1 :out "5"}])
         out-ch (chan)
-        xf (xf-res-for-req-eval {:op :eval :id 1})]
+        xf (res-for-req-eval {:op :eval :id 1})]
    ; read from in-chan and put on out chan
     (go-loop [v (<! in-ch)]
       (if-not v
@@ -55,4 +55,4 @@
 
       r)))
 
-(run)
+;(run)
