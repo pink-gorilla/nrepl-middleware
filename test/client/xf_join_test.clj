@@ -1,7 +1,7 @@
 (ns client.xf-join-test
   (:require
    [clojure.test :refer [testing is deftest]]
-   [pinkgorilla.nrepl.client.transducer :refer [res-for-req-join]]
+   [pinkgorilla.nrepl.client.transducer :refer [req-res-join res-transform-conj res-transform-extract]]
    [pinkgorilla.nrepl.client.core] ; side-effects
    ))
 
@@ -22,17 +22,22 @@
    {:datafy "{:idx 35, :value 6, :meta nil}", :id "1a193a83-cf0e-4ca7-ba26-5c9943f3126d", :meta "nil", :ns "user", :picasso "{:type :hiccup, :content [:span {:class \"clj-long\"} \"6\"]}", :value 6}
    {:id "1a193a83-cf0e-4ca7-ba26-5c9943f3126d", :status ["done"]}])
 
-(defn join [res-v]
-  (let [xf (res-for-req-join)]
-    (into [] xf res-v)))
+#_(let [rr (into []
+                 (req-res-join res-transform-extract false)
+                 sniffer-messages)]
+    (for [r rr]
+      (println r)))
 
-(deftest xf-join
-  (let [req-res (join sniffer-messages)
-        r (fn [n]
-            (-> (get req-res n)
-                (get-in [:res :value])))]
+(deftest xf-join-extract-no-partial
+  (let [req-res (into [] (req-res-join res-transform-extract false) sniffer-messages)
+        v (fn [n]
+            (-> (nth req-res n)
+                (get-in [:value])))]
+    ;(println "0: " (nth req-res 0))
     (testing "transducer for req-res-join"
-      (is (= (count req-res) 11)
-
+      (is (= 3 (count req-res)))
+      (is (= ["YES"] (v 0)))
+      (is (= [["p" 16]] (v 1)))
+      (is (= [2 4 6] (v 2)))
      ;   
-          ))))
+      )))

@@ -74,7 +74,7 @@
                             :nrepl.middleware.print/print-fn
                             :nrepl.middleware.caught/caught-fn)
         req-send (response-for req-listener {;:status :done
-                                        :sniffer-forward req-forward})]
+                                             :sniffer-forward req-forward})]
     (println "sniffer forwarding to " (:session-id-sink @state) "message: " req-forward)
     (when (:code req)
       (println "code meta data: " (meta (:code req))))

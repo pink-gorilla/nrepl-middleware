@@ -26,7 +26,6 @@
     (dissoc r :nrepl.middleware.print/keys)
     :no-response))
 
-
 (defmethod init :sniffer-sink [req]
   {:initial-value {}
    :process-fragment process-fragment})
