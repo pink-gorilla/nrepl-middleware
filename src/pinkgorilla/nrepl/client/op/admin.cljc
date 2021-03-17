@@ -1,7 +1,7 @@
 (ns pinkgorilla.nrepl.client.op.admin
   (:require
    [pinkgorilla.nrepl.client.protocols :refer [init]]
-   [pinkgorilla.nrepl.client.op.concat :refer [multiple-key-concat]]))
+   [pinkgorilla.nrepl.client.op.concat :refer [key-concat]]))
 
 ;todo:
 ; op: close
@@ -9,14 +9,14 @@
 
 
 (defmethod init :describe [req]
-  (multiple-key-concat [:versions :ops]))
+  (key-concat [:versions :ops]))
 
 (defmethod init :ls-sessions [req]
-  (multiple-key-concat [:sessions]))
+  (key-concat [:sessions]))
 
 (defmethod init :ls-middleware [req]
-  (multiple-key-concat [:middleware]))
+  (key-concat [:middleware]))
 
 (defmethod init :interrupt [req]
-  (multiple-key-concat :unknown))
+  (key-concat :unknown))
 

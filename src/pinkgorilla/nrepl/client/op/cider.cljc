@@ -3,25 +3,25 @@
    #?(:cljs [taoensso.timbre :refer-macros [debug info warn error]]
       :clj [taoensso.timbre :refer [debug info warn error]])
    [pinkgorilla.nrepl.client.protocols :refer [init]]
-   [pinkgorilla.nrepl.client.op.concat :refer [single-key-concat multiple-key-concat]]))
+   [pinkgorilla.nrepl.client.op.concat :refer [key-concat]]))
 
 (defmethod init :cider-version [req]
-  (multiple-key-concat [:cider-version]))
+  (key-concat [:cider-version]))
 
 (defmethod init :apropos [req]
-  (multiple-key-concat [:apropos-matches]))
+  (key-concat [:apropos-matches]))
 
 (defmethod init :complete [req]
-  (single-key-concat :completions))
+  (key-concat [:completions]))
 
 (defmethod init :complete-doc [req]
-  (single-key-concat :completion-doc))
+  (key-concat [:completion-doc]))
 
 (defmethod init :info [req]
-  (multiple-key-concat ["name" "ns"
-                        "resource" "added"
-                        "file" "line" "column"
-                        "see-also" "arglists-str" "doc"]))
+  (key-concat ["name" "ns"
+               "resource" "added"
+               "file" "line" "column"
+               "see-also" "arglists-str" "doc"]))
 
 #_[{"resource" "clojure/pprint/pprint_base.clj",
     "name" "pprint",
@@ -36,5 +36,5 @@
     "ns" "clojure.pprint"}]
 
 (defmethod init :stacktrace [req]
-  (single-key-concat :stacktrace))
+  (key-concat [:stacktrace]))
 

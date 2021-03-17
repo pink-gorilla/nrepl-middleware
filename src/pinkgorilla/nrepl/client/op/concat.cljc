@@ -1,30 +1,23 @@
 (ns pinkgorilla.nrepl.client.op.concat
   (:require
-   #?(:cljs [taoensso.timbre :refer-macros [debug info warn warnf error]]
-      :clj [taoensso.timbre :refer [debug info warn warnf error]])
+   #?(:cljs [taoensso.timbre :refer-macros [debug debugf info warn warnf error]]
+      :clj [taoensso.timbre :refer [debug debugf info warn warnf error]])
    [pinkgorilla.nrepl.client.protocols :refer [init]]))
 
-; many :op initsjust return one value. 
-; more efficient by having this helper
-(defn single-key-concat [k]
-  {:initial-value [] ;{k []}
+; many :op responses are just one message with one or more keys. 
+
+(defn key-concat [ks]
+  {:initial-value {}
    :process-fragment
    (fn [result fragment]
-     (info "prior result: " result)
-     (conj result (get fragment k)))})
+     (let [data (select-keys fragment ks)]
+       (debugf "prior result: %s new: %s" result data)
+       (merge result data)))})
 
-(defn multiple-key-concat [ks]
-  {:initial-value [] ;{k []}
-   :process-fragment
-   (fn [result fragment]
-     (debug "prior result: " result "ks: " ks)
-     (conj result (select-keys fragment ks)))})
-
-(defmethod init :gorilla-nav [req]
-  (single-key-concat :datafy))
+; unknown op responses will get returned by conj-ing all responses
 
 (defn develop-concat []
-  {:initial-value [] ;{k []}
+  {:initial-value []
    :process-fragment
    (fn [result fragment]
      (debug "prior result: " result)

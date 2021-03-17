@@ -1,10 +1,9 @@
 (ns demo.app
   (:require
    [taoensso.timbre :as timbre :refer-macros [debug info warn error]]
-   [cljs.core.async :as async :refer [<! >! chan timeout close!] :refer-macros [go go-loop]]
+   [cljs.core.async :as async :refer [<!] :refer-macros [go]]
    [reagent.dom]
    [reagent.core :as r]
-   [cljs-uuid-utils.core :as uuid]
    [pinkgorilla.nrepl.client.core :refer [connect send-request!
                                           op-describe op-lssessions op-lsmiddleware
                                           op-eval
@@ -39,7 +38,7 @@
     (r! :04-eval (op-eval "(println 3)(* 7 7)(println 5)"))
 
     ; cider
-    ;(r! :05-ciderv (op-ciderversion))
+    ;(r! :05-ciderv (op-ciderversion)) ; cider version fucks up other request, unsure why
     (r! :06-apropos (op-apropos "pprint"))
     (r! :07-docstring (op-docstring "doseq" "clojure.core"))
     (r! :08-complete (op-completions "ma" "user" "(def a 4)"))
