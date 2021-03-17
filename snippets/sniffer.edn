@@ -15,4 +15,6 @@
  
  {:op "eval"  :code "(+ 1 1) (+ 2 2) (+ 3 3)"}
 
+ {:op "eval" :code "(time (reduce + (range 1e6)))"}
+
  ]

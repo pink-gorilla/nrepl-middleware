@@ -125,6 +125,14 @@
   []
   {:op "stacktrace"})
 
+; gorilla
+
+(defn op-gorillanav
+  [idx k v]
+  {:op "gorilla-nav"
+   :datafy (pr-str {:idx idx
+                    :k k
+                    :v v})})
 
 
 ; helper like this might be handy:
