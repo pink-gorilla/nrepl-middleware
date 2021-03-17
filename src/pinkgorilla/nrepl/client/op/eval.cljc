@@ -4,9 +4,9 @@
       :clj [taoensso.timbre :refer [debug debugf info infof warn error errorf]])
    #?(:cljs [cljs.reader :refer [read-string]]
       :clj [clojure.core :refer [read-string]])
-   #?(:cljs [js :refer [Error]]
+  ; #?(:cljs [js :refer [Error]]
       ;:clj [java.lang :refer [Error]]
-      )
+   ;   )
    [pinkgorilla.nrepl.client.protocols :refer [init]]))
 
 ;#?(:clj
@@ -25,7 +25,7 @@
      (try
        (debugf "picasso-unwrap %s" value)
        (when value (read-string value))
-       (catch Error e
+       (catch js/Error e
          (error "picasso-unwrap parsing %s ex: %s" value e))))
 
    :clj

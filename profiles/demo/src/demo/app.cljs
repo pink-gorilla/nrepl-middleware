@@ -1,17 +1,12 @@
 (ns demo.app
-  (:require-macros
-   [cljs.core.async.macros :refer [go go-loop]])
   (:require
-   [taoensso.timbre :as timbre :refer [debug info warn error]]
-   [cljs.core.async :as async :refer [<! >! chan timeout close!]]
+   [taoensso.timbre :as timbre :refer-macros [debug info warn error]]
+   [cljs.core.async :as async :refer [<! >! chan timeout close!] :refer-macros [go go-loop]]
    [reagent.dom]
    [reagent.core :as r]
    [cljs-uuid-utils.core :as uuid]
-   [pinkgorilla.nrepl.ws.connection :refer [ws-connect!]]
-   [pinkgorilla.nrepl.ws.client :refer [nrepl-client! nrepl-op]]
-   [pinkgorilla.nrepl.op.admin :refer [describe ls-sessions]]
-   [pinkgorilla.nrepl.op.eval :refer [nrepl-eval]]
-   [pinkgorilla.nrepl.op.cider :refer [stacktrace resolve-symbol doc-string completions]]
+   [pinkgorilla.nrepl.client.core :refer [connect send-request!]]
+  
    [demo.views]))
 
 (enable-console-print!)
@@ -20,9 +15,10 @@
  (merge timbre/default-config
         {:min-level ;:info
          [[#{"pinkgorilla.nrepl.client.connection"} :debug]
-          [#{"*"} :warn]]}))
+          [#{"*"} :debug]]}))
 
-(defn conn-raw 
+
+#_(defn conn-raw 
   "demo nrepl websocket 
    uses the level1 api (raw api)
    only useful for testing"
@@ -46,7 +42,7 @@
 
     conn))
 
-(defn conn-req 
+#_(defn conn-req 
   "demo nrepl websocket
    uses the async request api (layer 2)"
   [ws-url d]
@@ -108,13 +104,16 @@
 
   (let [d (r/atom nil)
         ;conn (conn-raw "ws://localhost:9000/nrepl")
-        conn (conn-req "ws://127.0.0.1:9000/nrepl" d)]
+        conn (connect {:ws-url "ws://127.0.0.1:9000/nrepl"})]
 
+    ;(send-request! conn {:op "describe"})
+(send-request! conn {:op "describe"})
+    
     (reagent.dom/render [demo.views/app conn d]
                         (.getElementById js/document "app"))))
 
 
-;(make-request! conn {:op "describe"})
+
 ;
 (defn ^:export  stop []
   (js/console.log "Stopping..."))

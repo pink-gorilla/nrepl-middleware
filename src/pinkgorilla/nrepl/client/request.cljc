@@ -2,8 +2,8 @@
   #?(:cljs (:require-macros
             [cljs.core.async.macros :refer [go go-loop]]))
   (:require
-   #?(:cljs [taoensso.timbre :refer-macros [debug debugf info warn errorf]]
-      :clj [taoensso.timbre :refer [debug debugf info warn errorf]])
+   #?(:cljs [taoensso.timbre :refer-macros [debug debugf info infof warn errorf]]
+      :clj [taoensso.timbre :refer [debug debugf info infof warn errorf]])
    #?(:cljs [cljs.core.async :as async :refer [<! >! chan timeout close!]]
       :clj [clojure.core.async :as async :refer [<! >! chan timeout close! go go-loop]])
    [pinkgorilla.nrepl.client.id :refer [guuid]]
