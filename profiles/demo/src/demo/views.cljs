@@ -1,23 +1,31 @@
 (ns demo.views
-  (:require-macros
-   [cljs.core.async.macros :refer [go go-loop]])
   (:require
-   [taoensso.timbre :refer [debug info warn error]]
+   [taoensso.timbre :refer-macros [debug info warn error]]
    [pinkgorilla.nrepl.ui.describe :refer [describe]]))
 
 
 (defn nrepl-conn-info [conn]
-  (let [{:keys [connected? session-id]} conn]
+  (let [{:keys [connected? session-id]} @conn]
     [:div
-     [:p "NRepl connected:" (str @connected?)]
-     [:p "NRepl session-id:" (str @session-id)]]))
+     [:p "NRepl connected:" (str connected?)]
+     [:p "NRepl session-id:" (str session-id)]]))
 
-(defn app [conn d]
+(defn misc [data]
+  [:div
+   (doall (for [[k v] data]
+            ^{:key k}
+            [:div
+             [:p [:b (str k)]]
+             [:p (str v)]]))])
+
+
+(defn app [conn data]
   [:div
    [:h1 "NRepl demo"]
+   [:p "config" (pr-str (:config conn))]
    [:h2 "Will connect to nrepl-ws relay, and then run a few commands and print them."]
    [:h2 "Please start ws relay with 'lein relay-jetty' "]
-   [nrepl-conn-info conn]
-   [describe @d]
-   [:p "To see complete output please look into browser console"]
-   ])
+   [nrepl-conn-info (:conn conn)]
+   [describe (:describe @data)]
+   [misc @data]
+   [:p "You can also look into your browser console"]])

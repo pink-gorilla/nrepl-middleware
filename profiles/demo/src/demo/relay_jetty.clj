@@ -13,7 +13,14 @@
            :route "/nrepl"}})
 
 (defn -main []
-  (timbre/set-level! :info)
+
+(timbre/set-config!
+ (merge timbre/default-config
+        {:min-level ;:info
+         [[#{"pinkgorilla.nrepl.client.connection"} :debug]
+          [#{"*"} :warn]]}))
+
+
   (run-nrepl-server demo-config)
   ;(add-middleware! demo-config) ; not needed in case of in process nrepl-server
   (run-relay-jetty demo-config))

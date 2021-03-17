@@ -1,4 +1,4 @@
-(ns pinkgorilla.nrepl.ws.relay
+(ns pinkgorilla.nrepl.relay.relay
   (:require
    [taoensso.timbre :refer [debug info error]]
    [clojure.edn :as edn]

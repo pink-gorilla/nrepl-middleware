@@ -1,4 +1,4 @@
-(ns pinkgorilla.nrepl.ws.httpkit-ws-relay
+(ns pinkgorilla.nrepl.relay.httpkit-ws-relay
   "A websocket handler that passes messages back and forth to an already running nREPL server."
   ;(:use [compojure.core :only (defroutes GET)]
   ;      ring.util.response

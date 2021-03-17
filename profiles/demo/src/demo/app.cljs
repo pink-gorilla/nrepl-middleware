@@ -1,118 +1,63 @@
 (ns demo.app
-  (:require-macros
-   [cljs.core.async.macros :refer [go go-loop]])
   (:require
-   [taoensso.timbre :as timbre :refer [debug info warn error]]
-   [cljs.core.async :as async :refer [<! >! chan timeout close!]]
+   [taoensso.timbre :as timbre :refer-macros [debug info warn error]]
+   [cljs.core.async :as async :refer [<!] :refer-macros [go]]
    [reagent.dom]
    [reagent.core :as r]
-   [cljs-uuid-utils.core :as uuid]
-   [pinkgorilla.nrepl.ws.connection :refer [ws-connect!]]
-   [pinkgorilla.nrepl.ws.client :refer [nrepl-client! nrepl-op]]
-   [pinkgorilla.nrepl.op.admin :refer [describe ls-sessions]]
-   [pinkgorilla.nrepl.op.eval :refer [nrepl-eval]]
-   [pinkgorilla.nrepl.op.cider :refer [stacktrace resolve-symbol doc-string completions]]
+   [pinkgorilla.nrepl.client.core :refer [connect send-request!
+                                          op-describe op-lssessions op-lsmiddleware
+                                          op-eval
+                                          op-ciderversion op-apropos op-docstring op-completions op-resolve-symbol op-stacktrace]]
    [demo.views]))
 
 (enable-console-print!)
 
-;(timbre/set-level! :trace) ; Uncomment for more logging
-  (timbre/set-level! :debug)
-;(timbre/set-level! :info)
+(timbre/set-config!
+ (merge timbre/default-config
+        {:min-level ;:info
+         [[#{"pinkgorilla.nrepl.client.connection"} :debug]
+          [#{"*"} :debug]]}))
 
-(defn conn-raw 
-  "demo nrepl websocket 
-   uses the level1 api (raw api)
-   only useful for testing"
-  [ws-url]
-  (let [{:keys [connected? session-id input-ch output-ch] :as conn}
-        (ws-connect! ws-url)]
+(def config {:ws-url "ws://127.0.0.1:9000/nrepl"})
 
-    ; print rcvd messages
-    (go-loop []
-      (let [msg (<! output-ch)]
-        (info "DEMO RCVD: " msg)
-        (recur)))
-
-     ; send messages
-    (go-loop []
-      (<! (timeout 5000))
-      (info "connected: " @connected? "session id: " @session-id)
-      (>! input-ch {:op "describe" :id (uuid/uuid-string (uuid/make-random-uuid))})
-      (<! (timeout 15000))
-      (recur))
-
-    conn))
-
-(defn conn-req 
+(defn get-data
   "demo nrepl websocket
    uses the async request api (layer 2)"
-  [ws-url d]
-  (let [{:keys [connected? session-id] :as conn}
-        (nrepl-client! ws-url)]
- ; send messages
-    (go-loop [c 1]
-      (<! (timeout 5000))
-      (info "connected: " @connected? "session id: " @session-id)
-      
-      #_(let [c (<! (nrepl-op conn {:op "describe"}))]
-        (info "first fragment: " c)
-        (reset! d c))
-      
-      (let [c (<! (describe conn))]
-        (info "describe result: " c)
-        (reset! d c)
-        )
-      
-      (let [r (<! (nrepl-eval conn "(println 3)(* 7 7)(println 5)"))]
-        (info "eval result: " r)
-        ;(reset! d c)
-        )
-      
-      (let [r (<! (nrepl-eval conn "(throw Exception \"b\")"))
-            x (<! (stacktrace conn))
-            ]
-        (info "stacktrace result: " x)
-        ;(reset! d c)
-        )
-      
-        (let [r (<! (resolve-symbol conn "pprint-table" "clojure.pprint"))]
-          (info "resolve symbol result: " r)
-        ;(reset! d c)
-          )
+  [conn data]
+  (let [; helper fn. makes nrepl request "op" and stores result with :k in data atom
+        r! (fn [k op]
+             (go (let [r (<! (send-request! conn op))]
+                   (info k " result: " r)
+                   (swap! data assoc k r))))]
+    ; nrepl
+    (r! :01-describe (op-describe))
+    (r! :02-sessions (op-lssessions))
+    (r! :03-mw (op-lsmiddleware))
 
-         (let [r (<! (doc-string conn "doseq" "clojure.core"))]
-           (info "docstring result: " r)
-        ;(reset! d c)
-           )
-      
-      
-         (let [r (<! (completions conn "ma" "user" "(def a 4)"))]
-           (info "completion result: " r)
-        ;(reset! d c)
-           )
-        
-           (let [r (<! (ls-sessions conn))]
-             (info "ls-sessions result: " r)
-        ;(reset! d c)
-             )
+    ; eval
+    (r! :04-eval (op-eval "(println 3)(* 7 7)(println 5)"))
 
-      (<! (timeout 15000))
-      (recur 1))
-    conn))
+    ; cider
+    ;(r! :05-ciderv (op-ciderversion)) ; cider version fucks up other request, unsure why
+    (r! :06-apropos (op-apropos "pprint"))
+    (r! :07-docstring (op-docstring "doseq" "clojure.core"))
+    (r! :08-complete (op-completions "ma" "user" "(def a 4)"))
+    (r! :09-resolve (op-resolve-symbol "pprint" "clojure.pprint"))
+    (r! :10-evalex (op-eval "(throw Exception \"b\")")) ; make eval exception
+    (r! :11-stack (op-stacktrace)) ; get sacktrace after exception happened
+
+;
+    ))
 
 (defn ^:export  start []
   (info "nrepl-demo starting ..")
-
-  (let [d (r/atom nil)
-        ;conn (conn-raw "ws://localhost:9000/nrepl")
-        conn (conn-req "ws://127.0.0.1:9000/nrepl" d)]
-
-    (reagent.dom/render [demo.views/app conn d]
+  (let [data (r/atom {})
+        conn (connect config)]
+    ;(send-request! conn {:op "describe"})
+    (get-data conn data)
+    (reagent.dom/render [demo.views/app conn data]
                         (.getElementById js/document "app"))))
 
-
-;(make-request! conn {:op "describe"})
 ;
 (defn ^:export  stop []
   (js/console.log "Stopping..."))

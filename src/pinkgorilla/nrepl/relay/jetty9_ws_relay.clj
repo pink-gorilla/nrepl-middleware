@@ -1,11 +1,11 @@
-(ns pinkgorilla.nrepl.ws.jetty9-ws-relay
+(ns pinkgorilla.nrepl.relay.jetty9-ws-relay
   "A websocket handler that passes messages back and forth to an already running nREPL server."
   (:require
    [taoensso.timbre :refer [debug info error]]
    [ring.adapter.jetty9 :as jetty]
    [nrepl.transport :as transport]
    [nrepl.core :as nrepl]
-   [pinkgorilla.nrepl.ws.relay :refer [on-ws-receive]]))
+   [pinkgorilla.nrepl.relay.relay :refer [on-ws-receive]]))
 
 (defn connect [transport]
   (let [timeout Long/MAX_VALUE
@@ -31,13 +31,13 @@
     (info "saving client " ws-id)
     (swap! clients assoc ws-id c))
 
-  (when (> (count @clients) 1)
-    (info "more than one client: " (count @clients))
-    (doall (for [t (keys @clients)]
-             (do ;(info "client:" t)
-               (if (identical? ws-id t)
-                 nil
-                 (client-close t)))))))
+  #_(when (> (count @clients) 1)
+      (info "more than one client: " (count @clients))
+      (doall (for [t (keys @clients)]
+               (do ;(info "client:" t)
+                 (if (identical? ws-id t)
+                   nil
+                   (client-close t)))))))
 
 (defn ws-processor
   "Creates a websocket thing (not an actual ring-handler).
