@@ -5,36 +5,36 @@
    [pinkgorilla.nrepl.client.protocols :refer [init]]
    [pinkgorilla.nrepl.client.op.concat :refer [single-key-concat multiple-key-concat]]))
 
-; todo: notebook-ui - remove :candidates key
-; "Query the REPL server for autocompletion suggestions. 
-;   Relies on the cider-nrepl middleware."
+(defmethod init :cider-version [req]
+  (multiple-key-concat [:cider-version]))
+
+(defmethod init :apropos [req]
+  (multiple-key-concat [:apropos-matches]))
+
 (defmethod init :complete [req]
   (single-key-concat :completions))
 
-;todo notebook-ui: :docstring
-; "Queries the REPL server for docs for the given symbol. 
-; Relies on the cider-nrepl middleware."
 (defmethod init :complete-doc [req]
   (single-key-concat :completion-doc))
 
-;  "resolve a symbol to get its namespace takes the symbol and the namespace 
-;   that should be used as context.
-;   Relies on the cider-nrepl middleware. 
-;   Returns:
-;   - the symbol and the symbol's namespace"
 (defmethod init :info [req]
-  (multiple-key-concat [:name :ns]))
+  (multiple-key-concat ["name" "ns"
+                        "resource" "added"
+                        "file" "line" "column"
+                        "see-also" "arglists-str" "doc"]))
 
-; "resolve a symbol to get its namespace takes the symbol and the namespace that should be used as context.
-;  Relies on the cider-nrepl middleware. Calls back with the symbol and the symbol's namespace"
+#_[{"resource" "clojure/pprint/pprint_base.clj",
+    "name" "pprint",
+    "added" "1.2",
+    :status #{:done},
+    "line" 241,
+    "column" 1,
+    "file" "jar:file:/home/andreas/.m2/repository/org/clojure/clojure/1.10.1/clojure-1.10.1.jar!/clojure/pprint/pprint_base.clj",
+    "see-also" ("clojure.pprint/pp" "clojure.pprint/print-table" "clojure.core/prn" "clojure.core/prn-str" "clojure.core/pr" "clojure.core/pr-str" "clojure.pprint/pprint-tab"),
+    "arglists-str" "[object]\n[object writer]",
+    "doc" "Pretty print object to the optional output writer. If the writer is not provided, \nprint the object to the currently bound value of *out*.",
+    "ns" "clojure.pprint"}]
+
 (defmethod init :stacktrace [req]
   (single-key-concat :stacktrace))
 
-#_(defmethod init :eval [req]
-    {:initial-value {:value []
-                     :picasso []
-                     :ns nil
-                     :out ""
-                     :err []
-                     :root-ex nil}
-     :process-fragment process-fragment})

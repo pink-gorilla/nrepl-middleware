@@ -28,7 +28,7 @@
     (swap! result process-fragment res)
     (if (done? res)
       (do
-        (debugf "request %s  done result: %s result-ch: %s" request-id @result result-ch)
+        (debugf "request %s done! result: %s " request-id @result)
         (remove-req-processor mx request-id)
         (go
           (>! result-ch @result)
@@ -87,7 +87,7 @@
         {:keys [req-ch]} @conn]
     (if (req-valid? req)
       (let [result-ch (create-request-processor! mx partial-results? req)]
-        (debugf "send-request! req: %s result-ch: %s" req result-ch)
+        (debugf "send-request! req: %s" req)
         (if req-ch
           (go
             (>! req-ch req))
