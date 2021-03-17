@@ -1,7 +1,7 @@
 (ns pinkgorilla.nrepl.client.op.gorilla
   (:require
    [pinkgorilla.nrepl.client.protocols :refer [init]]
-   [pinkgorilla.nrepl.client.op.concat :refer [key-concat]]))
+   [pinkgorilla.nrepl.client.op.concat :refer [key-concat key-concat-conj]]))
 
 ; status is retured for all 3 req-types
 
@@ -33,4 +33,4 @@
 ;
 
 (defmethod init :gorilla-nav [req]
-  (key-concat [:datafy]))
+  (key-concat-conj [:datafy]))

@@ -55,9 +55,9 @@
                   [jarohen/chord "0.8.1" ; nrepl websocket
                    :exclusions [com.cognitect/transit-clj
                                 com.cognitect/transit-cljs]] ; websockets with core.async                                   
-                  [com.taoensso/timbre "5.1.2"]             ; clojurescript logging
+                  [com.taoensso/timbre "5.1.2"]             ; clj / cljs logging
                   [com.lucasbradstreet/cljs-uuid-utils "1.0.2"] ;; awb99: in encoding, and clj/cljs proof
-                  [clj-commons/pomegranate "1.2.0"] ; add-dependency in clj kernel TODO : Replace pomegranate with tools alpha
+                  [clj-commons/pomegranate "1.2.0"] ; add-dependency in clj kernel; TODO - Replace pomegranate with tools alpha
                   ]
 
   :profiles {:client {:source-paths ["profiles/client/src"]

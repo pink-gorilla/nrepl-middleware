@@ -41,12 +41,12 @@
          :idx 1 :key :a :v :b}
    :fragments [{:datafy {:x 1}}
                {:datafy {:y 2}}]
-   :result [{:x 1} {:y 2}]})
+   :result [{:datafy {:x 1}} {:datafy {:y 2}}]})
 
 (deftest ops-fragment-processing
   (testing "ops-fragment-processing"
-    (is (= (process-req code) (:result code)))
-    (is (= (process-req datafy) (:result datafy)))
+    (is (= (:result code)   (process-req code)))
+    (is (= (:result datafy) (process-req datafy)))
 
     ;
     ))

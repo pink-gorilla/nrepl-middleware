@@ -14,6 +14,14 @@
        (debugf "prior result: %s new: %s" result data)
        (merge result data)))})
 
+(defn key-concat-conj [ks]
+  {:initial-value []
+   :process-fragment
+   (fn [result fragment]
+     (let [data (select-keys fragment ks)]
+       (debugf "prior result: %s new: %s" result data)
+       (conj result data)))})
+
 ; unknown op responses will get returned by conj-ing all responses
 
 (defn develop-concat []
