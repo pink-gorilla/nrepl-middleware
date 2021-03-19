@@ -9,9 +9,13 @@
 (defn- log-msg [msg]
   (debugf "Multiplexer process res: %s" msg))
 
-(defn- process-resp [mx res]
+(defn req-id-kw [res]
   (let [req-id (:id res)
-        req-id (if (keyword? req-id) req-id (keyword req-id))
+        req-id (if (keyword? req-id) req-id (keyword req-id))]
+    req-id))
+
+(defn- process-res [mx res]
+  (let [req-id (req-id-kw res)
         request-processor (get @mx req-id)]
     (if request-processor
       (if-let [p (:process-response request-processor)]
@@ -29,7 +33,7 @@
     (go-loop []
       (let [res (<! res-ch)] ; read incoming responses from nrepl channel]
         (log-msg res)
-        (process-resp mx res)
+        (process-res mx res)
         (recur)))
     mx))
 

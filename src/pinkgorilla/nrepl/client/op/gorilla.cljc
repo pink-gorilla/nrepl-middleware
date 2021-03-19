@@ -22,9 +22,11 @@
   "result contains the accumulated eval-res messages.
    processes a fragment-response and modifies result-atom accordingly."
   [result res]
-  (if-let [r (:sniffer-forward res)]
-    (dissoc r :nrepl.middleware.print/keys)
-    :no-response))
+  (let [{:keys [sniffer-forward sniffer-status]} res]
+    (cond
+      sniffer-forward (dissoc sniffer-forward :nrepl.middleware.print/keys)
+      sniffer-status sniffer-status
+      :else :no-response)))
 
 (defmethod init :sniffer-sink [req]
   {:initial-value {}
