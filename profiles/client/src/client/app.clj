@@ -4,17 +4,14 @@
    [clojure.tools.cli :as cli]
    [taoensso.timbre :as timbre :refer [info]]
    [clojure.core :refer [read-string]]
-   ;[pinkgorilla.nrepl.client.request-sync :refer [request-rolling!]]
    [pinkgorilla.nrepl.helper :refer [print-fragments status success?]]
    [pinkgorilla.nrepl.client.core :refer [connect disconnect send-request-sync! request-rolling!]] ; side effects
-   ;[pinkgorilla.nrepl.client.connection :refer [connect!]]
-   ;[pinkgorilla.nrepl.client.request :refer [request-rolling!]]
    )
   (:gen-class))
 
 (def cli-options
   ;; see https://github.com/clojure/tools.cli#example-usage
-  [["-m" "--mode MODE" "mode: ide or sniff"
+  [["-m" "--mode MODE" "mode: ide or sink"
     :default :help
     :parse-fn #(keyword %)]
    

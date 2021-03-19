@@ -50,12 +50,12 @@
    )
 
 (defn request-rolling!
-  "make a nrepl request ´req´ and for each partial reply-fragment
-   execute ´fun´"
-  [c req fun]
+  "make a nrepl request ´req´
+   for each partial reply-fragment callback ´cb´"
+  [c req cb]
   (if-let [result-ch (send-request! c req true)]
     (go-loop [result (<! result-ch)]
-      (fun result)
+      (cb result)
       (recur (<! result-ch)))
     (info "cannot send nrepl msg. not connected!")))
 
@@ -113,15 +113,13 @@
 (defn op-resolve-symbol
   "resolve a symbol to get its namespace takes the symbol and the namespace 
    that should be used as context.
-   Relies on the cider-nrepl middleware. 
-   Returns:
-   - the symbol and the symbol's namespace"
+   Relies on the cider-nrepl middleware."
   [symbol ns]
   {:op "info" :symbol symbol :ns ns})
 
 (defn op-stacktrace
   "resolve a symbol to get its namespace takes the symbol and the namespace that should be used as context.
-  Relies on the cider-nrepl middleware. Calls back with the symbol and the symbol's namespace"
+  Relies on the cider-nrepl middleware."
   []
   {:op "stacktrace"})
 
@@ -133,6 +131,17 @@
    :datafy (pr-str {:idx idx
                     :k k
                     :v v})})
+
+(defn op-snifferstatus
+  "gets gorilla sniffer status"
+  []
+  {:op "sniffer-status"})
+
+(defn op-sniffersink
+  "registere as gorilla sniffer sink
+   use with request-rolling."
+  []
+  {:op "sniffer-sink"})
 
 
 ; helper like this might be handy:

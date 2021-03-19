@@ -9,7 +9,7 @@
 
 
 (defmethod init :describe [req]
-  (key-concat [:versions :ops]))
+  (key-concat [:versions :ops :aux]))
 
 (defmethod init :ls-sessions [req]
   (key-concat [:sessions]))
