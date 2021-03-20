@@ -5,16 +5,16 @@
    #?(:cljs [taoensso.timbre :refer-macros [debugf info infof]]
       :clj [taoensso.timbre :refer [debugf info infof]])
 
+   [pinkgorilla.nrepl.client.connection :refer [connect! disconnect!]]
+   [pinkgorilla.nrepl.client.multiplexer :refer [create-multiplexer!]]
+   [pinkgorilla.nrepl.client.request :as r]
+
    ; side-effects (register multi-methods)
    [pinkgorilla.nrepl.client.op.eval]
    [pinkgorilla.nrepl.client.op.concat]
    [pinkgorilla.nrepl.client.op.cider]
    [pinkgorilla.nrepl.client.op.admin]
-   [pinkgorilla.nrepl.client.op.gorilla]
-
-   [pinkgorilla.nrepl.client.connection :refer [connect! disconnect!]]
-   [pinkgorilla.nrepl.client.multiplexer :refer [create-multiplexer!]]
-   [pinkgorilla.nrepl.client.request :as r]))
+   [pinkgorilla.nrepl.client.op.gorilla]))
 
 (defn connect [config]
   (let [conn (connect! config)
@@ -50,7 +50,7 @@
    )
 
 (defn request-rolling!
-  "make a nrepl request ´req´
+  "send a nrepl request, and get `rolling` responses
    for each partial reply-fragment callback ´cb´"
   [c req cb]
   (if-let [result-ch (send-request! c req true)]

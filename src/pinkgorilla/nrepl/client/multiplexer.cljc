@@ -7,7 +7,7 @@
    #?(:cljs [reagent.core :refer [atom]])))
 
 (defn- log-msg [msg]
-  (debugf "Multiplexer process res: %s" msg))
+  (debugf "multiplexer res: %s" msg))
 
 (defn req-id-kw [res]
   (let [req-id (:id res)
@@ -24,14 +24,14 @@
       (errorf "no req-processor registered for req-id: %s resp: %s" req-id res))))
 
 (defn create-multiplexer!
-  "reads from nrepl-resp-chan in a go-loop
+  "reads from nrepl-res-ch in a go-loop
    calls req-processors for processing"
   [conn]
   (let [mx (atom {}) ; keys: request-id, vals: request-state
         res-ch (:res-ch @conn)]
-    ; process incoming responses from nrepl-chan
+    ; process incoming responses from res-ch
     (go-loop []
-      (let [res (<! res-ch)] ; read incoming responses from nrepl channel]
+      (let [res (<! res-ch)]
         (log-msg res)
         (process-res mx res)
         (recur)))

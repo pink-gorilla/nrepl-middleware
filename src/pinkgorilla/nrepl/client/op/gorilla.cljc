@@ -14,9 +14,6 @@
   (key-concat [:sniffer-status]))
 
 ; register a sink (used by notebook to listen to sniffed evals)
-;(defmethod init :sniffer-sink [req]
-;  (multiple-key-concat [:sniffer-status]))
-
 
 (defn- process-fragment-sink
   "result contains the accumulated eval-res messages.

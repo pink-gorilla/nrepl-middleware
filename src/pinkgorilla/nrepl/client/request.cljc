@@ -1,10 +1,8 @@
 (ns pinkgorilla.nrepl.client.request
-  #?(:cljs (:require-macros
-            [cljs.core.async.macros :refer [go go-loop]]))
   (:require
    #?(:cljs [taoensso.timbre :refer-macros [debug debugf info infof warn errorf]]
-      :clj [taoensso.timbre :refer [debug debugf info infof warn errorf]])
-   #?(:cljs [cljs.core.async :as async :refer [<! >! chan timeout close!]]
+      :clj [taoensso.timbre :refer         [debug debugf info infof warn errorf]])
+   #?(:cljs [cljs.core.async :as async :refer [<! >! chan timeout close!] :refer-macros [go go-loop]]
       :clj [clojure.core.async :as async :refer [<! >! chan timeout close! go go-loop]])
    [pinkgorilla.nrepl.client.id :refer [guuid]]
    [pinkgorilla.nrepl.client.protocols :refer [init]]))
@@ -23,12 +21,12 @@
     done))
 
 (defn process-req-response [mx rps res]
-  (info "processing req-rep " res)
+  (debugf "processing res %s" res)
   (let [{:keys [request-id result-ch result process-fragment partial-results?]} rps]
     (swap! result process-fragment res)
     (if (done? res)
       (do
-        (debugf "request %s done! result: %s " request-id @result)
+        (infof "req %s done! result: %s " request-id @result)
         (remove-req-processor mx request-id)
         (go
           (>! result-ch @result)
@@ -78,7 +76,7 @@
 (defn req-valid? [req]
   (let [v (and (:id req) (:op req))]
     (when-not v
-      (errorf "invalid request: " req))
+      (errorf "invalid req: " req))
     v))
 
 (defn send-request!

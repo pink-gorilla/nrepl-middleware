@@ -29,7 +29,7 @@
       (let [data (<! ws-ch)] ; data is nil when ws session gets disconnected.
         (if data
           (let [{:keys [message error]} data]
-            (debug "NREPL RCVD: " data)
+            (debug "nrepl res: " data)
             (if error
               (fail-fn error)
               (if got-session-msg
@@ -38,7 +38,7 @@
                   (recur true))
                 (if-let [new-session-id (:new-session message)]
                   (do
-                    (info "Got session-id msg " message)
+                    (info "nrepl: Got session-id msg " message)
                     (swap! conn assoc
                            :connected? true
                            :session-id new-session-id)
@@ -55,13 +55,13 @@
       (if connected?
         (if-let [message (<! req-ch)]
           (do
-            (debug "USER RCVD: " message)
+            (debug "user req: " message)
             (if (and ws-ch connected?)
               (let [m2 (merge message {:session session-id})]
-                (debug "NREPL SEND: " m2)
+                (debug "nrepl req send: " m2)
                 (>! ws-ch m2))
               (>! res-ch (reply-msg message {:error "Rejected - no websocket connection"}))))
-          (error "USER RCVD: no data!"))
+          (error "user req: received empty req (chan closed?)"))
         (do (debug "not processing user msgs .. not connected")
             (<! (timeout 1000))))
       (recur false))))
@@ -86,11 +86,11 @@
                     :connected? false
                     :ws-ch nil})]
     (go-loop [connected-prior? false]
-      (info "ws-connecting...")
+      (info "nrepl ws connecting ..")
       (let [{:keys [ws-channel error]} (<! (chord/ws-ch ws-url {:format :edn}))]
         (if error
           (do
-            (error "ws-chan connection failed!")
+            (error "nrepl ws-chan connection failed!")
             (swap! conn assoc :connected? false)
             (swap! conn assoc :ws-ch nil)
             (when connected-prior?
@@ -98,12 +98,12 @@
             (<! (timeout 3000))
             (recur false))
           (do
-            (info "ws-chan connected!")
+            (info "nrepl ws-chan connected!")
             (swap! conn assoc :ws-ch  ws-channel)
             ;(when-not connected-prior?
             (>! ws-channel {:op "clone" :id "uiui"}) ; )
             (<! (process-incoming-nrepl-msgs conn))
-            (info "incoming nrepl processing finished (ws closed?)")
+            (error "nrepl incoming processing finished (ws closed?)")
             (<! (timeout 3000000))
             (recur true)))))
      ; process incoming user messages

@@ -54,7 +54,7 @@
    to send the sniffed evals to"
   [{:keys [session] :as req}]
   (let [session (session-id- session)]
-    (println "sink msg:" req)
+    (println "sink msg:" (dissoc req :session))
     (println "sniffer - setting sink session id:" session)
     (swap! state assoc
            :msg-sink req
