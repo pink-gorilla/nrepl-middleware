@@ -85,7 +85,7 @@
 
         ; nrepl res -> res-ch
         (when-let [res (nt/recv t 5)] ; recv is blocking, after 5ms will return nil if no res rcvd
-          (debugf "nrepl resp rcvd: %s " res)
+          (debugf "nrepl res rcvd: %s " res)
 
           (when-not session-id
             (set-session-id! conn res))

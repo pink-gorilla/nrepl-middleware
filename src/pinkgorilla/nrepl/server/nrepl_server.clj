@@ -1,4 +1,4 @@
-(ns pinkgorilla.nrepl.service.nrepl-server
+(ns pinkgorilla.nrepl.server.nrepl-server
   (:require
    [taoensso.timbre :as timbre :refer [info]]
    [nrepl.server]

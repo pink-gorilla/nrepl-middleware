@@ -4,7 +4,7 @@
    [cljs.core.async :as async :refer [<!] :refer-macros [go]]
    [reagent.dom]
    [reagent.core :as r]
-   [pinkgorilla.nrepl.client.core :refer [connect send-request!
+   [pinkgorilla.nrepl.client.core :refer [connect send-request! request-rolling!
                                           op-describe op-lssessions op-lsmiddleware
                                           op-eval
                                           op-ciderversion op-apropos op-docstring op-completions op-resolve-symbol op-stacktrace]]
@@ -20,6 +20,10 @@
 
 (def config {:ws-url "ws://127.0.0.1:9000/nrepl"})
 
+
+(defn print-partial [res]
+  (warn "partial result: " res))
+
 (defn get-data
   "demo nrepl websocket
    uses the async request api (layer 2)"
@@ -29,6 +33,10 @@
              (go (let [r (<! (send-request! conn op))]
                    (info k " result: " r)
                    (swap! data assoc k r))))]
+
+    (request-rolling! conn {:op "eval" :code "(+ 7 7)"} print-partial)
+    (request-rolling! conn {:op "sniffer-sink"} print-partial)
+
     ; nrepl
     (r! :01-describe (op-describe))
     (r! :02-sessions (op-lssessions))
@@ -38,7 +46,7 @@
     (r! :04-eval (op-eval "(println 3)(* 7 7)(println 5)"))
 
     ; cider
-    ;(r! :05-ciderv (op-ciderversion)) ; cider version fucks up other request, unsure why
+    (r! :05-ciderv (op-ciderversion)) ; cider version fucks up other request, unsure why
     (r! :06-apropos (op-apropos "pprint"))
     (r! :07-docstring (op-docstring "doseq" "clojure.core"))
     (r! :08-complete (op-completions "ma" "user" "(def a 4)"))

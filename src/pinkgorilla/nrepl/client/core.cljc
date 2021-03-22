@@ -1,13 +1,12 @@
 (ns pinkgorilla.nrepl.client.core
   (:require
    #?(:clj [clojure.core.async :as async :refer [<! >! chan timeout close! go go-loop <!!]]
-      :cljs [cljs.core.async :as async :refer [<! >! chan timeout close!] :refer-macros [go go-loop]])
-   #?(:cljs [taoensso.timbre :refer-macros [debugf info infof]]
-      :clj [taoensso.timbre :refer [debugf info infof]])
+      :cljs [cljs.core.async :as async :refer   [<! >! chan timeout close!] :refer-macros [go go-loop]])
+   #?(:cljs [taoensso.timbre :refer-macros [debugf info infof error]]
+      :clj [taoensso.timbre         :refer [debugf info infof error]])
 
    [pinkgorilla.nrepl.client.connection :refer [connect! disconnect!]]
-   [pinkgorilla.nrepl.client.multiplexer :refer [create-multiplexer!]]
-   [pinkgorilla.nrepl.client.request :as r]
+   [pinkgorilla.nrepl.client.request :as r :refer [create-multiplexer!]]
 
    ; side-effects (register multi-methods)
    [pinkgorilla.nrepl.client.op.eval]
@@ -55,8 +54,11 @@
   [c req cb]
   (if-let [result-ch (send-request! c req true)]
     (go-loop [result (<! result-ch)]
-      (cb result)
-      (recur (<! result-ch)))
+      (if result
+        (do
+          (cb result)
+          (recur (<! result-ch)))
+        (infof "request-rolling! %s finished!" req)))
     (info "cannot send nrepl msg. not connected!")))
 
 

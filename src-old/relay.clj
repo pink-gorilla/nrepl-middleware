@@ -11,7 +11,7 @@
   (loop [s replies-seq]
     (let [msg (first s)]
       (reply-fn msg)
-      (when-not (contains-pred (:status msg))
+      (when-not (contains-pred msg)
         (recur (rest s))))))
 
 (defn pr-str-with-meta [data]
@@ -23,6 +23,17 @@
   (let [payload (pr-str-with-meta msg)]
     (info "ws Send " payload)
     (ws-send-fn ws-id payload)))
+
+
+;ciderv message cotains status as string
+;all other messages have status as keyword. 
+(defn done? [res]
+  (let [{:keys [status]} res
+        done (or (contains? status :done) ;; res status
+                 (some #(= "done" %) status))]
+    ;(debugf "status: %s done: %s" status done)
+    done))
+
 
 (defn make-nrepl-request
   "Processes websocket messages"
@@ -36,7 +47,7 @@
         [read write] transport
         reply-fn (partial process-replies
                           (partial process-nrepl-message ws-send-fn ws-id)
-                          (fn [s] (contains? s :done)))]
+                          done?)]
     (reply-fn
      ;; TODO: Not redundant do as clj-kondo claims!
      (do
@@ -47,7 +58,7 @@
 (defn on-ws-receive [nrepl-handler transport client
                      ws-send-fn ws-id
                      message]
-  (info "request rcvd: " ws-id " msg: " message)
+  (info "ws req: " ws-id " msg: " message)
   (let [data-edn (edn/read-string message)
         _ (debug "data edn: " data-edn " meta: " (meta data-edn))
         msg (assoc data-edn :as-picasso 1)]

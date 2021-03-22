@@ -1,7 +1,7 @@
 (ns pinkgorilla.nrepl.client.op.concat
   (:require
-   #?(:cljs [taoensso.timbre :refer-macros [debug debugf info warn warnf error]]
-      :clj [taoensso.timbre :refer [debug debugf info warn warnf error]])
+   #?(:cljs [taoensso.timbre :refer-macros [tracef debug debugf info warn warnf error]]
+      :clj [taoensso.timbre :refer [tracef debug debugf info warn warnf error]])
    [pinkgorilla.nrepl.client.protocols :refer [init]]))
 
 ; many :op responses are just one message with one or more keys. 
@@ -11,7 +11,7 @@
    :process-fragment
    (fn [result fragment]
      (let [data (select-keys fragment ks)]
-       (debugf "prior result: %s new: %s" result data)
+       (tracef "prior result: %s new: %s" result data)
        (merge result data)))})
 
 (defn key-concat-conj [ks]

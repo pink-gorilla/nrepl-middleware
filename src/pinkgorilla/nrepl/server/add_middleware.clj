@@ -1,4 +1,4 @@
-(ns pinkgorilla.nrepl.service.add-middleware
+(ns pinkgorilla.nrepl.server.add-middleware
   (:require
    [pinkgorilla.nrepl.client :as client]
    [pinkgorilla.nrepl.helper :refer [print-fragments status success?]]
