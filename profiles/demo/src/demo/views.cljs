@@ -1,7 +1,6 @@
 (ns demo.views
   (:require
-   [taoensso.timbre :refer-macros [debug info warn error]]
-   [pinkgorilla.nrepl.ui.describe :refer [describe]]))
+   [taoensso.timbre :refer-macros [debug info warn error]]))
 
 
 (defn nrepl-conn-info [conn]
@@ -26,6 +25,5 @@
    [:h2 "Will connect to nrepl-ws relay, and then run a few commands and print them."]
    [:h2 "Please start ws relay with 'lein relay-jetty' "]
    [nrepl-conn-info (:conn conn)]
-   [describe (:describe @data)]
    [misc @data]
    [:p "You can also look into your browser console"]])
