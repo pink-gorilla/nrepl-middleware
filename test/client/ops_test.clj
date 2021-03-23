@@ -43,33 +43,58 @@
                {:datafy {:y 2}}]
    :result [{:datafy {:x 1}} {:datafy {:y 2}}]})
 
-(def sniffer
-  {:req {:op "sniffer-sink"
-         :id "21f7fdb3-2d97-4533-8e2e-b3d3d88443ab"}
-   :fragments [{:id "21f7fdb3-2d97-4533-8e2e-b3d3d88443ab"
-                :session "2a346b60-ee76-4640-9121-f0c199e5f6ed"
-                :sniffer-forward {:op "eval"
-                                  :code "(+ 2 2)"
-                                  :id "0a40d786-37c6-45b4-8662-68349487f26b"}}
-               {:id "21f7fdb3-2d97-4533-8e2e-b3d3d88443ab"
-                :session "2a346b60-ee76-4640-9121-f0c199e5f6ed"
-                :sniffer-forward {:datafy "{:idx 3, :value 4, :meta nil}"
-                                  :id "0a40d786-37c6-45b4-8662-68349487f26b"
-                                  :meta "nil"
-                                  :ns "user"
-                                  :picasso "{:type :hiccup, :content [:span {:class \"clj-long\"} \"4\"]}"
-                                  :value 4}}
-               {:id "21f7fdb3-2d97-4533-8e2e-b3d3d88443ab"
-                :session "2a346b60-ee76-4640-9121-f0c199e5f6ed"
-                :sniffer-forward {:id "0a40d786-37c6-45b4-8662-68349487f26b"
-                                  :status ["done"]}}]
-   :result {:i :88}})
-
 (deftest ops-fragment-processing
   (testing "ops-fragment-processing"
     (is (= (:result code)   (process-req code)))
     (is (= (:result datafy) (process-req datafy)))
-    ;(is (= (:result sniffer) (process-req sniffer)))
-
     ;
     ))
+
+(def sniffer-req
+  {:req {:op :sniffer-sink
+         :id "21f7fdb3-2d97-4533-8e2e-b3d3d88443ab"}})
+
+(def sniffer-res-1
+  {:id "21f7fdb3-2d97-4533-8e2e-b3d3d88443ab"
+   :session "2a346b60-ee76-4640-9121-f0c199e5f6ed"
+   :sniffer-forward {:op "eval"
+                     :code "(+ 2 2)"
+                     :id "0a40d786-37c6-45b4-8662-68349487f26b"}})
+
+(def sniffer-res-2
+  {:id "21f7fdb3-2d97-4533-8e2e-b3d3d88443ab"
+   :session "2a346b60-ee76-4640-9121-f0c199e5f6ed"
+   :sniffer-forward {:datafy "{:idx 3, :value 4, :meta nil}"
+                     :id "0a40d786-37c6-45b4-8662-68349487f26b"
+                     :meta "nil"
+                     :ns "user"
+                     :picasso "{:type :hiccup, :content [:span {:class \"clj-long\"} \"4\"]}"
+                     :value 4}})
+
+(def sniffer-res-3
+  {:id "21f7fdb3-2d97-4533-8e2e-b3d3d88443ab"
+   :session "2a346b60-ee76-4640-9121-f0c199e5f6ed"
+   :sniffer-forward {:id "0a40d786-37c6-45b4-8662-68349487f26b"
+                     :status ["done"]}})
+
+(deftest ops-fragment-processing-sniffer-forward
+  (let [sniffer-1 (assoc sniffer-req :fragments [sniffer-res-1])
+        sniffer-2 (assoc sniffer-req :fragments [sniffer-res-1 sniffer-res-2])
+        sniffer-3 (assoc sniffer-req :fragments [sniffer-res-1 sniffer-res-2 sniffer-res-3])]
+
+    (testing "ops-fragment-processing sniffer-forward"
+      (is (= {:id "0a40d786-37c6-45b4-8662-68349487f26b"
+              :op "eval"
+              :code "(+ 2 2)"}
+             (process-req sniffer-1)))
+      (is (= {:id "0a40d786-37c6-45b4-8662-68349487f26b"
+              :datafy "{:idx 3, :value 4, :meta nil}"
+              :meta "nil" :ns "user"
+              :picasso "{:type :hiccup, :content [:span {:class \"clj-long\"} \"4\"]}"
+              :value 4}
+             (process-req sniffer-2)))
+      (is (= {:id "0a40d786-37c6-45b4-8662-68349487f26b"
+              :status ["done"]}
+             (process-req sniffer-3)))
+    ;
+      )))

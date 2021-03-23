@@ -23,11 +23,16 @@
   [result res]
   (let [{:keys [sniffer-forward sniffer-status]} res]
     (cond
-      sniffer-forward (let [sniffer-forward (dissoc sniffer-forward :nrepl.middleware.print/keys)]
-                        (warnf "sniffer-sink result: " sniffer-forward)
-                        sniffer-forward)
-      sniffer-status sniffer-status
-      :else :no-response)))
+      sniffer-forward
+      (let [sniffer-forward (dissoc sniffer-forward :nrepl.middleware.print/keys)]
+        (infof "sniffer-sink-forward: %s" sniffer-forward)
+        sniffer-forward)
+
+      sniffer-status
+      sniffer-status
+
+      :else
+      :no-response)))
 
 (defmethod init :sniffer-sink [req]
   {:initial-value {}
