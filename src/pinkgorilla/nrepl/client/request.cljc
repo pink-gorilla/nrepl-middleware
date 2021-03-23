@@ -66,18 +66,18 @@
 
 (defn process-req-response [mx rps res]
   (debugf "res processing: %s" res)
-  (let [{:keys [request-id result-ch result process-fragment partial-results?]} rps]
-    (swap! result process-fragment res)
+  (let [{:keys [request-id result-ch result process-fragment partial-results?]} rps
+        r (swap! result process-fragment res)]
     (if (done? res)
       (do
-        (infof "req done: %s result: %s " request-id @result)
+        (infof "req done: %s result: %s " request-id r)
         (remove-req-processor mx request-id)
         (go
-          (>! result-ch @result)
+          (>! result-ch r)
           (close! result-ch)))
       (when partial-results?
         (go
-          (>! result-ch @result))))))
+          (>! result-ch r))))))
 
 (defn create-request-processor!
   "make-request 
