@@ -134,7 +134,7 @@
 
 (defn wrap-sniffer
   [handler]
-  (fn [{:keys [^Transport transport op session] :as req}]
+  (fn [{:keys [^Transport transport op code session] :as req}]
     (let [session (session-id- session)]
       (cond
         ; requests handled by sniffer don't have to be processed by other handers
@@ -149,6 +149,7 @@
 
         :else
         (do (when (and (= op "eval")
+                       (not (= code ":gorilla/off"))
                        (= session (:session-id-source @state)))
               ;(info "sniffer - forwarding eval: " (:code req)) ; res-eval-forward does the logging
               (if (:msg-sink @state)

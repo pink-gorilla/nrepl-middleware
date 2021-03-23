@@ -1,5 +1,4 @@
-[ 
- {:op "eval" :code ":gorilla/sniff-on"}
+[{:op "eval" :code ":gorilla/on"}
 
  {:op "eval"  :code "^:X (+ 2 2)"}
  {:op "eval"  :code "^:R [:p/vega (+ 8 8)]"}
@@ -12,9 +11,7 @@
 
               ; evals inside notebook would have this flag. check if it works:
  {:op "eval" :as-picasso 1 :code "^:R [:p (+ 8 8)]"}
- 
+
  {:op "eval"  :code "(+ 1 1) (+ 2 2) (+ 3 3)"}
 
- {:op "eval" :code "(time (reduce + (range 1e6)))"}
-
- ]
+ {:op "eval" :code "(time (reduce + (range 1e6)))"}]

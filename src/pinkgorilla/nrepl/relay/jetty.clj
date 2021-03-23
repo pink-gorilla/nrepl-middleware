@@ -29,7 +29,9 @@
                                   (jetty/send! ws (pr-str res)))
                        conn (create-session! config ws-send!)]
                    (reset! gconn conn)))
-   :on-error   (fn [_ e]
+   :on-error   (fn [ws e]
+                 ; default idle timeout 500 sec 
+                 ; org.eclipse.jetty.websocket.api.CloseException
                  (error "ws Error" e))
    :on-close   (fn [_ ws status-code reason]
                  (info "ws Close" status-code reason ws)
@@ -43,7 +45,11 @@
                    (debugf "req ws %s" req)
                    (request! conn req)))
    :on-bytes   (fn [_ _ _ _] ;; ws bytes offset len
-                 (info "ws Bytes"))})
+                 (info "ws Bytes"))
+   :on-ping (fn [ws bytebuffer]
+              (info "ping"))
+   :on-pong (fn [ws bytebuffer]
+              (info "pong"))})
 
 (defn wrap-memory-session
   "Wraps the supplied handler in session middleware that uses a

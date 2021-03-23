@@ -1,0 +1,5 @@
+[{:op "eval"  :code ":gorilla/on"}
+ {:op "eval"  :code "(+ 7 7)"}
+ {:op "eval"  :code ":gorilla/off"}
+ {:op "eval"  :code "(+ 3 3)"}
+ ]
