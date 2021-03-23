@@ -1,11 +1,13 @@
 (ns pinkgorilla.nrepl.client.op.gorilla
   (:require
+   #?(:cljs [taoensso.timbre :refer-macros [tracef debug debugf info infof warn warnf error errorf]]
+      :clj [taoensso.timbre         :refer [tracef debug debugf info infof warn warnf error errorf]])
    [pinkgorilla.nrepl.client.protocols :refer [init]]
    [pinkgorilla.nrepl.client.op.concat :refer [key-concat key-concat-conj]]))
 
 ; status is retured for all 3 req-types
 
-; used by notebook to regularly display status of smiffer
+; used by notebook to regularly display status of sniffer
 (defmethod init :sniffer-status [req]
   (key-concat [:sniffer-status]))
 
@@ -21,7 +23,9 @@
   [result res]
   (let [{:keys [sniffer-forward sniffer-status]} res]
     (cond
-      sniffer-forward (dissoc sniffer-forward :nrepl.middleware.print/keys)
+      sniffer-forward (let [sniffer-forward (dissoc sniffer-forward :nrepl.middleware.print/keys)]
+                        (warnf "sniffer-sink result: " sniffer-forward)
+                        sniffer-forward)
       sniffer-status sniffer-status
       :else :no-response)))
 

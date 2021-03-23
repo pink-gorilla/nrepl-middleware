@@ -12,7 +12,7 @@
       (let [res (<! res-ch)]
         (if res
           (do
-            (infof "res -> ws %s" res)
+            (infof "res ws: %s" res)
             (ws-send! res)
             (recur))
           (warn "no res recvd. nrepl conn lost?"))))
@@ -20,7 +20,7 @@
 
 (defn request! [conn req]
   (let [{:keys [req-ch]} @conn]
-    (info "req ws:" req)
+    (infof "req ws: %s" req)
     (go
       (>! req-ch req))))
 

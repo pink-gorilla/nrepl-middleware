@@ -1,0 +1,8 @@
+[ 
+ 
+{:op "sniffer-source"}
+;{:op "eval"  :code ":gorilla/on"}
+
+{:op "eval"  :code "(+ 2 2)"}
+ 
+]

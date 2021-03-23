@@ -22,7 +22,7 @@
   (timbre/set-config!
    (merge timbre/default-config
           {:min-level ;:info
-           [[#{"pinkgorilla.nrepl.client.connection"} :debug]
+           [;[#{"pinkgorilla.nrepl.client.connection"} :debug]
             [#{"*"} :info]]}))
 
   (run-nrepl-server demo-config)

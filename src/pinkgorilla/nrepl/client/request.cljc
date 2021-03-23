@@ -65,7 +65,7 @@
     done))
 
 (defn process-req-response [mx rps res]
-  (debugf "res - processing: %s" res)
+  (debugf "res processing: %s" res)
   (let [{:keys [request-id result-ch result process-fragment partial-results?]} rps]
     (swap! result process-fragment res)
     (if (done? res)

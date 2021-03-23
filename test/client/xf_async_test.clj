@@ -9,16 +9,14 @@
 (defn parse []
   (let [res (atom [])
         c (chan 1 (res-transform-extract false))]
-      ; put onto chan
+    ; put onto chan
     (go
-      (onto-chan c ress))
-      ; read result from chan
-    (loop [n (<!! c)]
-      (when n
-        (do
-            ;(println "r:" n) 
-          (reset! res  n)
-          n)
+      (onto-chan c ress)) ; ress is the unit test input data
+    ; read all available results from chan
+    (loop [r (<!! c)]
+      (when r ; nil when chan is closed
+        ;(println "r:" n) 
+        (reset! res r)
         (recur (<!! c))))
       ;
     @res))

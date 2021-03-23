@@ -43,10 +43,33 @@
                {:datafy {:y 2}}]
    :result [{:datafy {:x 1}} {:datafy {:y 2}}]})
 
+(def sniffer
+  {:req {:op "sniffer-sink"
+         :id "21f7fdb3-2d97-4533-8e2e-b3d3d88443ab"}
+   :fragments [{:id "21f7fdb3-2d97-4533-8e2e-b3d3d88443ab"
+                :session "2a346b60-ee76-4640-9121-f0c199e5f6ed"
+                :sniffer-forward {:op "eval"
+                                  :code "(+ 2 2)"
+                                  :id "0a40d786-37c6-45b4-8662-68349487f26b"}}
+               {:id "21f7fdb3-2d97-4533-8e2e-b3d3d88443ab"
+                :session "2a346b60-ee76-4640-9121-f0c199e5f6ed"
+                :sniffer-forward {:datafy "{:idx 3, :value 4, :meta nil}"
+                                  :id "0a40d786-37c6-45b4-8662-68349487f26b"
+                                  :meta "nil"
+                                  :ns "user"
+                                  :picasso "{:type :hiccup, :content [:span {:class \"clj-long\"} \"4\"]}"
+                                  :value 4}}
+               {:id "21f7fdb3-2d97-4533-8e2e-b3d3d88443ab"
+                :session "2a346b60-ee76-4640-9121-f0c199e5f6ed"
+                :sniffer-forward {:id "0a40d786-37c6-45b4-8662-68349487f26b"
+                                  :status ["done"]}}]
+   :result {:i :88}})
+
 (deftest ops-fragment-processing
   (testing "ops-fragment-processing"
     (is (= (:result code)   (process-req code)))
     (is (= (:result datafy) (process-req datafy)))
+    ;(is (= (:result sniffer) (process-req sniffer)))
 
     ;
     ))

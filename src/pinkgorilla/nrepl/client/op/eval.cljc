@@ -1,7 +1,7 @@
 (ns pinkgorilla.nrepl.client.op.eval
   (:require
    #?(:cljs [taoensso.timbre :refer-macros [tracef debug debugf info infof warn error errorf]]
-      :clj [taoensso.timbre :refer [tracef debug debugf info infof warn error errorf]])
+      :clj [taoensso.timbre         :refer [tracef debug debugf info infof warn error errorf]])
    #?(:cljs [cljs.reader :refer [read-string]]
       :clj [clojure.core :refer [read-string]])
    [pinkgorilla.nrepl.client.protocols :refer [init]]))
@@ -36,7 +36,7 @@
    "
      [value]
      (try
-       (debugf "picasso-unwrap %s" value)
+       (tracef "picasso-unwrap %s" value)
        (when value (read-string value))
        (catch Exception e
          (errorf "picasso-unwrap parsing %s ex: %s" value (.getMessage e)))))

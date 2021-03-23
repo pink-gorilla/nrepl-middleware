@@ -3,7 +3,7 @@
     sends evals to a sink (typiccally pinkgorilla notebook)
    "
   (:require
-   ;[clojure.tools.logging :refer (info)]
+   [taoensso.timbre :as timbre :refer [debug info infof warn error]]
    [nrepl.transport :as transport]
    [nrepl.middleware :as middleware]
    [nrepl.middleware.print]
@@ -36,7 +36,7 @@
 
 (defn sniff-on [{:keys [session] :as req}]
   (let [session (session-id- session)]
-    ;(println "sniffer - setting source session id:" session)
+    ;(info "sniffer - setting source session id:" session)
     (swap! state assoc :session-id-source session)))
 
 (defn sniff-off []
@@ -45,7 +45,7 @@
 (defn response-sniff-source!
   [req]
   (sniff-on req)
-  (println "sniffer - state:" (status-))
+  (info "sniffer state:" (status-))
   (response-for req {:status :done
                      :sniffer-status (status-)}))
 
@@ -54,12 +54,12 @@
    to send the sniffed evals to"
   [{:keys [session] :as req}]
   (let [session (session-id- session)]
-    (println "sink msg:" (dissoc req :session))
-    (println "sniffer - setting sink session id:" session)
+    ;(debug "sink msg:" (dissoc req :session))
+    (infof "sniffer sink: %s" session)
     (swap! state assoc
            :msg-sink req
            :session-id-sink session)
-    (println "sniffer - state:" (status-))
+    (info "sniffer state:" (status-))
     ; response-msg may NOT contain :status :done
     ; sniffer will forward messages to that request-id
     (response-for req {; :status :done 
@@ -69,15 +69,16 @@
   "forwards an nrepl message to the sink."
   [req]
   (let [req-listener (:msg-sink @state)
-        req-forward (dissoc req :session :transport
+        req-forward (dissoc req
+                            :session
+                            :transport
                             :nrepl.middleware.print/keys
                             :nrepl.middleware.print/print-fn
                             :nrepl.middleware.caught/caught-fn)
-        req-send (response-for req-listener {;:status :done
-                                             :sniffer-forward req-forward})]
-    (println "sniffer forwarding to " (:session-id-sink @state) "message: " req-forward)
-    (when (:code req)
-      (println "code meta data: " (meta (:code req))))
+        req-send (response-for req-listener {:sniffer-forward req-forward})]
+    (infof "sniffer forward to: %s msg: %s" (:session-id-sink @state) req-forward)
+    ;(when (:code req)
+    ;  (info "code meta data: " (meta (:code req))))
     req-send))
 
 
@@ -98,7 +99,10 @@
 (defn eval-res [{:keys [code] :as req} {:keys [value] :as res}]
   (when (and code true); (contains? res :value))
     (let [msg-listener (:msg-sink @state)
-          res-forward (dissoc res :session :transport
+          res-forward (dissoc res
+                              :session
+                              :transport
+                              :nrepl.middleware.print/keys
                               :nrepl.middleware.print/print-fn
                               :nrepl.middleware.caught/caught-fn)
           res-forward (if (:as-picasso res-forward)
@@ -106,7 +110,7 @@
                         (add-picasso res-forward))
           res-resp (response-for msg-listener {:sniffer-forward res-forward})]
       ; printing not allowed here - nrepl would capture this as part of the eval request 
-      ;(println "sniffer forwarding response:" msg-resp)
+      ;(info "sniffer forwarding response:" msg-resp)
       res-resp)))
 
 (defn- wrap-sniffer-sender
@@ -146,10 +150,10 @@
         :else
         (do (when (and (= op "eval")
                        (= session (:session-id-source @state)))
-              (println "sniffer - forwarding eval: " (:code req))
+              ;(info "sniffer - forwarding eval: " (:code req)) ; res-eval-forward does the logging
               (if (:msg-sink @state)
                 (transport/send (:transport (:msg-sink @state)) (res-eval-forward req))
-                (println "sniffer - no sink. cannot forward!"))
+                (warn "sniffer - no sink. cannot forward!"))
                   ;(handler request)
               )
             (handler (assoc req :transport (wrap-sniffer-sender req))))

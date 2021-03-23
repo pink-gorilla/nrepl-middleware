@@ -115,7 +115,9 @@
         ; stop
         ([acc]
          (when-not partial?
-           (xf acc @result))
+           ;(println "xxx" @result)
+           (when @result
+             (xf acc @result)))
          (reset! result nil)
          (xf (xf acc)))
         ; event
