@@ -43,7 +43,8 @@
    ;
    )
 
-(defn- process-fragment
+; used also by sniffer in notebook
+(defn process-fragment
   "result is an atom, containing the eval result.
    processes a fragment-response and modifies result-atom accordingly."
   [result {:keys [out err root-ex ns value picasso datafy]}]
@@ -65,11 +66,15 @@
       ; root exception ?? what is this ?? where does it come from ? cider? nrepl?
       (cond-> root-ex (assoc :root-ex root-ex))))
 
+
+; used also by sniffer in notebook
+(def initial-value {:value []
+                    :picasso []
+                    :ns nil
+                    :out ""
+                    :err []
+                    :root-ex nil})
+
 (defmethod init :eval [req]
-  {:initial-value {:value []
-                   :picasso []
-                   :ns nil
-                   :out ""
-                   :err []
-                   :root-ex nil}
+  {:initial-value initial-value
    :process-fragment process-fragment})
