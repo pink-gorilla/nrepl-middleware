@@ -68,6 +68,8 @@
 
 
 ; used also by sniffer in notebook
+
+
 (def initial-value {:value []
                     :picasso []
                     :ns nil
