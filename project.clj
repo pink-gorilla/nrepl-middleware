@@ -18,6 +18,9 @@
 
   :min-lein-version "2.9.3"
   :min-java-version "1.11"
+  ;:jvm-opts ["-Dtrust_all_cert=true"
+  ;           "-Djavax.net.ssl.trustStore=/home/andreas/.keystore"
+  ;           ]
 
   :source-paths ["src"]
   :target-path  "target/jar"

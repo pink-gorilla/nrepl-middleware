@@ -14,7 +14,7 @@
                   ;:transport-fn
                   }
    :relay {:port 9000
-           :route "/nrepl"}})
+           :route "/api/nrepl"}})
 
 
 (defn -main []
