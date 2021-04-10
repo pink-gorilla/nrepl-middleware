@@ -12,9 +12,9 @@
    [pinkgorilla.nrepl.middleware.picasso :refer [add-picasso]])
   (:import nrepl.transport.Transport))
 
-(def state (atom {:msg-sink nil
-                  :session-id-sink nil
-                  :session-id-source nil}))
+(defonce state (atom {:msg-sink nil
+                      :session-id-sink nil
+                      :session-id-source nil}))
 
 (defn session-id-
   "extracts the id from a session.
@@ -154,7 +154,7 @@
               ;(info "sniffer - forwarding eval: " (:code req)) ; res-eval-forward does the logging
               (if (:msg-sink @state)
                 (transport/send (:transport (:msg-sink @state)) (res-eval-forward req))
-                (warn "sniffer - no sink. cannot forward!"))
+                (warn "sniffer - no sink. cannot forward! state: " @state))
                   ;(handler request)
               )
             (handler (assoc req :transport (wrap-sniffer-sender req))))

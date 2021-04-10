@@ -2,11 +2,12 @@
   (:require
    #?(:clj [clojure.core.async :as async :refer [<! >! chan timeout close! go go-loop <!!]]
       :cljs [cljs.core.async :as async :refer   [<! >! chan timeout close!] :refer-macros [go go-loop]])
-   #?(:cljs [taoensso.timbre :refer-macros [debugf info infof error]]
-      :clj [taoensso.timbre         :refer [debugf info infof error]])
+   #?(:cljs [taoensso.timbre :refer-macros [debug debugf info infof error]]
+      :clj [taoensso.timbre         :refer [debug debugf info infof error]])
 
    [pinkgorilla.nrepl.client.connection :refer [connect! disconnect!]]
    [pinkgorilla.nrepl.client.request :as r :refer [create-multiplexer!]]
+   [pinkgorilla.nrepl.client.id :refer [guuid]]
 
    ; side-effects (register multi-methods)
    [pinkgorilla.nrepl.client.op.eval]
@@ -15,19 +16,34 @@
    [pinkgorilla.nrepl.client.op.admin]
    [pinkgorilla.nrepl.client.op.gorilla]))
 
-(defn connect [config]
-  (let [conn (connect! config)
-        mx (create-multiplexer! conn)]
-    {:config config
-     :conn conn
-     :mx mx}))
-
-(defn disconnect [s]
-  (disconnect! (:conn s)))
-
 (defn send-request! [{:keys [conn mx]} req & [partial-results?]]
   (let [result-ch (r/send-request! conn mx partial-results? req)]
     result-ch))
+
+(defn- send-ping-loop
+  "websocket connections have a timeout.
+   we send regular ping events to keep connection alive"
+  [{:keys [conn] :as c}]
+  (go-loop []
+    (let [{:keys [session-id ws-ch res-ch req-ch connected?]} @conn]
+      (when connected?
+        (debug "pinging ws-relay..")
+        (send-request! c {:op "sniffer-status" :id (guuid)}))
+      (<! (timeout 60000)) ; jetty default idle timeout is 300 seconds = 5 minutes
+      (recur))))
+
+(defn connect [config]
+  (let [conn (connect! config)
+        mx (create-multiplexer! conn)
+        c {:config config
+           :conn conn
+           :mx mx}]
+    #?(:cljs
+       (send-ping-loop c))
+    c))
+
+(defn disconnect [s]
+  (disconnect! (:conn s)))
 
 #_(defn send-requests!
     [s reqs]

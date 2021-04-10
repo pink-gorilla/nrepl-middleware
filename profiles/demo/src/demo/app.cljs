@@ -18,7 +18,7 @@
          [[#{"pinkgorilla.nrepl.client.connection"} :debug]
           [#{"*"} :debug]]}))
 
-(def config {:ws-url "ws://127.0.0.1:9000/nrepl"})
+(def config {:ws-url "ws://127.0.0.1:9000/api/nrepl"})
 
 
 (defn print-partial [res]
