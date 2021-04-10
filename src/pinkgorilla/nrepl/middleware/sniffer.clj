@@ -90,9 +90,9 @@
   (let [v (:value res)]
     (when v
       (case v
-        :gorilla/on (do (log "enabling sniffing.")
+        :gorilla/on (do (log ":gorilla/on - enabling sniffing.")
                         (sniff-on res))
-        :gorilla/off (do (log "disabling sniffing.")
+        :gorilla/off (do (log ":gorilla/off - disabling sniffing.")
                          (sniff-off))
         nil))))
 
@@ -110,7 +110,7 @@
                         (add-picasso res-forward))
           res-resp (response-for msg-listener {:sniffer-forward res-forward})]
       ; printing not allowed here - nrepl would capture this as part of the eval request 
-      ;(info "sniffer forwarding response:" msg-resp)
+      (log (str "sniffer forwarding response:" res-resp))
       res-resp)))
 
 (defn- wrap-sniffer-sender
@@ -154,7 +154,7 @@
               ;(info "sniffer - forwarding eval: " (:code req)) ; res-eval-forward does the logging
               (if (:msg-sink @state)
                 (transport/send (:transport (:msg-sink @state)) (res-eval-forward req))
-                (warn "sniffer - no sink. cannot forward! state: " @state))
+                (warn "sniffer - no sink. cannot forward! code: " code)) ; "state: " @state
                   ;(handler request)
               )
             (handler (assoc req :transport (wrap-sniffer-sender req))))

@@ -1,8 +1,10 @@
 (ns pinkgorilla.nrepl.logger
   (:require
+   [clojure.core.async :as async :refer [<! >! >!! chan poll! timeout close! go go-loop]]
    [pinkgorilla.nrepl.ignore :refer [ignore?]]))
 
 (def log-enabled? false)
+;(def log-enabled? true)
 
 (defn cut-namespaces [msg]
   (if (get-in msg [:value :namespace-definitions])
@@ -38,13 +40,23 @@
               :nrepl.middleware.print/options
               :nrepl.middleware.caught/caught-fn)))
 
+(def messages-chan (chan))
+
+(go-loop []
+  (let [text (<! messages-chan)]
+    (println text)
+    (recur)))
+
 (def log-file "target/nrepl.txt")
 
 (defn log [text]
   (when log-enabled?
     (spit log-file
           (str "\r\n" text)
-          :append true)))
+          :append true))
+  (when text
+    (>!! messages-chan text))
+  nil)
 
 (defn log-resp [req resp]
   (when (not (ignore? req resp))
@@ -54,3 +66,4 @@
 (defn log-req [req]
   (log (str "\r\n req-only" (pr-str req))))
 
+(log "started")
