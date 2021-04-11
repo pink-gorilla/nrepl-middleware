@@ -17,7 +17,7 @@
                   ["vcs" "push"]]
 
   :min-lein-version "2.9.3"
-  :min-java-version "1.11"
+  ;:min-java-version "1.11"
   ;:jvm-opts ["-Dtrust_all_cert=true"
   ;           "-Djavax.net.ssl.trustStore=/home/andreas/.keystore"
   ;           ]
@@ -41,7 +41,7 @@
                          [com.google.code.findbugs/jsr305 "3.0.2"]]
 
 
-  :dependencies  [;[org.clojure/clojure "1.10.1"]
+  :dependencies  [[org.clojure/clojure "1.10.1"] ; + in evals
                   ;[org.clojure/spec.alpha "0.2.187"]
                   ;[org.clojure/data.json "0.2.6"]
                   [org.clojure/core.async "1.3.610"]
@@ -99,7 +99,8 @@
                                [lein-shell "0.5.0"]
                                ;[lein-codox "0.10.7"] ; docs
                                [lein-ancient "0.6.15"]
-                               [min-java-version "0.1.0"]]
+                               ;[min-java-version "0.1.0"]
+                               ]
 
                      :aliases {"clj-kondo"
                                ["run" "-m" "clj-kondo.main"]}

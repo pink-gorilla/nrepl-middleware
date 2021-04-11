@@ -76,7 +76,7 @@
                             :nrepl.middleware.print/print-fn
                             :nrepl.middleware.caught/caught-fn)
         req-send (response-for req-listener {:sniffer-forward req-forward})]
-    (infof "sniffer forward to: %s msg: %s" (:session-id-sink @state) req-forward)
+    ;(infof "sniffer forward to: %s msg: %s" (:session-id-sink @state) req-forward)
     ;(when (:code req)
     ;  (info "code meta data: " (meta (:code req))))
     req-send))
@@ -110,7 +110,6 @@
                         (add-picasso res-forward))
           res-resp (response-for msg-listener {:sniffer-forward res-forward})]
       ; printing not allowed here - nrepl would capture this as part of the eval request 
-      (log (str "sniffer forwarding response:" res-resp))
       res-resp)))
 
 (defn- wrap-sniffer-sender
@@ -127,9 +126,11 @@
       (commands req res)
       (when (and (= (session-id- session) (:session-id-source @state))
                  (:code req))
-        (when (:msg-sink @state)
-          (transport/send (:transport (:msg-sink @state))
-                          (eval-res req res))))
+        (let [forward-res  (eval-res req res)]
+          (if (:msg-sink @state)
+            (do (log (str "sniffer forwarding res: " forward-res))
+                (transport/send (:transport (:msg-sink @state)) forward-res))
+            (log (str "no-sink - not forwarding res: " forward-res)))))
       this)))
 
 (defn wrap-sniffer
@@ -153,8 +154,9 @@
                        (= session (:session-id-source @state)))
               ;(info "sniffer - forwarding eval: " (:code req)) ; res-eval-forward does the logging
               (if (:msg-sink @state)
-                (transport/send (:transport (:msg-sink @state)) (res-eval-forward req))
-                (warn "sniffer - no sink. cannot forward! code: " code)) ; "state: " @state
+                (do (info "forwarding req: " code)
+                    (transport/send (:transport (:msg-sink @state)) (res-eval-forward req)))
+                (warn "sniffer - no sink. cannot forward code: " code)) ; "state: " @state
                   ;(handler request)
               )
             (handler (assoc req :transport (wrap-sniffer-sender req))))
@@ -167,7 +169,8 @@
 
 (middleware/set-descriptor!
  #'wrap-sniffer
- {:requires #{}
+ {;:requires #{}
+  :requires #{#'nrepl.middleware.print/wrap-print}
   :expects  ; expects get executed before this middleware
   #{"eval"
     #'pinkgorilla.nrepl.middleware.picasso/wrap-picasso}

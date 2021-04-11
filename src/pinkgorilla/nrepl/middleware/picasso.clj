@@ -28,19 +28,19 @@
   (let [r (->picasso value)]
     r))
 
-(defn add-datafy [resp v]
+(defn add-datafy [res v]
   (if-let [d (datafy-id v)]
-    (assoc resp :datafy (pr-str d))
-    resp))
+    (assoc res :datafy (pr-str d))
+    res))
 
-(defn add-picasso [resp]
-  (if-let [[_ v] (find resp :value)]
-    (-> (assoc resp :picasso (formatter/serialize (render-value v))
+(defn add-picasso [res]
+  (if-let [[_ v] (find res :value)]
+    (-> (assoc res :picasso (formatter/serialize (render-value v))
                :meta (formatter/serialize (meta v)))
         (add-datafy v))
-    resp))
+    res))
 
-(defn convert-response [{:keys [op] :as req} resp]
+(defn convert-response [{:keys [op] :as req} res]
    ;; we have to transform the rendered value to EDN here, as otherwise
    ;; it will be pr'ed by the print middleware (which comes with the
    ;; eval middleware), meaning that it won't be mapped to EDN when the
@@ -55,8 +55,8 @@
   ;        nav (nav! id k v)]
   ;    (assoc resp :nav (formatter/serialize nav)))
   (if (:as-picasso req)
-    (add-picasso resp)
-    resp))
+    (add-picasso res)
+    res))
 
 (defn transport-picasso-render
   [{:keys [^Transport transport] :as request}]
