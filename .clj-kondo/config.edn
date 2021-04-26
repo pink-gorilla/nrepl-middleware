@@ -26,7 +26,10 @@
   :unused-referred-var
   {:level :info
    :exclude [; dont be strict in referring to logging functions
-             {taoensso.timbre [debug info]}             
+             {taoensso.timbre [trane tracef 
+                               debug debugf 
+                               info infof
+                               error errorf]}             
              ]}
 
   :unresolved-symbol

@@ -23,6 +23,7 @@
    Messages are mapped back and forth to EDN.
    Uses https://www.eclipse.org/jetty/javadoc/current/org/eclipse/jetty/websocket/api/WebSocketAdapter.html"
   [config]
+  (info "creating nrepl jetty-ws-relay handler:" config)
   {:on-connect (fn [ws]
                  (infof "ws connected: %s connecting to nrepl %s" ws config)
                  (let [ws-send! (fn [res]
@@ -61,9 +62,9 @@
                            :cookie-name "nrepl-relay-session"})))
 
 (defn run-relay-jetty [config]
-  (let [ws-handler (ws-handler (:nrepl-client config))
+  (let [ws-handler (ws-handler (get-in config [:nrepl :relay]))
         ws-handler-wrapped (wrap-memory-session ws-handler)
-        {:keys [port route]} (:relay config)]
+        {:keys [port route]} (:web config)]
     (info "starting jetty relay at port " port "..")
     (run-jetty ws-handler-wrapped
                {:port port

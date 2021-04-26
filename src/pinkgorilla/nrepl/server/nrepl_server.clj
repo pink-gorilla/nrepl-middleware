@@ -4,9 +4,8 @@
    [nrepl.server]
    [pinkgorilla.nrepl.handler.nrepl-handler :refer [make-default-handler]]))
 
-(defn run-nrepl-server [config]
-  (let [nrepl-server-config (:nrepl-server config)
-        {:keys [bind port]
+(defn run-nrepl-server [nrepl-server-config]
+  (let [{:keys [bind port]
          :or {bind "127.0.0.1"
               port 9000}}
         nrepl-server-config]

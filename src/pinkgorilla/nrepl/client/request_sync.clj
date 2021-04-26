@@ -1,7 +1,28 @@
 (ns pinkgorilla.nrepl.client.request-sync
   (:require
+   [taoensso.timbre :refer [debug debugf info infof warn warnf errorf]]
    [clojure.pprint :refer [pprint]]
    [nrepl.core :as nrepl]))
+
+(defn- add-session-id [state msg]
+  (if-let [session-id (:session-id @state)]
+    (assoc msg :session session-id)
+    msg))
+
+(defn send-request-sync!
+  "makes a nrepl request.
+   waits until all responses are received
+   returns the fragments
+   "
+  [state msg]
+  ;(println "send! msg" msg " state: " @state " fn: " on-receive-fn)
+  (if-let [client (:client @state)]
+    (->> (add-session-id state msg)
+         (nrepl/message client)
+         doall)
+    (do
+      (println "cannot send nrepl msg. not connected!")
+      nil)))
 
 (defn- set-session-id! [conn fragments]
    ; "clone", which will cause a new session to be retained. 
@@ -37,26 +58,6 @@
     (println "disconnecting client nrepl session.")
     (swap! conn dissoc :transport :client)
     (.close transport)))
-
-(defn- add-session-id [state msg]
-  (if-let [session-id (:session-id @state)]
-    (assoc msg :session session-id)
-    msg))
-
-(defn send-request-sync!
-  "makes a nrepl request.
-   waits until all responses are received
-   returns the fragments
-   "
-  [state msg]
-  ;(println "send! msg" msg " state: " @state " fn: " on-receive-fn)
-  (if-let [client (:client @state)]
-    (->> (add-session-id state msg)
-         (nrepl/message client)
-         doall)
-    (do
-      (println "cannot send nrepl msg. not connected!")
-      nil)))
 
 (defn request-rolling!
   "make a nrepl request ´msg´ and for each partial reply-fragment

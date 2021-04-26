@@ -7,14 +7,14 @@
   (:gen-class))
 
 (def demo-config
-  {:nrepl-server {:bind "127.0.0.1"
+  {:nrepl {:server {:bind "127.0.0.1"
                   :port 9100}
-   :nrepl-client {:host "127.0.0.1"
-                  :port 9100
+           :relay  {:host "127.0.0.1"
+                   :port 9100
                   ;:transport-fn
-                  }
-   :relay {:port 9000
-           :route "/api/nrepl"}})
+                  }}
+   :web {:port 9000
+         :route "/api/nrepl"}})
 
 
 (defn -main []
@@ -25,7 +25,7 @@
            [;[#{"pinkgorilla.nrepl.client.connection"} :debug]
             [#{"*"} :info]]}))
 
-  (run-nrepl-server demo-config)
+  (run-nrepl-server (get-in demo-config [:nrepl :server]))
   ;(add-middleware! demo-config) ; not needed in case of in process nrepl-server
   (run-relay-jetty demo-config))
 

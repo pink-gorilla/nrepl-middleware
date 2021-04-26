@@ -1,6 +1,6 @@
 (ns pinkgorilla.nrepl.server.add-middleware
   (:require
-   [pinkgorilla.nrepl.client :as client]
+   [pinkgorilla.nrepl.client.core :as client]
    [pinkgorilla.nrepl.helper :refer [print-fragments status success?]]
    [pinkgorilla.nrepl.handler.nrepl-loader :refer [ops-sniffer]]))
 
@@ -19,8 +19,8 @@
               port 9000}}
         nrepl-server-config]
     (println "add-middleware! nrepl port: " port)
-    (let [state (client/connect! port)
-          request! (partial client/request! state)]
+    (let [state (client/connect port)
+          request! (partial client/send-request! state)]
       (println "connected!")
       (println "init results: "
                (map  (comp print-fragments

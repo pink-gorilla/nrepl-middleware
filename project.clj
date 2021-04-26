@@ -48,7 +48,7 @@
 
                   ; nrepl/kernel
                   [nrepl "0.8.3"]  ; 0.7.0 lacks add-middleware
-                  [cider/cider-nrepl "0.25.8"]
+                  [cider/cider-nrepl "0.25.11"]
                   [cider/piggieback "0.5.0"]
                   [clojail "1.0.6"] ; sandboxing
                   [compliment "0.3.10"] ; code completion
