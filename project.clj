@@ -30,10 +30,8 @@
 
   :uberjar-exclusions [#"cider/nrepl.*\.class$"]
 
-  :managed-dependencies [[org.clojure/clojure "1.10.1"]
-                         [org.clojure/core.async "1.3.610"]
-                         [org.clojure/clojurescript "1.10.773"]
-                         [com.cognitect/transit-clj "1.0.324"]
+  #_:managed-dependencies #_[[org.clojure/core.async "1.3.610"]
+                          [com.cognitect/transit-clj "1.0.324"]
                          [com.cognitect/transit-cljs "0.8.264"]
                          [com.fasterxml.jackson.core/jackson-core "2.11.2"]
                          [cheshire "5.10.0"]
@@ -41,17 +39,17 @@
                          [com.google.code.findbugs/jsr305 "3.0.2"]]
 
 
-  :dependencies  [[org.clojure/clojure "1.10.1"] ; + in evals
+  :dependencies  [[org.clojure/clojure "1.10.3"] ; + in evals
                   ;[org.clojure/spec.alpha "0.2.187"]
                   ;[org.clojure/data.json "0.2.6"]
                   [org.clojure/core.async "1.3.610"]
 
                   ; nrepl/kernel
                   [nrepl "0.8.3"]  ; 0.7.0 lacks add-middleware
-                  [cider/cider-nrepl "0.25.11"]
-                  [cider/piggieback "0.5.0"]
+                  [cider/cider-nrepl "0.26.0"]
+                  [cider/piggieback "0.5.2"]
                   [clojail "1.0.6"] ; sandboxing
-                  [compliment "0.3.10"] ; code completion
+                  [compliment "0.3.11"] ; code completion
                   [org.pinkgorilla/picasso "3.1.18"] ; render values
 
                   ; clojurescript
@@ -60,30 +58,30 @@
                                 com.cognitect/transit-cljs]] ; websockets with core.async                                   
                   [com.taoensso/timbre "5.1.2"]             ; clj / cljs logging
                   [com.lucasbradstreet/cljs-uuid-utils "1.0.2"] ;; awb99: in encoding, and clj/cljs proof
-                  [clj-commons/pomegranate "1.2.0"] ; add-dependency in clj kernel; TODO - Replace pomegranate with tools alpha
+                  [clj-commons/pomegranate "1.2.1"] ; add-dependency in clj kernel; TODO - Replace pomegranate with tools alpha
                   ]
 
   :profiles {:client {:source-paths ["profiles/client/src"]
-                      :dependencies [[org.clojure/tools.cli "1.0.194"] ; commandline args
+                      :dependencies [[org.clojure/tools.cli "1.0.206"] ; commandline args
                                      ]}
 
              :cljs {:source-paths ["profiles/demo/src"]
                     #_:repl-options   #_{:init-ns          demo.app
                                          :port             4001
                                          :nrepl-middleware [shadow.cljs.devtools.server.nrepl/middleware]}
-                    :dependencies [[org.clojure/clojurescript "1.10.773"]
+                    :dependencies [[org.clojure/clojurescript "1.10.844"]
                                    [org.clojure/tools.analyzer "1.0.0"]
 
                                    ; shadow-cljs MAY NOT be a dependency in lein deps :tree -> if so, bundeler will fail because shadow contains core.async which is not compatible with self hosted clojurescript
-                                   [thheller/shadow-cljs "2.10.13"]
-                                   [thheller/shadow-cljsjs "0.0.21"]
-                                   [reagent "0.10.0"
+                                   [thheller/shadow-cljs "2.12.5"]
+                                  ; [thheller/shadow-cljsjs "0.0.21"]
+                                   [reagent "1.0.0"
                                     :exclusions [org.clojure/tools.reader
                                                  cljsjs/react
                                                  cljsjs/react-dom]]]}
 
              :relay-jetty {:source-paths ["profiles/demo/src"]
-                           :dependencies [[ring "1.8.1"]
+                           :dependencies [[ring "1.9.2"]
                                           [ring-cors "0.1.13"]
                                           [ring/ring-defaults "0.3.2"
                                            :exclusions [javax.servlet/servlet-api]]
