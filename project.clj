@@ -30,16 +30,13 @@
 
   :uberjar-exclusions [#"cider/nrepl.*\.class$"]
 
-  #_:managed-dependencies #_[[org.clojure/core.async "1.3.610"]
-                          [com.cognitect/transit-clj "1.0.324"]
-                         [com.cognitect/transit-cljs "0.8.264"]
-                         [com.fasterxml.jackson.core/jackson-core "2.11.2"]
-                         [cheshire "5.10.0"]
-                         [org.clojure/tools.reader "1.3.2"]
-                         [com.google.code.findbugs/jsr305 "3.0.2"]]
 
+  :dependencies  [; version conflict resolution
+                  [org.clojure/tools.reader "1.3.4"] ; clj-kondo
 
-  :dependencies  [[org.clojure/clojure "1.10.3"] ; + in evals
+                  
+                  
+                  [org.clojure/clojure "1.10.3"] ; + in evals
                   ;[org.clojure/spec.alpha "0.2.187"]
                   ;[org.clojure/data.json "0.2.6"]
                   [org.clojure/core.async "1.3.618"]
