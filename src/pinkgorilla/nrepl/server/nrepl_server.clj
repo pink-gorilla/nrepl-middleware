@@ -2,7 +2,16 @@
   (:require
    [taoensso.timbre :as timbre :refer [info]]
    [nrepl.server]
-   [pinkgorilla.nrepl.handler.nrepl-handler :refer [make-default-handler]]))
+   [pinkgorilla.nrepl.handler.nrepl-handler :refer [make-default-handler]]
+   ;; side effects
+   [nrepl.middleware.print]
+  ;picasso
+   [picasso.default-config]
+   [pinkgorilla.notebook.repl]
+   [picasso.datafy.file]
+  ; nrepl-miiddleware
+   [pinkgorilla.nrepl.middleware.picasso]
+   [pinkgorilla.nrepl.middleware.sniffer]))
 
 (defn run-nrepl-server [nrepl-server-config]
   (let [{:keys [bind port]

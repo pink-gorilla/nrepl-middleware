@@ -42,7 +42,7 @@
   :dependencies  [[org.clojure/clojure "1.10.3"] ; + in evals
                   ;[org.clojure/spec.alpha "0.2.187"]
                   ;[org.clojure/data.json "0.2.6"]
-                  [org.clojure/core.async "1.3.610"]
+                  [org.clojure/core.async "1.3.618"]
 
                   ; nrepl/kernel
                   [nrepl "0.8.3"]  ; 0.7.0 lacks add-middleware
@@ -50,7 +50,7 @@
                   [cider/piggieback "0.5.2"]
                   [clojail "1.0.6"] ; sandboxing
                   [compliment "0.3.11"] ; code completion
-                  [org.pinkgorilla/picasso "3.1.18"] ; render values
+                  [org.pinkgorilla/picasso "3.1.20"] ; render values
 
                   ; clojurescript
                   [jarohen/chord "0.8.1" ; nrepl websocket
@@ -74,7 +74,6 @@
 
                                    ; shadow-cljs MAY NOT be a dependency in lein deps :tree -> if so, bundeler will fail because shadow contains core.async which is not compatible with self hosted clojurescript
                                    [thheller/shadow-cljs "2.12.5"]
-                                  ; [thheller/shadow-cljsjs "0.0.21"]
                                    [reagent "1.0.0"
                                     :exclusions [org.clojure/tools.reader
                                                  cljsjs/react
@@ -85,13 +84,10 @@
                                           [ring-cors "0.1.13"]
                                           [ring/ring-defaults "0.3.2"
                                            :exclusions [javax.servlet/servlet-api]]
-                                    ;[javax.websocket/javax.websocket-api "1.1"]
-                                    ;[javax.servlet/javax.servlet-api "4.0.1"]
-                                    ;[org.eclipse.jetty.websocket/websocket-server "9.4.12.v20180830"]
-                                          [info.sunng/ring-jetty9-adapter "0.14.0"]]}
+                                     [info.sunng/ring-jetty9-adapter "0.14.0"]]}
 
              :dev   {:dependencies [[org.clojure/tools.logging "1.1.0"]
-                                    [clj-kondo "2020.07.29"]]
+                                    [clj-kondo "2021.03.31"]]
                      :plugins [[lein-cljfmt "0.6.6"]
                                [lein-cloverage "1.1.2"]
                                [lein-shell "0.5.0"]
