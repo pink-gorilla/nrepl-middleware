@@ -34,8 +34,6 @@
   :dependencies  [; version conflict resolution
                   [org.clojure/tools.reader "1.3.4"] ; clj-kondo
 
-                  
-                  
                   [org.clojure/clojure "1.10.3"] ; + in evals
                   ;[org.clojure/spec.alpha "0.2.187"]
                   ;[org.clojure/data.json "0.2.6"]
@@ -47,7 +45,7 @@
                   [cider/piggieback "0.5.2"]
                   [clojail "1.0.6"] ; sandboxing
                   [compliment "0.3.11"] ; code completion
-                  [org.pinkgorilla/picasso "3.1.20"] ; render values
+                  [org.pinkgorilla/picasso "3.1.21"] ; render values
 
                   ; clojurescript
                   [jarohen/chord "0.8.1" ; nrepl websocket
