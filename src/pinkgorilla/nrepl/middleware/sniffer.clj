@@ -3,6 +3,7 @@
     sends evals to a sink (typiccally pinkgorilla notebook)
    "
   (:require
+  ; [clojure.set]
    [taoensso.timbre :as timbre :refer [debug info infof warn error]]
    [nrepl.transport :as transport]
    [nrepl.middleware :as middleware]
@@ -69,17 +70,19 @@
   "forwards an nrepl message to the sink."
   [req]
   (let [req-listener (:msg-sink @state)
-        req-forward (dissoc req
-                            :session
-                            :transport
-                            :nrepl.middleware.print/keys
-                            :nrepl.middleware.print/print-fn
-                            :nrepl.middleware.caught/caught-fn)
+        #_req-forward #_(dissoc req
+                                :session
+                                :transport
+                                :nrepl.middleware.print/keys
+                                :nrepl.middleware.print/print-fn
+                                :nrepl.middleware.caught/caught-fn)
+        req-forward (select-keys req [:id :ns :picasso :out :err])
         req-send (response-for req-listener {:sniffer-forward req-forward})]
     ;(infof "sniffer forward to: %s msg: %s" (:session-id-sink @state) req-forward)
     ;(when (:code req)
     ;  (info "code meta data: " (meta (:code req))))
     req-send))
+
 
 
 ; a clean nrepl middleware is found in:
