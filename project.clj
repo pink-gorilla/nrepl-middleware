@@ -45,7 +45,7 @@
                   [cider/piggieback "0.5.2"]
                   [clojail "1.0.6"] ; sandboxing
                   [compliment "0.3.11"] ; code completion
-                  [org.pinkgorilla/picasso "3.1.21"] ; render values
+                  [org.pinkgorilla/picasso "3.1.44"] ; render values
 
                   ; clojurescript
                   [jarohen/chord "0.8.1" ; nrepl websocket
