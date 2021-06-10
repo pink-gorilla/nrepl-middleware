@@ -89,11 +89,11 @@
   (when (and code true); (contains? res :value))
     (let [msg-listener (:msg-sink @state)
           #_res-forward #_(dissoc res
-                              :session
-                              :transport
-                              :nrepl.middleware.print/keys
-                              :nrepl.middleware.print/print-fn
-                              :nrepl.middleware.caught/caught-fn)
+                                  :session
+                                  :transport
+                                  :nrepl.middleware.print/keys
+                                  :nrepl.middleware.print/print-fn
+                                  :nrepl.middleware.caught/caught-fn)
           res-forward (select-keys req [:id ;:op :code
                                         :ns :picasso :out :err])
           res-forward (if (:as-picasso res)
@@ -116,8 +116,6 @@
         :gorilla/off (do (log ":gorilla/off - disabling sniffing.")
                          (sniff-off))
         nil))))
-
-
 
 (defn- wrap-sniffer-sender
   "Wraps a `Transport` with code which prints the value of messages sent to
