@@ -83,7 +83,7 @@
           res (if (:as-picasso res)
                 res
                 (add-picasso res))
-          res-forward (select-keys res [:id :ns :picasso :out :err])
+          res-forward (select-keys res [:id :status :ns :picasso :out :err])
           res-resp (response-for msg-listener {:sniffer-forward res-forward})]
       ; printing not allowed here - nrepl would capture this as part of the eval request 
       res-resp)))
