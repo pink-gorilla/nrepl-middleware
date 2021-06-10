@@ -76,7 +76,8 @@
                                 :nrepl.middleware.print/keys
                                 :nrepl.middleware.print/print-fn
                                 :nrepl.middleware.caught/caught-fn)
-        req-forward (select-keys req [:id :ns :picasso :out :err])
+        req-forward (select-keys req [:id :op :code
+                                      :ns :picasso :out :err])
         req-send (response-for req-listener {:sniffer-forward req-forward})]
     ;(infof "sniffer forward to: %s msg: %s" (:session-id-sink @state) req-forward)
     ;(when (:code req)
