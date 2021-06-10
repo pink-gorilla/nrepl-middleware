@@ -70,15 +70,7 @@
   "forwards an nrepl message to the sink."
   [req]
   (let [req-listener (:msg-sink @state)
-        #_req-forward #_(dissoc req
-                                :session
-                                :transport
-                                :nrepl.middleware.print/keys
-                                :nrepl.middleware.print/print-fn
-                                :nrepl.middleware.caught/caught-fn)
-        req-forward (select-keys req [:id :op :code
-                                      ;:ns :picasso :out :err
-                                      ])
+        req-forward (select-keys req [:id :op :code])
         req-send (response-for req-listener {:sniffer-forward req-forward})]
     ;(infof "sniffer forward to: %s msg: %s" (:session-id-sink @state) req-forward)
     ;(when (:code req)
@@ -88,17 +80,10 @@
 (defn eval-res [{:keys [code] :as req} {:keys [value] :as res}]
   (when (and code true); (contains? res :value))
     (let [msg-listener (:msg-sink @state)
-          #_res-forward #_(dissoc res
-                                  :session
-                                  :transport
-                                  :nrepl.middleware.print/keys
-                                  :nrepl.middleware.print/print-fn
-                                  :nrepl.middleware.caught/caught-fn)
-          res-forward (select-keys req [:id ;:op :code
-                                        :ns :picasso :out :err])
-          res-forward (if (:as-picasso res)
-                        res-forward
-                        (add-picasso res-forward))
+          res (if (:as-picasso res)
+                res
+                (add-picasso res))
+          res-forward (select-keys res [:id :ns :picasso :out :err])
           res-resp (response-for msg-listener {:sniffer-forward res-forward})]
       ; printing not allowed here - nrepl would capture this as part of the eval request 
       res-resp)))
