@@ -18,7 +18,7 @@
     ;cider.nrepl/wrap-debug
     ;cider.nrepl/wrap-enlighten
     ;cider.nrepl/wrap-format
- ;   cider.nrepl/wrap-info    ; disabled because of exception: java.lang.ClassNotFoundException: jdk.javadoc.doclet.Doclet
+    cider.nrepl/wrap-info    ; disabled because of exception: java.lang.ClassNotFoundException: jdk.javadoc.doclet.Doclet
     ;cider.nrepl/wrap-inspect
     ;cider.nrepl/wrap-macroexpand
     ;cider.nrepl/wrap-ns
@@ -28,7 +28,7 @@
     ;cider.nrepl/wrap-refresh
     ;cider.nrepl/wrap-resource
     ;cider.nrepl/wrap-spec
-    ;cider.nrepl/wrap-stacktrace ; disabled because of exception: java.lang.ClassNotFoundException: jdk.javadoc.doclet.Doclet
+    cider.nrepl/wrap-stacktrace ; disabled because of exception: java.lang.ClassNotFoundException: jdk.javadoc.doclet.Doclet
     ;cider.nrepl/wrap-test
     ;cider.nrepl/wrap-trace
     ;cider.nrepl/wrap-tracker

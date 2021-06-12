@@ -74,6 +74,9 @@
                                                  cljsjs/react
                                                  cljsjs/react-dom]]]}
 
+             :orchard {:source-paths ["profiles/orchard/src"]
+                           :dependencies [[cider/orchard "0.7.1"]]}
+
              :relay-jetty {:source-paths ["profiles/demo/src"]
                            :dependencies [[ring "1.9.2"]
                                           [ring-cors "0.1.13"]
@@ -134,7 +137,12 @@
             ["with-profile" "+relay-jetty" "run" "-m" "demo.relay-jetty"]
 
             "client"
-            ["with-profile" "+client" "run" "-m" "client.app"]}
+            ["with-profile" "+client" "run" "-m" "client.app"]
+            
+            "orchard"
+["with-profile" "+orchard" "run" "-m" "demo"]
+            
+            }
 
 
 
