@@ -38,7 +38,8 @@
 (defn sniff-on [{:keys [session] :as req}]
   (let [session (session-id- session)]
     ;(info "sniffer - setting source session id:" session)
-    (swap! state assoc :session-id-source session)))
+    (swap! state assoc :session-id-source session)
+    (println (pr-str (dissoc @state :msg-sink)))))
 
 (defn sniff-off []
   (swap! state assoc :session-id-source nil))

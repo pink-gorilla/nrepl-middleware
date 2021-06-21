@@ -17,11 +17,6 @@
                   ["vcs" "push"]]
 
   :min-lein-version "2.9.3"
-  ;:min-java-version "1.11"
-  ;:jvm-opts ["-Dtrust_all_cert=true"
-  ;           "-Djavax.net.ssl.trustStore=/home/andreas/.keystore"
-  ;           ]
-
   :source-paths ["src"]
   :target-path  "target/jar"
   :clean-targets ^{:protect false} [:target-path
@@ -30,13 +25,9 @@
 
   :uberjar-exclusions [#"cider/nrepl.*\.class$"]
 
-
   :dependencies  [; version conflict resolution
                   [org.clojure/tools.reader "1.3.4"] ; clj-kondo
-
                   [org.clojure/clojure "1.10.3"] ; + in evals
-                  ;[org.clojure/spec.alpha "0.2.187"]
-                  ;[org.clojure/data.json "0.2.6"]
                   [org.clojure/core.async "1.3.618"]
 
                   ; nrepl/kernel
@@ -66,7 +57,6 @@
                                          :nrepl-middleware [shadow.cljs.devtools.server.nrepl/middleware]}
                     :dependencies [[org.clojure/clojurescript "1.10.844"]
                                    [org.clojure/tools.analyzer "1.0.0"]
-
                                    ; shadow-cljs MAY NOT be a dependency in lein deps :tree -> if so, bundeler will fail because shadow contains core.async which is not compatible with self hosted clojurescript
                                    [thheller/shadow-cljs "2.12.5"]
                                    [reagent "1.0.0"
@@ -75,14 +65,14 @@
                                                  cljsjs/react-dom]]]}
 
              :orchard {:source-paths ["profiles/orchard/src"]
-                           :dependencies [[cider/orchard "0.7.1"]]}
+                       :dependencies [[cider/orchard "0.7.1"]]}
 
              :relay-jetty {:source-paths ["profiles/demo/src"]
                            :dependencies [[ring "1.9.2"]
                                           [ring-cors "0.1.13"]
                                           [ring/ring-defaults "0.3.2"
                                            :exclusions [javax.servlet/servlet-api]]
-                                     [info.sunng/ring-jetty9-adapter "0.14.0"]]}
+                                          [info.sunng/ring-jetty9-adapter "0.14.0"]]}
 
              :dev   {:dependencies [[org.clojure/tools.logging "1.1.0"]
                                     [clj-kondo "2021.03.31"]]
@@ -138,11 +128,9 @@
 
             "client"
             ["with-profile" "+client" "run" "-m" "client.app"]
-            
+
             "orchard"
-["with-profile" "+orchard" "run" "-m" "demo"]
-            
-            }
+            ["with-profile" "+orchard" "run" "-m" "demo"]}
 
 
 
