@@ -1,4 +1,4 @@
-(ns demo.app
+(ns demo.page.ops
   (:require
    [taoensso.timbre :as timbre :refer-macros [debug info warn error]]
    [cljs.core.async :as async :refer [<!] :refer-macros [go]]
@@ -8,10 +8,8 @@
                                           op-describe op-lssessions op-lsmiddleware
                                           op-eval
                                           op-ciderversion op-apropos op-docstring op-completions op-resolve-symbol op-stacktrace]]
-   [demo.views]))
-
-(def config {:ws-url "ws://127.0.0.1:9500/api/nrepl"})
-
+   [demo.views]
+   [demo.conn :refer [nrepl-status]]))
 
 (defn print-partial [res]
   (warn "partial result: " res))
@@ -50,14 +48,15 @@
 ;
     ))
 
+(defmethod reagent-page :demo/ops [{:keys [route-params query-params handler] :as route}]
+  (let [data (r/atom {})
+        first (r/atom true)]
+    (fn [{:keys [route-params query-params handler] :as route}])
+    (when @first
+      (reset! first false)
+      (get-data (:conn @nrepl-status) data))
 
-(def data (r/atom {}))
-(def conn (connect config))
-
- (get-data conn data)
-
-(defmethod reagent-page :demo/main [{:keys [route-params query-params handler] :as route}]
-    [demo.views/app conn data])
+    [demo.views/app (:conn @nrepl-status) data]))
 
 
 

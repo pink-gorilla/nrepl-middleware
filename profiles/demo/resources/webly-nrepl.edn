@@ -2,9 +2,18 @@
          ; clj
          :ns-clj []
          ; cljs
-         :ns-cljs [demo.app]
+         :ns-cljs [demo.page.main
+                   demo.page.notebook
+                   demo.page.ops
+                   picasso.kernel.edn
+                   pinkgorilla.nrepl.kernel.kernel
+                   demo.conn
+                   ]
          ;:start-user-app [:demo/start]
-         :routes {:app {"" :demo/main}
+         :routes {:app {"" :demo/main
+                        "ops" :demo/ops
+                        "notebook" :demo/notebook
+                        }
                   :api {}}}
 
  :google-analytics {:enabled true} ; set to false to disable google-analytics tracking.

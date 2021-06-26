@@ -18,8 +18,13 @@
              [:p (str v)]]))])
 
 
+(defn link-href [href text]
+  [:a.bg-blue-300.cursor-pointer.hover:bg-red-700.m-1
+   {:href href} text])
+
 (defn app [conn data]
   [:div
+    [link-href "/" "main"]
    [:h1 "NRepl demo"]
    [:p "config" (pr-str (:config conn))]
    [:h2 "Will connect to nrepl-ws relay, and then run a few commands and print them."]

@@ -41,9 +41,6 @@
           ;[#{"pinkgorilla.nrepl.client.op.eval"} :debug]
             [#{"*"} level]]})))
 
-
-
-
 (defn neval [state msg]
   (println "\r\n" msg)
   (->> msg

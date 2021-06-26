@@ -17,11 +17,11 @@
   }
  :aliases
  {:test {:extra-paths ["test"]
-          :extra-deps {io.github.cognitect-labs/test-runner
-                       {:git/url "https://github.com/cognitect-labs/test-runner.git"
-                        :sha "9e35c979860c75555adaff7600070c60004a0f44"}}
-          :main-opts ["-m" "cognitect.test-runner"]
-          :exec-fn cognitect.test-runner.api/test}
+         :extra-deps {io.github.cognitect-labs/test-runner
+                      {:git/url "https://github.com/cognitect-labs/test-runner.git"
+                       :sha "9e35c979860c75555adaff7600070c60004a0f44"}}
+         :main-opts ["-m" "cognitect.test-runner"]
+         :exec-fn cognitect.test-runner.api/test}
 
   :garamond
   {:main-opts ["-m" "garamond.main"]
@@ -60,28 +60,30 @@
 
   ;;
   :relay {:extra-paths ["profiles/cli/src"]
-        :extra-deps {org.pinkgorilla/webly {:mvn/version "0.3.8"}}
-        :main-opts ["-m" "relay"]}
-  
+          :extra-deps {org.pinkgorilla/webly {:mvn/version "0.3.8"}}
+          :main-opts ["-m" "relay"]}
+
   :client {:extra-paths ["profiles/cli/src"]
            :extra-deps {org.clojure/tools.cli {:mvn/version "1.0.206"}}
            :main-opts ["-m" "client"]}
 
-  
+
   :webly {:extra-paths ["profiles/demo/src"
                         "profiles/demo/resources"]
-          :extra-deps  {org.pinkgorilla/webly {:mvn/version "0.3.8"}}
+          :extra-deps  {org.pinkgorilla/webly {:mvn/version "0.3.8"}
+                        org.pinkgorilla/pinkie {:mvn/version "0.3.3"}
+                        org.pinkgorilla/ui-markdown {:mvn/version "0.0.9"}
+                        org.pinkgorilla/ui-code {:mvn/version "0.0.13"}}
           :exec-fn webly.user.app.app/webly-run
           :exec-args {:profile "watch"
-                      :config "webly-nrepl.edn"
-                      }}  
-  
+                      :config "webly-nrepl.edn"}}
+
 
   ;  :uberjar-exclusions [#"cider/nrepl.*\.class$"]
 
-  
 
-  
+
+
 
 
 
