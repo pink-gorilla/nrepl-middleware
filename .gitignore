@@ -24,3 +24,4 @@ package.json
 package-lock.json
 .cpcache
 karma.conf.js
+shadow-cljs.edn
