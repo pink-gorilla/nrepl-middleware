@@ -1,0 +1,4 @@
+{:group-id "org.pinkgorilla"
+ :artifact-id "nrepl-middleware"
+ :scm-url "https://github.com/pink-gorilla/nrepl-middleware/"
+ }

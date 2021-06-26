@@ -1,0 +1,91 @@
+{:paths ["src" "resources"]
+ :deps
+ {org.clojure/clojure {:mvn/version  "1.10.3"}
+
+  ; nrepl/kernel
+  nrepl/nrepl {:mvn/version "0.8.3"}  ; 0.7.0 lacks add-middleware
+  cider/cider-nrepl {:mvn/version "0.26.0"}
+  cider/piggieback {:mvn/version "0.5.2"}
+  clojail/clojail {:mvn/version "1.0.6"} ; sandboxing
+  compliment/compliment {:mvn/version "0.3.11"} ; code completion
+  org.pinkgorilla/picasso {:mvn/version "3.1.45"} ; render values
+
+  ; clojurescript
+  jarohen/chord {:mvn/version "0.8.1"}  ; websockets with core.async                                   
+  com.lucasbradstreet/cljs-uuid-utils {:mvn/version "1.0.2"} ;; awb99: in encoding, and clj/cljs proof
+  clj-commons/pomegranate {:mvn/version "1.2.1"} ; add-dependency in clj kernel; TODO - Replace pomegranate with tools alpha
+  }
+ :aliases
+ {:test {:extra-paths ["test"]
+          :extra-deps {io.github.cognitect-labs/test-runner
+                       {:git/url "https://github.com/cognitect-labs/test-runner.git"
+                        :sha "9e35c979860c75555adaff7600070c60004a0f44"}}
+          :main-opts ["-m" "cognitect.test-runner"]
+          :exec-fn cognitect.test-runner.api/test}
+
+  :garamond
+  {:main-opts ["-m" "garamond.main"]
+   :extra-deps {com.workframe/garamond {:mvn/version "0.4.0"}}}
+
+  ;https://github.com/applied-science/deps-library 1.0.861
+  :release {:extra-deps {applied-science/deps-library {:mvn/version "0.4.0"}}
+            :main-opts ["-m" "applied-science.deps-library"]}
+
+  ; https://github.com/weavejester/cljfmt
+  :cljfmt     {:extra-deps {cljfmt/cljfmt {:mvn/version "RELEASE"}}
+               :main-opts ["-m" "cljfmt.main" "check" "--indents" "cljfmt.edn"]}
+  :cljfmt-fix {:extra-deps {cljfmt/cljfmt {:mvn/version "RELEASE"}}
+               :main-opts ["-m" "cljfmt.main" "fix" "--indents" "cljfmt.edn"]}
+
+ ; https://github.com/clj-kondo/clj-kondo/blob/master/doc/jvm.md
+  :lint {:extra-deps {clj-kondo/clj-kondo {:mvn/version "RELEASE"}}
+         :main-opts ["-m" "clj-kondo.main"
+                     "--lint" "src"]}
+
+  :cloverage {:extra-paths ["test"]
+              :extra-deps  {cloverage/cloverage {:mvn/version "RELEASE"}}
+              :main-opts   ["-m" "cloverage.coverage"
+                            "--src-ns-path" "src"
+                            "--test-ns-path" "test"]
+              :exec-fn     cloverage.coverage/run-project
+              :exec-args   {:src-ns-path  ["src"]
+                            :test-ns-path ["test"]}}
+
+  :outdated {:extra-deps {com.github.liquidz/antq {:mvn/version "RELEASE"}}
+             :main-opts ["-m" "antq.core"]}
+
+  :check {:extra-deps {athos/clj-check {:git/url "https://github.com/athos/clj-check.git"
+                                        :sha "0ca84df1357d71429243b99908303f45a934654c"}}
+          :main-opts ["-m" "clj-check.check"]}
+
+  ;;
+  :relay {:extra-paths ["profiles/cli/src"]
+        :extra-deps {org.pinkgorilla/webly {:mvn/version "0.3.8"}}
+        :main-opts ["-m" "relay"]}
+  
+  :client {:extra-paths ["profiles/cli/src"]
+           :extra-deps {org.clojure/tools.cli {:mvn/version "1.0.206"}}
+           :main-opts ["-m" "client"]}
+
+  
+  :webly {:extra-paths ["profiles/demo/src"
+                        "profiles/demo/resources"]
+          :extra-deps  {org.pinkgorilla/webly {:mvn/version "0.3.8"}}
+          :exec-fn webly.user.app.app/webly-run
+          :exec-args {:profile "watch"
+                      :config "webly-nrepl.edn"
+                      }}  
+  
+
+  ;  :uberjar-exclusions [#"cider/nrepl.*\.class$"]
+
+  
+
+  
+
+
+
+
+;
+  }}
+

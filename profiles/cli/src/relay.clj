@@ -1,4 +1,4 @@
-(ns demo.relay-jetty
+(ns relay
   (:require
    [taoensso.timbre :as timbre :refer [debug info error]]
    [pinkgorilla.nrepl.server.nrepl-server :refer [run-nrepl-server]]
@@ -13,7 +13,7 @@
                    :port 9100
                   ;:transport-fn
                   }}
-   :web {:port 9000
+   :web {:port 9500
          :route "/api/nrepl"}})
 
 

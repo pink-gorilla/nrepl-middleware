@@ -77,9 +77,7 @@
         (infof "request-rolling! %s finished!" req)))
     (info "cannot send nrepl msg. not connected!")))
 
-
 ; request op helper (is this really needed?)
-
 
 (defn op-describe []
   {:op "describe"})
@@ -161,9 +159,7 @@
   []
   {:op "sniffer-sink"})
 
-
 ; helper like this might be handy:
-
 
 #_(defn ^:export nrepl-eval-cb
     "evaluates a clojure expression

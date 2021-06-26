@@ -8,9 +8,7 @@
    [pinkgorilla.nrepl.client.id :refer [guuid]]
    [pinkgorilla.nrepl.client.protocols :refer [init]]))
 
-
 ; multiplexer
-
 
 (defn- log-msg [msg]
   (tracef "res - multiplexer: %s" msg))
@@ -47,9 +45,7 @@
       (recur))
     mx))
 
-
 ; request
-
 
 (defn add-req-processor [mx req-id rps]
   (swap! mx assoc req-id rps))

@@ -1,4 +1,4 @@
-(ns client.app
+(ns client
   (:require
    [clojure.core.async :refer [<! <!! go go-loop]]
    [clojure.tools.cli :as cli]

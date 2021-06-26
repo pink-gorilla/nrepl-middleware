@@ -15,12 +15,10 @@
         p (partial process-fragment-log process-fragment)]
     (reduce p initial-value fragments)))
 
-
 ; :ns needs to be in fragment, because otherwise value and pcasso
 ; do not get processed.
 ; picasso is wrapped as edn by middleware, you can run (pr-str val)
 ; to create more tests
-
 
 (def code
   {:req {:op :eval :code "1 (println 4) (+ 1 1) (println 5) 3"}

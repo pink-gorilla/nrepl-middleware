@@ -92,7 +92,6 @@
 ; a clean nrepl middleware is found in:
 ; https://github.com/RickMoynihan/nrebl.middleware/blob/master/src/nrebl/middleware.clj
 
-
 (defn commands [req res]
   (let [v (:value res)]
     (when v
@@ -153,10 +152,7 @@
             (handler (assoc req :transport (wrap-sniffer-sender req))))
         ;  (handler request)        
         ))))
-
-
 ; https://nrepl.org/nrepl/design/middleware.html
-
 
 (middleware/set-descriptor!
  #'wrap-sniffer
@@ -173,8 +169,6 @@
 
             "sniffer-sink"
             {:doc "called from notebook. destination for forwarded events "}}})
-
-
 
 ; {:doc "Provides sniffer status"
 ;             :requires {"prefix" "The prefix to complete."}

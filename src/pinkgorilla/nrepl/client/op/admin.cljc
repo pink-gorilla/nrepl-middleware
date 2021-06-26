@@ -7,7 +7,6 @@
 ; op: close
 ; op: clone
 
-
 (defmethod init :describe [req]
   (key-concat [:versions :ops :aux]))
 

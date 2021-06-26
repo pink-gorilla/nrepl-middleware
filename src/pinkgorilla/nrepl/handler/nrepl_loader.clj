@@ -1,9 +1,7 @@
 (ns pinkgorilla.nrepl.handler.nrepl-loader)
 
-
 ; nrepl docs:
 ; https://nrepl.org/nrepl/ops.html#_add_middleware
-
 
 (def ops-sniffer
   [{:op "describe"}

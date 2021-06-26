@@ -2,23 +2,15 @@
   (:require
    [taoensso.timbre :as timbre :refer-macros [debug info warn error]]
    [cljs.core.async :as async :refer [<!] :refer-macros [go]]
-   [reagent.dom]
    [reagent.core :as r]
+   [webly.web.handler :refer [reagent-page]]
    [pinkgorilla.nrepl.client.core :refer [connect send-request! request-rolling!
                                           op-describe op-lssessions op-lsmiddleware
                                           op-eval
                                           op-ciderversion op-apropos op-docstring op-completions op-resolve-symbol op-stacktrace]]
    [demo.views]))
 
-(enable-console-print!)
-
-(timbre/set-config!
- (merge timbre/default-config
-        {:min-level ;:info
-         [[#{"pinkgorilla.nrepl.client.connection"} :debug]
-          [#{"*"} :debug]]}))
-
-(def config {:ws-url "ws://127.0.0.1:9000/api/nrepl"})
+(def config {:ws-url "ws://127.0.0.1:9500/api/nrepl"})
 
 
 (defn print-partial [res]
@@ -34,6 +26,7 @@
                    (info k " result: " r)
                    (swap! data assoc k r))))]
 
+    (info "making nrepl reqs")
     (request-rolling! conn {:op "eval" :code "(+ 7 7)"} print-partial)
     (request-rolling! conn {:op "sniffer-sink"} print-partial)
 
@@ -52,21 +45,19 @@
     (r! :08-complete (op-completions "ma" "user" "(def a 4)"))
     (r! :09-resolve (op-resolve-symbol "pprint" "clojure.pprint"))
     (r! :10-evalex (op-eval "(throw Exception \"b\")")) ; make eval exception
-    (r! :11-stack (op-stacktrace)) ; get sacktrace after exception happened
+    (r! :11-stack (op-stacktrace)) ; get stacktrace after exception happened
 
 ;
     ))
 
-(defn ^:export  start []
-  (info "nrepl-demo starting ..")
-  (let [data (r/atom {})
-        conn (connect config)]
-    ;(send-request! conn {:op "describe"})
-    (get-data conn data)
-    (reagent.dom/render [demo.views/app conn data]
-                        (.getElementById js/document "app"))))
 
-;
-(defn ^:export  stop []
-  (js/console.log "Stopping..."))
+(def data (r/atom {}))
+(def conn (connect config))
+
+ (get-data conn data)
+
+(defmethod reagent-page :demo/main [{:keys [route-params query-params handler] :as route}]
+    [demo.views/app conn data])
+
+
 

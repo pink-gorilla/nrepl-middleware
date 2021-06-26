@@ -98,7 +98,6 @@
          acc)))))
 ;; => #'pinkgorilla.nrepl.client.transducer/res-transform-conj
 
-
 (defn res-transform-extract
   "transducer - extracts (reduces) useful information
    from multiple res into a result. Used to build a 

@@ -5,13 +5,11 @@
    [clojure.datafy]
    #_[picasso.converter :refer [->picasso]]))
 
-
 ; https://github.com/RickMoynihan/nrebl.middleware
 ; https://github.com/Lokeh/punk
 ; https://github.com/pedro-w/nav-demo
 ; https://www.youtube.com/watch?v=c52QhiXsmyI&list=PLZdCLR02grLpMkEBXT22FTaJYxB92i3V3&index=3
 ; PREPL = Repl + presentation layer. klipse already supports this!!!
-
 
 (def current (atom 0))
 
@@ -76,7 +74,6 @@
   (def p2 (clojure.datafy/nav (clojure.datafy/datafy p1) 3 (nth p1 3)))
   (clojure.datafy/datafy p2)
 
-
- ; 
+; 
   )
 

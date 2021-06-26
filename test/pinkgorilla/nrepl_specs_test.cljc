@@ -190,13 +190,7 @@
    :ns "dynalloc.chevvy"
    :value "\"{:value-response {:type :html, :content [:span {:class \\\"clj-nil\\\"} \\\"nil\\\"], :value \\\"nil\\\"}}\""})
 
-
-
-
-
-
 ;(println (s/explain :nrepl-msg/stacktrace-msg stacktrace-msg))
-
 
 (deftest nrepl-specs-test
   (is (= true (s/valid? :nrepl-msg/stacktrace-msg stacktrace-msg))))

@@ -66,9 +66,7 @@
       ; root exception ?? what is this ?? where does it come from ? cider? nrepl?
       (cond-> root-ex (assoc :root-ex root-ex))))
 
-
 ; used also by sniffer in notebook
-
 
 (def initial-value {:value []
                     :picasso []

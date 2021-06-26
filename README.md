@@ -1,6 +1,6 @@
 # NREPL Middleware [![GitHub Actions status |pink-gorilla/gorilla-middleware](https://github.com/pink-gorilla/nrepl-middleware/workflows/CI/badge.svg)](https://github.com/pink-gorilla/nrepl-middleware/actions?workflow=CI)[![Codecov Project](https://codecov.io/gh/pink-gorilla/nrepl-middleware/branch/master/graph/badge.svg)](https://codecov.io/gh/pink-gorilla/nrepl-middleware)[![Clojars Project](https://img.shields.io/clojars/v/org.pinkgorilla/nrepl-middleware.svg)](https://clojars.org/org.pinkgorilla/nrepl-middleware)
 
-- This project is used in [Notebook](https://github.com/pink-gorilla/gorilla-notebook) and [Goldly](https://github.com/pink-gorilla/goldly).
+- This project is used in [Notebook](https://github.com/pink-gorilla/gorilla-notebook).
 
 ## features
 - nrepl websocket relay (browsers can not connect to normal tcp ports)
@@ -14,10 +14,10 @@ To test picasso and sniffer middleware run 3 different terminal windows
 and execute this 3 commands in this order
 
 ```
-lein relay-jetty  ; this runs jetty http server with websocket relay (port 9000)
-lein client -m sink   ; will listen to sniffed evals
-lein client -m ide -i ./snippets/sniffer.edn 
-lein client -m ide -i ./snippets/sniffer-min.edn
+clojure -M:relay  ; this runs jetty http server with websocket relay (port 9000)
+clojure -M:client -m sink   ; will listen to sniffed evals
+clojure -M:client -m ide -i ./snippets/sniffer.edn 
+clojure -M:client -m ide -i ./snippets/sniffer-min.edn
 
  ; will do a few evals that wil show up on listen
 ```
@@ -27,12 +27,11 @@ lein client -m ide -i ./snippets/sniffer-min.edn
 To see a simple websocket frontend, run in 2 terminal windows:
 
 ```
-lein relay-jetty  ; this runs jetty http server with websocket relay (port 9000)
+clojure -M:relay  ; this runs jetty http server with websocket relay (port 9000)
 ```
 
 ```
-npm install
-lein demo         ; browser app served with shadow-cljs dev server port 8000
+clojure -M:demo         ; browser app served with shadow-cljs dev server port 8000
 ```
 
 

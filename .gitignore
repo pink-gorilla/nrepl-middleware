@@ -19,4 +19,8 @@ pom.xml.asc
 .settings/*
 .lsp/
 .calva/
-
+.webly
+package.json
+package-lock.json
+.cpcache
+karma.conf.js

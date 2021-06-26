@@ -23,7 +23,6 @@
 ;; This middleware adds :picasso key to the response protocol on the value that results from the evaluation, and
 ;; then converts the result to edn.
 
-
 (defn render-value [value]
   (let [r (->picasso value)]
     r))
@@ -92,13 +91,11 @@
       (nrepl.transport/send transport (response-nav request))
       (handler (assoc request :transport (transport-picasso-render request))))))
 
-
 ;; TODO: No idea whether this still applies to nrepl 0.6
 ;; nrepl.middleware.print/wrap-print is the new nrepl.middleware.pr-values - see new CHANGELOG.md
 ;; Unfortunately nREPL's interruptible-eval middleware has a fixed dependency on the pr-values middleware. So here,
 ;; what we do is fudge the :requires and :expects values to ensure that our rendering middleware gets inserted into
 ;; the linearized middlware stack between the eval middleware and the pr-values middleware. A bit of a hack!
-
 
 (middleware/set-descriptor!
  #'wrap-picasso

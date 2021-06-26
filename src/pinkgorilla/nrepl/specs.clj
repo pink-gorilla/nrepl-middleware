@@ -156,8 +156,6 @@
     :pinkie nil
     :out "20-06-10 03:29:52 lggram INFO [goldly.runner:108] - sending  {:run-id nil, :system-id \"f6cf7895-768a-4f65-8507-f5b1adca287f\", :fun nil, :result [[:span {:class \"clj-long\"} \"24\"]], :where [:END]}\n"}
 
-
-
 ;   
    ])
 
