@@ -1,4 +1,6 @@
-{:paths ["src" "resources"]
+{:paths ["src" 
+         "classes" ; aot
+         ]
  :deps
  {org.clojure/clojure {:mvn/version  "1.10.3"}
 
@@ -63,6 +65,10 @@
           :extra-deps {org.pinkgorilla/webly {:mvn/version "0.3.8"}}
           :main-opts ["-m" "relay"]}
 
+  :aot {:extra-paths ["profiles/cli/src"]
+          :extra-deps {org.pinkgorilla/webly {:mvn/version "0.3.8"}}
+         }
+
   :client {:extra-paths ["profiles/cli/src"]
            :extra-deps {org.clojure/tools.cli {:mvn/version "1.0.206"}}
            :main-opts ["-m" "client"]}
@@ -78,15 +84,7 @@
           :exec-args {:profile "watch"
                       :config "webly-nrepl.edn"}}
 
-
   ;  :uberjar-exclusions [#"cider/nrepl.*\.class$"]
-
-
-
-
-
-
-
 
 ;
   }}
