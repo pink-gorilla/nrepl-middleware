@@ -20,17 +20,11 @@
   (into [:div.bg-blue-400.m-5.inline-block {:class "w-1/4"}]
         children))
 
-(defn demo-eval []
-  [block
-   [:p.text-4xl "bidi routes"]
-   [:p [link-dispatch [:bidi/goto :demo/ops] "ops"]]
-   [:p [link-dispatch [:bidi/goto :demo/notebook] "notebook"]]])
-
-(defn main []
-  [:div
-   [:h1 "nrepl demo"]
-   [:p [link-dispatch [:reframe10x-toggle] "tenx-toggle"]]
-   [demo-eval]])
-
 (defmethod reagent-page :demo/main [& args]
-  [main])
+  [block
+   [:p.text-4xl "nrepl demo"]
+   [:p [link-dispatch [:reframe10x-toggle] "tenx-toggle"]]
+   [:p [link-dispatch [:bidi/goto :demo/ops] "ops"]]
+   [:p [link-dispatch [:bidi/goto :demo/notebook] "notebook"]]
+   [:p [link-dispatch [:bidi/goto :demo/info] "nrepl info"]]])
+

@@ -5,6 +5,7 @@
          :ns-cljs [demo.page.main
                    demo.page.notebook
                    demo.page.ops
+                   demo.page.info
                    picasso.kernel.edn
                    pinkgorilla.nrepl.kernel.kernel
                    demo.conn
@@ -13,6 +14,7 @@
          :routes {:app {"" :demo/main
                         "ops" :demo/ops
                         "notebook" :demo/notebook
+                         "info" :demo/info
                         }
                   :api {}}}
 
