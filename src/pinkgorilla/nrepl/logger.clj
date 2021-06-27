@@ -66,4 +66,4 @@
 (defn log-req [req]
   (log (str "\r\n req-only" (pr-str req))))
 
-(log "started")
+(log "nrepl logger started")

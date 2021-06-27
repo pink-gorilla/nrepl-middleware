@@ -120,7 +120,8 @@
           (if (:msg-sink @state)
             (do (log (str "sniffer forwarding res: " forward-res))
                 (transport/send (:transport (:msg-sink @state)) forward-res))
-            (log (str "no-sink - not forwarding res: " forward-res)))))
+            ;(log (str "no-sink - not forwarding res: " forward-res))
+            )))
       this)))
 
 (defn wrap-sniffer
@@ -146,7 +147,8 @@
               (if (:msg-sink @state)
                 (do (info "forwarding req: " code)
                     (transport/send (:transport (:msg-sink @state)) (res-eval-forward req)))
-                (warn "sniffer - no sink. cannot forward code: " code)) ; "state: " @state
+                ;(warn "sniffer - no sink. cannot forward code: " code)
+) ; "state: " @state
                   ;(handler request)
               )
             (handler (assoc req :transport (wrap-sniffer-sender req))))

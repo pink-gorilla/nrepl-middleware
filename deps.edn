@@ -1,6 +1,4 @@
-{:paths ["src" 
-         "classes" ; aot
-         ]
+{:paths ["src"]
  :deps
  {org.clojure/clojure {:mvn/version  "1.10.3"}
 
@@ -60,22 +58,30 @@
                                         :sha "0ca84df1357d71429243b99908303f45a934654c"}}
           :main-opts ["-m" "clj-check.check"]}
 
-  ;;
-  :relay {:extra-paths ["profiles/cli/src"]
+  ;; cli
+  :relay {:extra-paths ["profiles/cli/src"
+                        "classes" ; aot
+                        ]
           :extra-deps {org.pinkgorilla/webly {:mvn/version "0.3.8"}}
           :main-opts ["-m" "relay"]}
 
   :aot {:extra-paths ["profiles/cli/src"]
-          :extra-deps {org.pinkgorilla/webly {:mvn/version "0.3.8"}}
-         }
+        :extra-deps {org.pinkgorilla/webly {:mvn/version "0.3.8"}
+                     org.pinkgorilla/pinkie {:mvn/version "0.3.3"}
+                     org.pinkgorilla/ui-markdown {:mvn/version "0.0.9"}
+                     org.pinkgorilla/ui-code {:mvn/version "0.0.13"}}}
 
-  :client {:extra-paths ["profiles/cli/src"]
+  :client {:extra-paths ["profiles/cli/src"
+                         "classes" ; aot
+                         ]
            :extra-deps {org.clojure/tools.cli {:mvn/version "1.0.206"}}
            :main-opts ["-m" "client"]}
 
-
+  ; web ui
   :webly {:extra-paths ["profiles/demo/src"
-                        "profiles/demo/resources"]
+                        "profiles/demo/resources"
+                        "classes" ; aot
+                        ]
           :extra-deps  {org.pinkgorilla/webly {:mvn/version "0.3.8"}
                         org.pinkgorilla/pinkie {:mvn/version "0.3.3"}
                         org.pinkgorilla/ui-markdown {:mvn/version "0.0.9"}
@@ -84,7 +90,14 @@
           :exec-args {:profile "watch"
                       :config "webly-nrepl.edn"}}
 
-  ;  :uberjar-exclusions [#"cider/nrepl.*\.class$"]
+  ; experiment
+  :exp {:extra-paths ["profiles/exp/src"
+                      "classes" ; aot
+                      ]
+        ;:extra-deps {org.clojure/tools.cli {:mvn/version "1.0.206"}}
+        :main-opts ["-m" "demo"]}
+
+
 
 ;
   }}
