@@ -1,6 +1,6 @@
 (ns pinkgorilla.nrepl.service
   (:require
-   [taoensso.timbre :as timbre :refer [debug infof error]]
+   [taoensso.timbre :as timbre :refer [debug infof warn error]]
    [pinkgorilla.nrepl.server.nrepl-server :refer [run-nrepl-server]]
    ;[pinkgorilla.nrepl.server.add-middleware :refer [add-middleware!]]
    ;[pinkgorilla.nrepl.relay.jetty :refer [run-relay-jetty]]
