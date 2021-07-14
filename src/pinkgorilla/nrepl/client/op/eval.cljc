@@ -12,7 +12,7 @@
 #?(:cljs
    (defn- picasso-unwrap
      "picasso middleware serializes picasso values to edn.
-   It does this becaus nrepl might usesay bencode for its connection.
+   It does this becaus nrepl might use say bencode for its connection.
    In this case we would loose meta-data, Therefor picasso values ae sent as string
    on the wire.
    In case nrepl transport is edn (which new versions do), then
@@ -21,9 +21,10 @@
      [value]
      (try
        (tracef "picasso-unwrap %s" value)
-       (when value (read-string value))
+       (when value
+         (read-string value))
        (catch js/Error e
-         (error "picasso-unwrap parsing %s ex: %s" value e))))
+         (errorf "picasso-unwrap value: %s ex: %s" value e))))
 
    :clj
    (defn- picasso-unwrap

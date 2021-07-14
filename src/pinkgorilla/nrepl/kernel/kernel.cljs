@@ -5,7 +5,7 @@
    [re-frame.core :as rf]
    [picasso.id :refer [guuid]]
    [picasso.kernel.protocol :refer [kernel-eval]]
-   [pinkgorilla.nrepl.client.core :refer [send-request! op-eval op-stacktrace]]
+   [pinkgorilla.nrepl.client.core :refer [send-request! op-eval-picasso op-stacktrace]]
    [pinkgorilla.nrepl.kernel.subscriptions] ; side effects
    ))
 
@@ -27,7 +27,7 @@
     (debug "clj-eval: " code)
     (go (try (let [;_ (info "nrepl: " @nrepl)
                    conn (:conn @nrepl)
-                   eval-result (<! (send-request! conn (op-eval code)))
+                   eval-result (<! (send-request! conn (op-eval-picasso code)))
                    _ (info "nrepl eval result: " eval-result)
                    ;eval-result (if (stacktrace? eval-result)
                    ;              (get-stacktrace conn eval-result)

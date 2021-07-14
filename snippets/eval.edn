@@ -1,0 +1,19 @@
+[{:op "describe"}
+ {:op "ls-sessions"}
+ {:op "ls-middleware"}
+ {:op "eval" :code "(+ 1 1)"}
+
+ {:op "eval"  :code "^:X (+ 2 2)"}
+ {:op "eval"  :code "^:R [:p/vega (+ 8 8)]"}
+ {:op "eval"  :code "^:U (time (reduce + (range 1e6)))"}
+
+ ; evals inside notebook would have this flag. check if it works:
+ {:op "eval" :as-picasso 1 :code "^:R [:p (+ 8 8)]"}
+ {:op "eval" :as-picasso 1 :code "(+ 8 8)"}
+ {:op "eval" :as-picasso 1 :code "[7 8 9]"}
+ 
+{:op "eval"  :code "^:R [:p (+ 8 8)]"}
+{:op "eval"  :code "(+ 8 8)"}
+{:op "eval"  :code "[7 8 9]"}
+ 
+ ]

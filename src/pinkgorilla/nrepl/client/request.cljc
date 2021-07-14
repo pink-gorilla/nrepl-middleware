@@ -69,11 +69,17 @@
         (infof "req done: %s result: %s " request-id r)
         (remove-req-processor mx request-id)
         (go
-          (>! result-ch r)
+          (error "partial: " partial-results?)
+          (if (= partial-results? :raw)
+            (>! result-ch res)
+            (>! result-ch r))
           (close! result-ch)))
       (when partial-results?
         (go
-          (>! result-ch r))))))
+          (error "partial: " partial-results?)
+          (if (= partial-results? :raw)
+            (>! result-ch res)
+            (>! result-ch r)))))))
 
 (defn create-request-processor!
   "make-request 

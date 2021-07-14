@@ -1,4 +1,5 @@
-{:paths ["src"]
+{:paths ["src"
+         "resources"]
  :deps
  {org.clojure/clojure {:mvn/version  "1.10.3"}
 
@@ -8,7 +9,7 @@
   cider/piggieback {:mvn/version "0.5.2"}
   clojail/clojail {:mvn/version "1.0.6"} ; sandboxing
   compliment/compliment {:mvn/version "0.3.11"} ; code completion
-  org.pinkgorilla/picasso {:mvn/version "3.1.45"} ; render values
+  org.pinkgorilla/picasso {:mvn/version "3.1.52"} ; render values
 
   ; clojurescript
   jarohen/chord {:mvn/version "0.8.1"}  ; websockets with core.async                                   
@@ -19,7 +20,7 @@
  {:test {:extra-paths ["test"]
          :extra-deps {io.github.cognitect-labs/test-runner
                       {:git/url "https://github.com/cognitect-labs/test-runner.git"
-                       :sha "9e35c979860c75555adaff7600070c60004a0f44"}}
+                       :sha "f597341b6ca7bb4cf027e0a34a6710ca9cb969da"}}
          :main-opts ["-m" "cognitect.test-runner"]
          :exec-fn cognitect.test-runner.api/test}
 
@@ -55,21 +56,23 @@
              :main-opts ["-m" "antq.core"]}
 
   :check {:extra-deps {athos/clj-check {:git/url "https://github.com/athos/clj-check.git"
-                                        :sha "0ca84df1357d71429243b99908303f45a934654c"}}
+                                        :sha "518d5a1cbfcd7c952f548e6dbfcb9a4a5faf9062"}}
           :main-opts ["-m" "clj-check.check"]}
+
+  ;; NREPL APP
 
   ;; cli
   :relay {:extra-paths ["profiles/cli/src"
                         "classes" ; aot
                         ]
-          :extra-deps {org.pinkgorilla/webly {:mvn/version "0.3.8"}}
+          :extra-deps {org.pinkgorilla/webly {:mvn/version "0.3.45"}}
           :main-opts ["-m" "relay"]}
 
   :aot {:extra-paths ["profiles/cli/src"]
-        :extra-deps {org.pinkgorilla/webly {:mvn/version "0.3.8"}
-                     org.pinkgorilla/pinkie {:mvn/version "0.3.3"}
-                     org.pinkgorilla/ui-markdown {:mvn/version "0.0.9"}
-                     org.pinkgorilla/ui-code {:mvn/version "0.0.13"}}}
+        :extra-deps {org.pinkgorilla/webly {:mvn/version "0.3.45"}
+                     org.pinkgorilla/pinkie {:mvn/version "0.3.11"}
+                     org.pinkgorilla/ui-markdown {:mvn/version "0.0.18"}
+                     org.pinkgorilla/ui-code {:mvn/version "0.0.26"}}}
 
   :client {:extra-paths ["profiles/cli/src"
                          "classes" ; aot
@@ -78,17 +81,14 @@
            :main-opts ["-m" "client"]}
 
   ; web ui
-  :webly {:extra-paths ["profiles/demo/src"
-                        "profiles/demo/resources"
-                        "classes" ; aot
-                        ]
-          :extra-deps  {org.pinkgorilla/webly {:mvn/version "0.3.8"}
-                        org.pinkgorilla/pinkie {:mvn/version "0.3.3"}
-                        org.pinkgorilla/ui-markdown {:mvn/version "0.0.9"}
-                        org.pinkgorilla/ui-code {:mvn/version "0.0.13"}}
-          :exec-fn webly.user.app.app/webly-run
-          :exec-args {:profile "watch"
-                      :config "webly-nrepl.edn"}}
+  :goldly {:extra-paths ["profiles/demo/src"
+                         "profiles/demo/resources"
+                         "classes"] ; aot
+           :extra-deps  {org.pinkgorilla/goldly {:mvn/version "0.3.24"}
+                         org.pinkgorilla/pinkie {:mvn/version "0.3.11"}}
+           :exec-fn goldly-server.app/goldly-server-run!
+           :exec-args {:profile "watch"
+                       :config "goldly-nrepl.edn"}}
 
   ; experiment
   :exp {:extra-paths ["profiles/exp/src"

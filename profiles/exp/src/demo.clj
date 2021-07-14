@@ -2,7 +2,7 @@
   (:require
    [taoensso.timbre :as timbre :refer [debug info error]]
    [clojure.core.async :refer [chan go go-loop <! >!]]
-   [pinkgorilla.nrepl.relay.async :refer [make-relay]]
+   [pinkgorilla.nrepl.client.connection.in-process :refer [connect]]
    [pinkgorilla.nrepl.data.demo-ops :as demo])
   (:gen-class))
 
@@ -20,7 +20,7 @@
            [;[#{"pinkgorilla.nrepl.client.connection"} :debug]
             [#{"*"} :info]]}))
 
-  (let [conn (make-relay)
+  (let [conn (connect {})
         {:keys [req-ch res-ch]} @conn
 
         ops (concat demo/op-eval-simpel

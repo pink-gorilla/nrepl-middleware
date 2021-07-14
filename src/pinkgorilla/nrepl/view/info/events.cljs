@@ -18,10 +18,10 @@
  (fn [cofx [_]]
    (dispatch [:nrepl/op-db (op-lsmiddleware) [:nrepl :info]])))
 
-(reg-event-fx
- :nrepl/sniffer-status
- (fn [cofx [_]]
-   (dispatch [:nrepl/op-db {:op "sniffer-status"} [:nrepl :info]])))
+#_(reg-event-fx
+   :nrepl/sniffer-status
+   (fn [cofx [_]]
+     (dispatch [:nrepl/op-db {:op "sniffer-status"} [:nrepl :info]])))
 
 (reg-event-fx
  :nrepl/eval-test
@@ -37,5 +37,5 @@
    (dispatch [:nrepl/describe])
    (dispatch [:nrepl/ls-sessions])
    (dispatch [:nrepl/ls-middleware])
-   (dispatch [:nrepl/sniffer-status])
+   ;(dispatch [:nrepl/sniffer-status])
    (dispatch [:nrepl/eval-test "(+ 1 1)"])))

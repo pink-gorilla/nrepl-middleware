@@ -61,9 +61,8 @@
 
 (defn info-panel [session-id describe sessions mws sniffer-status]
   [:div
-   [:button.bg-green-400 {;:type "button"
-                          :on-click #(dispatch [:nrepl/info-get])} "get info"]
    [desc-panel describe]
    [middleware-panel mws]
    [session-panel session-id sessions]
-   [sniffer-panel sniffer-status]])
+   ;[sniffer-panel sniffer-status]
+   ])

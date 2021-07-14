@@ -27,7 +27,11 @@
     :default "./snippets/default.edn"]
 
    ["-l" "--log-level LOGLEVEL" ":debug :info :warn :error , default: :warn"
-    :default :warn
+    :default :info
+    :parse-fn #(keyword %)]
+   
+   ["-t" "--type TYPE" ":bencode :in-process , default: :in-process"
+    :default :in-process
     :parse-fn #(keyword %)]
 
 ;
@@ -60,6 +64,7 @@
       :sink
       (do
         (println "printing all sniffing results ... (exit with ctrl+c)")
+        (println "connect opts: " options)
         (let [conn (connect options)]
           (println (send-request-sync! conn {:op "describe"}))
           (request-rolling! conn {:op "sniffer-sink"} print-forwarded)

@@ -20,17 +20,17 @@
   (let [result-ch (r/send-request! conn mx partial-results? req)]
     result-ch))
 
-(defn- send-ping-loop
-  "websocket connections have a timeout.
+#_(defn- send-ping-loop
+    "websocket connections have a timeout.
    we send regular ping events to keep connection alive"
-  [{:keys [conn] :as c}]
-  (go-loop []
-    (let [{:keys [session-id ws-ch res-ch req-ch connected?]} @conn]
-      (when connected?
-        (debug "pinging ws-relay..")
-        (send-request! c {:op "sniffer-status" :id (guuid)}))
-      (<! (timeout 60000)) ; jetty default idle timeout is 300 seconds = 5 minutes
-      (recur))))
+    [{:keys [conn] :as c}]
+    (go-loop []
+      (let [{:keys [session-id ws-ch res-ch req-ch connected?]} @conn]
+        (when connected?
+          (debug "pinging ws-relay..")
+          (send-request! c {:op "sniffer-status" :id (guuid)}))
+        (<! (timeout 60000)) ; jetty default idle timeout is 300 seconds = 5 minutes
+        (recur))))
 
 (defn connect [config]
   (let [conn (connect! config)
@@ -38,12 +38,12 @@
         c {:config config
            :conn conn
            :mx mx}]
-    #?(:cljs
-       (send-ping-loop c))
+    ; #?(:cljs
+    ;   (send-ping-loop c))
     c))
 
 (defn disconnect [s]
-  (disconnect! (:conn s)))
+  (disconnect! s))
 
 #_(defn send-requests!
     [s reqs]
@@ -67,8 +67,8 @@
 (defn request-rolling!
   "send a nrepl request, and get `rolling` responses
    for each partial reply-fragment callback ´cb´"
-  [c req cb]
-  (if-let [result-ch (send-request! c req true)]
+  [c req cb & [raw]]
+  (if-let [result-ch (send-request! c req (or raw true))]
     (go-loop [result (<! result-ch)]
       (if result
         (do
@@ -99,6 +99,11 @@
   "evals code"
   [code]
   {:op "eval" :code code})
+
+(defn op-eval-picasso
+  "evals code"
+  [code]
+  {:op "eval" :code code :as-picasso true})
 
 ; cider ops
 ; https://docs.cider.mx/cider-nrepl/nrepl-api/ops.html
