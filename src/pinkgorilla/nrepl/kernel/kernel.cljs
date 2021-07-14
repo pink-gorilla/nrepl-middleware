@@ -6,7 +6,7 @@
    [picasso.id :refer [guuid]]
    [picasso.kernel.protocol :refer [kernel-eval]]
    [pinkgorilla.nrepl.client.core :refer [send-request! op-eval-picasso op-stacktrace]]
-   [pinkgorilla.nrepl.kernel.subscriptions] ; side effects
+   [pinkgorilla.nrepl.kernel.connection] ; side-effects
    ))
 
 (def nrepl (rf/subscribe [:nrepl/status]))

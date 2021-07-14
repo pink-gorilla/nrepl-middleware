@@ -1,8 +1,7 @@
-(ns pinkgorilla.nrepl.relay.sente
+(ns pinkgorilla.nrepl.server.relay-sente
   (:require
    [clojure.string]
    [taoensso.timbre :as log :refer [debug info infof warn error errorf]]
-   [clojure.core.async :refer [chan go go-loop <! >!]]
    [webly.ws.core :refer [send! send-all! send-response]]
    [webly.ws.msg-handler :refer [-event-msg-handler]]
    [pinkgorilla.nrepl.client.core :refer [connect request-rolling!]]

@@ -3,13 +3,13 @@
    [taoensso.timbre :as timbre :refer-macros [debug info warn error]]
    [cljs.core.async :as async :refer [<!] :refer-macros [go]]
    [reagent.core :as r]
+   [re-frame.core :as rf]
    [webly.web.handler :refer [reagent-page]]
    [pinkgorilla.nrepl.client.core :refer [connect send-request! request-rolling!
                                           op-describe op-lssessions op-lsmiddleware
                                           op-eval
                                           op-ciderversion op-apropos op-docstring op-completions op-resolve-symbol op-stacktrace]]
-   [demo.views]
-   [demo.conn :refer [nrepl-status]]))
+   [demo.views]))
 
 (defn print-partial [res]
   (warn "partial result: " res))
@@ -49,7 +49,8 @@
     ))
 
 (defmethod reagent-page :demo/ops [{:keys [route-params query-params handler] :as route}]
-  (let [data (r/atom {})
+  (let [nrepl-status (rf/subscribe [:nrepl/status])
+        data (r/atom {})
         first (r/atom true)]
     (fn [{:keys [route-params query-params handler] :as route}])
     (when @first

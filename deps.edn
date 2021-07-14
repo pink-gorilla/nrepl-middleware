@@ -62,9 +62,8 @@
   ;; NREPL APP
 
   ;; cli
-  :relay {:extra-paths ["profiles/cli/src"
-                        "classes" ; aot
-                        ]
+  :relay {:extra-paths ["classes" ; aot
+                        "profiles/cli/src"]
           :extra-deps {org.pinkgorilla/webly {:mvn/version "0.3.45"}}
           :main-opts ["-m" "relay"]}
 
@@ -74,16 +73,15 @@
                      org.pinkgorilla/ui-markdown {:mvn/version "0.0.18"}
                      org.pinkgorilla/ui-code {:mvn/version "0.0.26"}}}
 
-  :client {:extra-paths ["profiles/cli/src"
-                         "classes" ; aot
-                         ]
+  :client {:extra-paths ["classes" ; aot
+                         "profiles/cli/src"]
            :extra-deps {org.clojure/tools.cli {:mvn/version "1.0.206"}}
            :main-opts ["-m" "client"]}
 
   ; web ui
-  :goldly {:extra-paths ["profiles/demo/src"
-                         "profiles/demo/resources"
-                         "classes"] ; aot
+  :goldly {:extra-paths ["classes" ; aot
+                         "profiles/demo/src"
+                         "profiles/demo/resources"] 
            :extra-deps  {org.pinkgorilla/goldly {:mvn/version "0.3.24"}
                          org.pinkgorilla/pinkie {:mvn/version "0.3.11"}}
            :exec-fn goldly-server.app/goldly-server-run!
@@ -91,9 +89,8 @@
                        :config "goldly-nrepl.edn"}}
 
   ; experiment
-  :exp {:extra-paths ["profiles/exp/src"
-                      "classes" ; aot
-                      ]
+  :exp {:extra-paths ["classes" ; aot
+                      "profiles/exp/src"]
         ;:extra-deps {org.clojure/tools.cli {:mvn/version "1.0.206"}}
         :main-opts ["-m" "demo"]}
 

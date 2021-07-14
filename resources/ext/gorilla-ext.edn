@@ -1,4 +1,4 @@
-{:name "nrepl-middleware"
+{:name "nrepl"
  :clj-require []
  :cljs-namespace [pinkgorilla.nrepl.kernel.kernel
                   pinkgorilla.nrepl.client.connection.sente]

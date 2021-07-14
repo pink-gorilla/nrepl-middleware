@@ -17,13 +17,6 @@
          ;:start-service pinkgorilla.nrepl.service/start-nrepl
          }
 
- :goldly {:enabled true
-          :lazy true
-          :routes {"" :demo/main
-                   "ops" :demo/ops
-                   "notebook" :demo/notebook
-                   "info" :demo/info}}
-
  :google-analytics {:enabled true} ; set to false to disable google-analytics tracking.
 
  :timbre-loglevel [[#{"webly.ws.*"} :debug]
@@ -38,6 +31,17 @@
 
  :settings {:use-localstorage  true  ; allow user to change settings via localstorage
             :bongo 777}
+
+ :goldly {:enabled true
+          :lazy true
+          :routes {"" :demo/main
+                   "ops" :demo/ops
+                   "notebook" :demo/notebook
+                   "info" :demo/info}}
+
+ :nrepl {:enabled true
+         :bind "127.0.0.1"
+         :port 9100}
 
  ;
  }

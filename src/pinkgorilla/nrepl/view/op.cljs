@@ -23,8 +23,8 @@
 (reg-event-fx
  :nrepl/op-dispatch
  (fn [{:keys [db] :as cofx}  [_ op handler]]
-   (let [{:keys [nrepl]} db
-         {:keys [conn]} nrepl]
+   (let [status (:nrepl/status db)
+         {:keys [conn]} status]
      (if conn
        (run-op-dispatch conn op handler)
        (error "cannot run nrepl op - not connected!"))

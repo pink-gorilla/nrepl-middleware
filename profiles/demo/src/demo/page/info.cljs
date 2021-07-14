@@ -6,7 +6,5 @@
    ))
 
 
-
-
 (defmethod reagent-page :demo/info [& args]
   [page/nrepl-info])

@@ -1,0 +1,26 @@
+
+
+ ;[pinkgorilla.nrepl.relay.jetty :refer [run-relay-jetty]]
+  
+
+#_(def default-config
+    {:nrepl {:server {:bind "127.0.0.1"
+                      :port 9100}
+             :relay  {:host "127.0.0.1"
+                      :port 9100
+                  ;:transport-fn
+                      }}
+     :web {:port 9500
+           :route "/api/nrepl"}})
+
+
+  ;(run-relay-jetty default-config)
+
+
+;(def config {:ws-url "ws://127.0.0.1:9500/api/nrepl"})
+
+;(rf/dispatch [:nrepl/connect-to {:ws-url "ws://127.0.0.1:9500/api/nrepl"}])
+
+
+
+;(def conn (connect config))

@@ -1,52 +1,37 @@
 (ns pinkgorilla.nrepl.kernel.connection
   (:require
-   [taoensso.timbre :refer-macros [debug info warnf warn errorf]]
-   [clojure.string :as str]
-   [cemerick.url :as url]
-   [cljs.core.async :as async :refer [<! >! chan timeout close!]]
+   [taoensso.timbre :refer-macros [debug info warnf warn error errorf]]
    ;[reagent.core :as r]
    ;[reagent.ratom :refer [make-reaction]]
-   [re-frame.core :refer [reg-event-fx reg-event-db dispatch]]
+   [re-frame.core :as rf]
    [pinkgorilla.nrepl.client.core :refer [connect send-request! request-rolling!]]))
-(defn application-url []
-  (url/url (-> js/window .-location .-href)))
 
-(defn ws-path [port path]
-  (let [app-url (application-url)
-        proto (if (= (:protocol app-url) "http") "ws" "wss")
-        port (or port (:port app-url))
-        port-postfix (if (< 0 port)
-                       (str ":" port)
-                       "")
-        wsp (str proto "://" (:host app-url) port-postfix path)]
-    (info "nrepl ws-endpoint: " wsp)
-    wsp))
+;; re-frame bridge
 
-(reg-event-db
- :nrepl/init
+(rf/reg-sub
+ :nrepl/status
  (fn [db [_]]
-   (let [db (or db {})
-         api (get-in db [:config :profile :server :api])
-         port-api (get-in db [:config :web-server-api :port])
-         port (when api port-api)
-         config (get-in db [:config :nrepl])
-         {:keys [ws-endpoint connect?]} config
-         ws-endpoint (or ws-endpoint (ws-path port "/api/nrepl"))]
-     (if connect?
-       (do
-         (warn "auto-connect nrepl: " ws-endpoint)
-         (dispatch [:nrepl/connect]))
-       (warn "NOT connecting automatically to nrepl"))
-     (assoc db :nrepl {:ws-url ws-endpoint
-                       :connected? false
-                       :conn nil
-                       :info {:sessions nil  ; this needs to be here, otherwise ops fail
-                              :describe nil}}))))
+   (let [s (or (:nrepl/status db)
+               {:connected? false
+                :conn nil})]
+     s)))
 
-(reg-event-db
+(rf/reg-sub
+ :nrepl/connected?
+ (fn [db _]
+   (get-in db [:nrepl/status :connected?])))
+
+(rf/reg-sub
+ :nrepl/conn
+ (fn [db _]
+   (let [conn-a (get-in db [:nrepl/status :conn :conn])]
+     (when conn-a
+       @conn-a))))
+
+(rf/reg-event-db
  :nrepl/set-connection-status
  (fn [db [_ connected?]]
-   (let [old-connected? (get-in db [:nrepl :connected?])]
+   (let [old-connected? (get-in db [:nrepl/status :connected?])]
      (if (= old-connected? connected?)
        (do (warnf ":nrepl/set-connection-status - connection status unchanged: %s" connected?)
            db)
@@ -54,28 +39,40 @@
          (if connected?
            (do
              (info "nrepl connected!")
-             (dispatch [:nrepl/register-sniffer-sink]))
+             (rf/dispatch [:nrepl/register-sniffer-sink]))
            (info "nrepl disconnected!"))
-         (assoc-in db [:nrepl :connected?] connected?))))))
+         (assoc-in db [:nrepl/status :connected?] connected?))))))
 
-(reg-event-db
+(defn start-bridge [conn]
+  (error "start nrepl bridge: " conn)
+  (add-watch
+   conn
+   :my-watch
+   (fn [c]
+     (let [{:keys [connected?]} @conn]
+       (error "nrepl ws connected? " connected?)
+       (rf/dispatch [:nrepl/set-connection-status connected?])))))
+
+;; connetion management
+
+(rf/reg-event-db
  :nrepl/connect
- (fn [{:keys [nrepl] :as db} [_]]
-   (let [{:keys [ws-url]} nrepl
-         {:keys [conn] :as c} (connect {:ws-url ws-url})]
+ (fn [db [_ nrepl-config]]
+   (error "starting nrepl client connection: " nrepl-config)
+   (let [{:keys [conn] :as c} (connect nrepl-config)]
+     (start-bridge conn)
+     (assoc-in db [:nrepl/status :conn] c))))
 
-     (add-watch conn :my-watch (fn [c]
-                                 (let [{:keys [connected?]} @conn]
-                                   (debug "nrepl ws connected? " connected?)
-                                   (dispatch [:nrepl/set-connection-status connected?]))))
-     (assoc-in db [:nrepl :conn] c))))
+(rf/reg-event-fx
+ :nrepl/init
+ (fn [{:keys [db] :as cofx} _]
+   (let [nrepl-config (or (get-in db [:config :nrepl]) {})
+         {:keys [enabled]} nrepl-config]
+     (if enabled
+       (rf/dispatch [:nrepl/connect nrepl-config])
+       (error "nrepl is disabled."))
+     nil)))
 
-(reg-event-db
- :nrepl/connect-to
- (fn [db [_ ws-url]]
-   (let [db (or db {})]
-     (dispatch [:nrepl/connect])
-     (assoc-in db [:nrepl :ws-url] ws-url))))
 
 
 
