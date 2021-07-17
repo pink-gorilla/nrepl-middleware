@@ -14,7 +14,7 @@ To test picasso and sniffer middleware run 3 different terminal windows
 and execute this 3 commands in this order
 
 ```
-clojure -M:relay  ; this runs jetty http server with websocket relay (port 9000)
+clojure -X:relay  ; this runs jetty http server with websocket relay (port 9000)
 clojure -M:client -m sink   ; will listen to sniffed evals
 clojure -M:client -m ide -i ./snippets/sniffer.edn 
 clojure -M:client -m ide -i ./snippets/sniffer-min.edn

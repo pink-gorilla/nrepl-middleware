@@ -20,26 +20,12 @@
   (let [result-ch (r/send-request! conn mx partial-results? req)]
     result-ch))
 
-#_(defn- send-ping-loop
-    "websocket connections have a timeout.
-   we send regular ping events to keep connection alive"
-    [{:keys [conn] :as c}]
-    (go-loop []
-      (let [{:keys [session-id ws-ch res-ch req-ch connected?]} @conn]
-        (when connected?
-          (debug "pinging ws-relay..")
-          (send-request! c {:op "sniffer-status" :id (guuid)}))
-        (<! (timeout 60000)) ; jetty default idle timeout is 300 seconds = 5 minutes
-        (recur))))
-
 (defn connect [config]
   (let [conn (connect! config)
         mx (create-multiplexer! conn)
         c {:config config
            :conn conn
            :mx mx}]
-    ; #?(:cljs
-    ;   (send-ping-loop c))
     c))
 
 (defn disconnect [s]
@@ -102,8 +88,10 @@
 
 (defn op-eval-picasso
   "evals code"
-  [code]
-  {:op "eval" :code code :as-picasso true})
+  ([code]
+   {:op "eval" :code code :as-picasso true})
+  ([code ns]
+   {:op "eval" :ns ns :code code :as-picasso true}))
 
 ; cider ops
 ; https://docs.cider.mx/cider-nrepl/nrepl-api/ops.html

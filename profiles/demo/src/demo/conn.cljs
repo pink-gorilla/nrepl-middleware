@@ -10,6 +10,6 @@
 ; it requires that the config was loaded prior
 ;(rf/dispatch [:nrepl/init])
 
-(rf/dispatch [:nrepl/connect  {:enabled true
+#_(rf/dispatch [:nrepl/connect  {:enabled true
                                :bind "127.0.0.1"
                                :port 9100}])

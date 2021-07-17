@@ -24,6 +24,8 @@
   [block
    [:p.text-4xl "nrepl demo"]
    [:p [link-dispatch [:reframe10x-toggle] "tenx-toggle"]]
+   [:p [link-href "/goldly/about" "goldly developer tools"]]
+
    [:p [link-dispatch [:bidi/goto :demo/ops] "ops"]]
    [:p [link-dispatch [:bidi/goto :demo/notebook] "notebook"]]
    [:p [link-dispatch [:bidi/goto :demo/info] "nrepl info"]]])

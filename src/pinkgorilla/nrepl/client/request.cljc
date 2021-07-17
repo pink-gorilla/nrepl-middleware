@@ -9,18 +9,43 @@
    [pinkgorilla.nrepl.client.protocols :refer [init]]))
 
 ; multiplexer
+(defn add-req-processor [mx req-id rps]
+  (let [req-id (if (keyword? req-id)
+                 req-id
+                 (keyword req-id))]
+    (debugf "adding req-processor %s" req-id)
+    (swap! mx assoc req-id rps)))
+
+(defn remove-req-processor [mx req-id]
+  (let [req-id (if (keyword? req-id)
+                 req-id
+                 (keyword req-id))]
+    (debugf "removing req-processor %s" req-id)
+    (swap! mx dissoc req-id)))
+
+(defn get-req-processor [mx req-id]
+  (let [req-id (if (keyword? req-id)
+                 req-id
+                 (keyword req-id))
+        p (get @mx req-id)]
+    (if p
+      p
+      (do (errorf "req-processor not found req-id: %s processors: %s" req-id (:keys @mx))
+          nil))))
 
 (defn- log-msg [msg]
   (tracef "res - multiplexer: %s" msg))
 
 (defn req-id-kw [res]
   (let [req-id (:id res)
-        req-id (if (keyword? req-id) req-id (keyword req-id))]
+        req-id (if (keyword? req-id)
+                 req-id
+                 (keyword req-id))]
     req-id))
 
 (defn- process-res [mx res]
   (let [req-id (req-id-kw res)
-        request-processor (get @mx req-id)]
+        request-processor (get-req-processor mx req-id)]
     (if request-processor
       (if-let [p (:process-response request-processor)]
         (p res)
@@ -31,6 +56,7 @@
   "reads from nrepl-res-ch in a go-loop
    calls req-processors for processing"
   [conn]
+  (debug "creating req multiplexer..")
   (let [mx (atom {}) ; keys: request-id, vals: request-state
         res-ch (:res-ch @conn)]
     ; process incoming responses from res-ch
@@ -46,12 +72,6 @@
     mx))
 
 ; request
-
-(defn add-req-processor [mx req-id rps]
-  (swap! mx assoc req-id rps))
-
-(defn remove-req-processor [mx req-id]
-  (swap! mx dissoc req-id))
 
 (defn done? [res]
   (let [{:keys [status]} res
@@ -69,14 +89,14 @@
         (infof "req done: %s result: %s " request-id r)
         (remove-req-processor mx request-id)
         (go
-          (error "partial: " partial-results?)
+          (debug "partial: " partial-results?)
           (if (= partial-results? :raw)
             (>! result-ch res)
             (>! result-ch r))
           (close! result-ch)))
       (when partial-results?
         (go
-          (error "partial: " partial-results?)
+          (debug "partial: " partial-results?)
           (if (= partial-results? :raw)
             (>! result-ch res)
             (>! result-ch r)))))))
@@ -99,7 +119,9 @@
               (assoc req :op (keyword op)))
         {:keys [initial-value process-fragment]} (init req)
         result (atom initial-value)
-        request-id (keyword (:id req))
+        request-id  (if (keyword? (:id req))
+                      (:id req)
+                      (keyword (:id req)))
         result-ch (chan)
         rps {:request-id request-id
              :result result

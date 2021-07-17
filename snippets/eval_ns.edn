@@ -1,0 +1,6 @@
+[{:op "eval" :ns "user" :code "(ns bongo)"}
+ {:op "eval" :ns "bongo" :code "(defn add2 [n] (+ 2 n))"}
+ {:op "eval" :ns "bongo" :code "(add2 8)"}
+
+ {:op "eval"  :ns "bongo" :code "(println \"next form will fail...\")"}
+ {:op "eval"  :ns "user" :code "(add2 8)"}]

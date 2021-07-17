@@ -19,9 +19,10 @@ pom.xml.asc
 .settings/*
 .lsp/
 .calva/
+.cpcache
 .webly
 package.json
 package-lock.json
-.cpcache
+goldly_bindings_generated.cljs
 karma.conf.js
 shadow-cljs.edn

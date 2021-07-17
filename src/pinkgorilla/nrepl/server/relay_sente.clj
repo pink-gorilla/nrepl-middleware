@@ -2,14 +2,14 @@
   (:require
    [clojure.string]
    [taoensso.timbre :as log :refer [debug info infof warn error errorf]]
-   [webly.ws.core :refer [send! send-all! send-response]]
+   [webly.ws.core :refer [send-response]]
    [webly.ws.msg-handler :refer [-event-msg-handler]]
-   [pinkgorilla.nrepl.client.core :refer [connect request-rolling!]]
-     ;[pinkgorilla.nrepl.client.connection.in-process :refer [connect]]
-   [pinkgorilla.nrepl.client.request :as r :refer [create-multiplexer!]]))
+   [pinkgorilla.nrepl.client.core :refer [connect request-rolling!]]))
 
-(info "starting nrepl sente relay")
-(def conn (connect {:type :in-process}))
+(def conn (atom nil))
+(defn start-sente-relay []
+  (info "starting nrepl sente relay")
+  (reset! conn (connect {:type :in-process})))
 
 (comment
   ; ev-msg
@@ -19,15 +19,15 @@
                        :id "478db1fb-4355-4419-999c-0f3324bfac3c"}]
    :id :nrepl/req})
 (defn relay-responses [ev-msg req]
-  (let [req-id (:id req)
-        uid (:uid ev-msg)]
-    (infof "relaying nrepl req: %s to: %s " req uid)
-    (request-rolling! conn req
-                      (fn [res]
-                      ;(let [res (assoc res :id req-id)]
-                        (infof "relaying to: %s nrepl res: " uid res)
-                        (send-response ev-msg :nrepl/res res))
-                      :raw)))
+  (if @conn
+    (let [uid (:uid ev-msg)]
+      (infof "relaying nrepl req: %s to: %s " req uid)
+      (request-rolling! @conn req
+                        (fn [res]
+                          (infof "relaying to: %s nrepl res: %s" uid res)
+                          (send-response ev-msg :nrepl/res res))
+                        :raw))
+    (error "sente relay not started! cannot relay nrepl reqs")))
 
 (defmethod -event-msg-handler :nrepl/req
   [{:as ev-msg :keys [event id ?data]}]

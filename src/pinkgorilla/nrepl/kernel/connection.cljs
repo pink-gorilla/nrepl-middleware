@@ -1,6 +1,6 @@
 (ns pinkgorilla.nrepl.kernel.connection
   (:require
-   [taoensso.timbre :refer-macros [debug info warnf warn error errorf]]
+   [taoensso.timbre :refer-macros [debug info infof warnf warn error errorf]]
    ;[reagent.core :as r]
    ;[reagent.ratom :refer [make-reaction]]
    [re-frame.core :as rf]
@@ -44,7 +44,7 @@
          (assoc-in db [:nrepl/status :connected?] connected?))))))
 
 (defn start-bridge [conn]
-  (error "start nrepl bridge: " conn)
+  (debug "start nrepl bridge: " @conn)
   (add-watch
    conn
    :my-watch
@@ -58,7 +58,7 @@
 (rf/reg-event-db
  :nrepl/connect
  (fn [db [_ nrepl-config]]
-   (error "starting nrepl client connection: " nrepl-config)
+   (infof "starting nrepl client connection: %s" nrepl-config)
    (let [{:keys [conn] :as c} (connect nrepl-config)]
      (start-bridge conn)
      (assoc-in db [:nrepl/status :conn] c))))
@@ -73,6 +73,7 @@
        (error "nrepl is disabled."))
      nil)))
 
+(def nrepl-conn (rf/subscribe [:nrepl/status]))
 
 
 

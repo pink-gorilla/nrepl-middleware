@@ -9,18 +9,17 @@
   cider/piggieback {:mvn/version "0.5.2"}
   clojail/clojail {:mvn/version "1.0.6"} ; sandboxing
   compliment/compliment {:mvn/version "0.3.11"} ; code completion
-  org.pinkgorilla/picasso {:mvn/version "3.1.52"} ; render values
+  org.pinkgorilla/picasso {:mvn/version "3.1.56"} ; render values
 
   ; clojurescript
-  jarohen/chord {:mvn/version "0.8.1"}  ; websockets with core.async                                   
+  ;jarohen/chord {:mvn/version "0.8.1"}  ; websockets with core.async                                   
   com.lucasbradstreet/cljs-uuid-utils {:mvn/version "1.0.2"} ;; awb99: in encoding, and clj/cljs proof
-  clj-commons/pomegranate {:mvn/version "1.2.1"} ; add-dependency in clj kernel; TODO - Replace pomegranate with tools alpha
-  }
+  clj-commons/pomegranate {:mvn/version "1.2.1"}} ; add-dependency in clj kernel; TODO - Replace pomegranate with tools alpha
  :aliases
  {:test {:extra-paths ["test"]
          :extra-deps {io.github.cognitect-labs/test-runner
                       {:git/url "https://github.com/cognitect-labs/test-runner.git"
-                       :sha "f597341b6ca7bb4cf027e0a34a6710ca9cb969da"}}
+                       :sha "4e7e1c0dfd5291fa2134df052443dc29695d8cbe"}}
          :main-opts ["-m" "cognitect.test-runner"]
          :exec-fn cognitect.test-runner.api/test}
 
@@ -64,14 +63,22 @@
   ;; cli
   :relay {:extra-paths ["classes" ; aot
                         "profiles/cli/src"]
-          :extra-deps {org.pinkgorilla/webly {:mvn/version "0.3.45"}}
-          :main-opts ["-m" "relay"]}
+          :extra-deps {org.pinkgorilla/webly {:mvn/version "0.3.49"}}
+          :exec-fn webly.user.app.app/webly-run
+          :exec-args {:profile "jetty"
+                      :config {:nrepl {:enabled true
+                                       :bind "0.0.0.0"
+                                       :port 9100}
+                               :webly {:start-service relay/start
+                                       :ns-clj [relay]}
+                               :timbre-loglevel [;[#{"pinkgorilla.nrepl.client.connection"} :debug]
+                                                 [#{"*"} :info]]}}}
 
   :aot {:extra-paths ["profiles/cli/src"]
-        :extra-deps {org.pinkgorilla/webly {:mvn/version "0.3.45"}
+        :extra-deps {org.pinkgorilla/webly {:mvn/version "0.3.49"}
                      org.pinkgorilla/pinkie {:mvn/version "0.3.11"}
                      org.pinkgorilla/ui-markdown {:mvn/version "0.0.18"}
-                     org.pinkgorilla/ui-code {:mvn/version "0.0.26"}}}
+                     org.pinkgorilla/ui-code {:mvn/version "0.0.28"}}}
 
   :client {:extra-paths ["classes" ; aot
                          "profiles/cli/src"]
@@ -81,8 +88,9 @@
   ; web ui
   :goldly {:extra-paths ["classes" ; aot
                          "profiles/demo/src"
-                         "profiles/demo/resources"] 
-           :extra-deps  {org.pinkgorilla/goldly {:mvn/version "0.3.24"}
+                         "profiles/demo/resources"]
+           :extra-deps  {org.pinkgorilla/goldly {:mvn/version "0.3.29"
+                                                 :exclusions [org.pinkgorilla/nrepl-middleware]}
                          org.pinkgorilla/pinkie {:mvn/version "0.3.11"}}
            :exec-fn goldly-server.app/goldly-server-run!
            :exec-args {:profile "watch"

@@ -11,7 +11,7 @@
 (def req-ch (chan))
 (def res-ch (chan))
 
-;tis does not work. not sure why.
+;this does not work. not sure why.
 #_(defmethod -event-msg-handler :nrepl/res
     [{:as ev-msg :keys [event id ?data]}]
     (let [[_ res] event] ; _ is :nrepl/req
@@ -22,7 +22,7 @@
 (rf/reg-event-fx
  :nrepl/res
  (fn [_ [_ res]] ; _ {:keys [db] :as cofx} _ :nrepl/res
-   (error "nrepl res rcvd: " res)
+   (debug "nrepl res rcvd: " res)
    (go
      (>! res-ch res))
    nil))
@@ -33,7 +33,7 @@
                     :req-ch req-ch
                     :res-ch res-ch
                     :connected? true})]
-    (error "starting nrepl sente relay!")
+    (info "connecting to nrepl via sente-relay!")
     (go-loop []
       (let [req (<! req-ch)]
         (info "relaying nrepl req: " req)

@@ -2,14 +2,10 @@
   (:require
    [clojure.core.async :refer [<! >! chan close! go]]
    [taoensso.timbre :as timbre :refer [debug debugf info error]]
-   [re-frame.core :as rf]
    [picasso.id :refer [guuid]]
    [picasso.kernel.protocol :refer [kernel-eval]]
    [pinkgorilla.nrepl.client.core :refer [send-request! op-eval-picasso op-stacktrace]]
-   [pinkgorilla.nrepl.kernel.connection] ; side-effects
-   ))
-
-(def nrepl (rf/subscribe [:nrepl/status]))
+   [pinkgorilla.nrepl.kernel.connection :refer [nrepl-conn]]))
 
 (defn stacktrace? [eval-result]
   (when (:err eval-result)
@@ -21,20 +17,21 @@
             st (<! (send-request! conn (op-stacktrace)))]
         (merge eval-result st))))
 
-(defmethod kernel-eval :clj [{:keys [id code]
-                              :or {id (guuid)}}]
+(defmethod kernel-eval :clj [{:keys [id code ns]
+                              :or {ns 'user
+                                   id (guuid)}}]
   (let [c (chan)]
     (debug "clj-eval: " code)
     (go (try (let [;_ (info "nrepl: " @nrepl)
-                   conn (:conn @nrepl)
-                   eval-result (<! (send-request! conn (op-eval-picasso code)))
+                   conn (:conn @nrepl-conn)
+                   eval-result (<! (send-request! conn (op-eval-picasso code ns)))
                    _ (info "nrepl eval result: " eval-result)
                    ;eval-result (if (stacktrace? eval-result)
                    ;              (get-stacktrace conn eval-result)
                    ;              eval-result)
                    ]
                (>! c (merge eval-result {:id id})))
-             (catch js/Error e
+             (catch #?(:cljs js/Error :clj Exception) e
                (error "nrepl eval ex: " e)
                (>! c {:id id
                       :error e})))
