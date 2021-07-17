@@ -9,7 +9,7 @@
   cider/piggieback {:mvn/version "0.5.2"}
   clojail/clojail {:mvn/version "1.0.6"} ; sandboxing
   compliment/compliment {:mvn/version "0.3.11"} ; code completion
-  org.pinkgorilla/picasso {:mvn/version "3.1.56"} ; render values
+  org.pinkgorilla/picasso {:mvn/version "3.1.57"} ; render values
 
   ; clojurescript
   ;jarohen/chord {:mvn/version "0.8.1"}  ; websockets with core.async                                   

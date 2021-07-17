@@ -1,7 +1,6 @@
 (ns pinkgorilla.nrepl.client.connection
   (:require
    [taoensso.timbre :refer [debug debugf info infof warn warnf errorf]]
-
    [pinkgorilla.nrepl.client.connection.bencode :as bencode]
    [pinkgorilla.nrepl.client.connection.in-process :as in-process]))
 

@@ -2,8 +2,8 @@
   (:require
    #?(:clj [clojure.core.async :as async :refer [<! >! chan timeout close! go go-loop <!!]]
       :cljs [cljs.core.async :as async :refer   [<! >! chan timeout close!] :refer-macros [go go-loop]])
-   #?(:cljs [taoensso.timbre :refer-macros [debug debugf info infof error]]
-      :clj [taoensso.timbre         :refer [debug debugf info infof error]])
+   #?(:cljs [taoensso.timbre :refer-macros [debug debugf info infof error errorf]]
+      :clj [taoensso.timbre         :refer [debug debugf info infof error errorf]])
 
    [pinkgorilla.nrepl.client.connection :refer [connect! disconnect!]]
    [pinkgorilla.nrepl.client.request :as r :refer [create-multiplexer!]]
@@ -16,16 +16,38 @@
    [pinkgorilla.nrepl.client.op.admin]
    [pinkgorilla.nrepl.client.op.gorilla]))
 
-(defn send-request! [{:keys [conn mx]} req & [partial-results?]]
-  (let [result-ch (r/send-request! conn mx partial-results? req)]
+(defn inject-session-id [session-id {:keys [session] :as req}]
+  (if (and (nil? session) session-id)
+    (do (errorf "injecting session-id %s to req" session-id)
+        (assoc req :session session-id))
+    (do (debugf "NOT injecting session-id %s to req" session-id)
+        req)))
+
+(defn send-request! [{:keys [conn mx session-id]} req & [partial-results?]]
+  (let [req-with-session-id (inject-session-id @session-id req)
+        result-ch (r/send-request! conn mx partial-results? req-with-session-id)]
     result-ch))
+
+(defn set-session-id! [{:keys [session-id] :as conn}]
+  (let [id-req-clone (guuid)
+        req-clone {:op "clone" :id id-req-clone}]
+    (error "creating new nrepl session ..")
+    (go
+      (let [res-ch (send-request! conn req-clone false)
+            res (<! res-ch)
+            session-id-new (:new-session res)]
+         ;(error "session res:" res "type: " (type res) (pr-str res))
+        (errorf "new session id : %s" session-id-new)
+        (reset! session-id session-id-new)))))
 
 (defn connect [config]
   (let [conn (connect! config)
         mx (create-multiplexer! conn)
         c {:config config
            :conn conn
-           :mx mx}]
+           :mx mx
+           :session-id (atom nil)}]
+    (set-session-id! c)
     c))
 
 (defn disconnect [s]

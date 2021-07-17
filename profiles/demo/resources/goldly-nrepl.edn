@@ -18,11 +18,11 @@
                    [#{"webly.user.*"} :info]
                    [#{"webly.*"} :info]
                    [#{"goldly.*"} :info]
-                   
                    [#{"picasso.*"} :info]
                    [#{"ui.notebook.*"} :info]
                    [#{"notebook.*"} :info]
                    [#{"ui.*"} :info]
+                   [#{"pinkgorilla.nrepl.*"} :debug]
                    [#{"*"} :debug]]
 
  :settings {:use-localstorage  true  ; allow user to change settings via localstorage

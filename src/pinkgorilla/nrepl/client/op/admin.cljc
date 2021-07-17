@@ -7,6 +7,9 @@
 ; op: close
 ; op: clone
 
+(defmethod init :clone [req]
+  (key-concat [:new-session]))
+
 (defmethod init :describe [req]
   (key-concat [:versions :ops :aux]))
 

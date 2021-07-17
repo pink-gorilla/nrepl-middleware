@@ -17,14 +17,13 @@
             st (<! (send-request! conn (op-stacktrace)))]
         (merge eval-result st))))
 
-(defmethod kernel-eval :clj [{:keys [id code ns]
-                              :or {ns 'user
-                                   id (guuid)}}]
+(defmethod kernel-eval :clj [{:keys [id code]
+                              :or {id (guuid)}}]
   (let [c (chan)]
     (debug "clj-eval: " code)
     (go (try (let [;_ (info "nrepl: " @nrepl)
                    conn (:conn @nrepl-conn)
-                   eval-result (<! (send-request! conn (op-eval-picasso code ns)))
+                   eval-result (<! (send-request! conn (op-eval-picasso code)))
                    _ (info "nrepl eval result: " eval-result)
                    ;eval-result (if (stacktrace? eval-result)
                    ;              (get-stacktrace conn eval-result)
