@@ -2,6 +2,5 @@
  :clj-require []
  :cljs-namespace [pinkgorilla.nrepl.kernel.kernel
                   pinkgorilla.nrepl.client.connection.sente]
- :cljs-bindings {}
  :cljs-ns-bindings {}
  :snippets []}
